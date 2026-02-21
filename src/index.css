@@ -1,0 +1,82 @@
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg-base: #1A1612;
+  --bg-layer: #241F1A;
+  --text-primary: #F5F0E8;
+  --text-muted: #F5F0E870;
+  --accent-mint: #8BA875;
+  --accent-amber: #D4A574;
+  --accent-red: #C47070CC;
+  --accent-violet: #A3B18A;
+  --glass-fill: #FFFFFF0A;
+  --glass-border: #FFFFFF12;
+  --glow-amber: #D4A57440;
+  --glow-violet: #A3B18A30;
+  --nav-active: #A3B18A;
+  --nav-inactive: #F5F0E840;
+}
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: #1A1612;
+  color: #F5F0E8;
+  font-family: 'DM Sans', sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Sora', sans-serif;
+}
+
+code, .mono {
+  font-family: 'DM Mono', monospace;
+}
+
+#root {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: none;
+  font-family: inherit;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+input, textarea, select {
+  font-family: inherit;
+  font-size: inherit;
+}

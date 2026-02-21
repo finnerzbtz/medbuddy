@@ -1,0 +1,19 @@
+.env
+node_modules/
+dist/
+scripts/ref-images/
+assets/raw/
+assets/blender/
+*.blend1
+.DS_Store
+.vp-session.json
+*.pen
+Gemini_Generated_Image_*
+COMPACTION.md
+/tmp/
+
+# Large binary assets — tracked via Git LFS or downloaded separately
+assets/final/*.glb
+public/models/*.glb
+*-raw.glb
+shots/
