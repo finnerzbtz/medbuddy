@@ -17,3 +17,4 @@ assets/final/*.glb
 public/models/*.glb
 *-raw.glb
 shots/
+.worktrees/
