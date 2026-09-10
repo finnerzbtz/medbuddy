@@ -72,14 +72,16 @@ export default function MedicationForm() {
             .getState()
             .saveMedication({ ...form, updateSupply: supplyChanged }, id);
           if (result.ok) {
+            const destination = params.has('welcome') ? '/welcome/reminders' : '/meds';
             useAppStore
               .getState()
               .showToast(
                 medication
                   ? 'Medication updated. Schedule changes start tomorrow.'
                   : 'Medication added to your routine.',
+                { destination },
               );
-            navigate(params.has('welcome') ? '/welcome/reminders' : '/meds');
+            navigate(destination);
           } else {
             const message = result.error!;
             setError(message);

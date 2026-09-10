@@ -90,7 +90,7 @@ interface State {
   celebration: CheckInMoment | null;
   previewCelebration: () => void;
   dismissCelebration: (id: string) => void;
-  toast: { message: string; undoId?: string; checkIn?: boolean } | null;
+  toast: { message: string; undoId?: string; checkIn?: boolean; destination?: string } | null;
   completeWelcome: (name: string, petName: string) => Result;
   saveMedication: (input: MedicationInput, id?: string) => Result;
   setMedicationStatus: (id: string, status: 'active' | 'paused' | 'archived') => Result;
@@ -110,7 +110,7 @@ interface State {
   reset: () => Result;
   react: (animation: AnimationName) => void;
   settle: () => void;
-  showToast: (message: string, undoId?: string) => void;
+  showToast: (message: string, options?: { undoId?: string; destination?: string }) => void;
   dismissToast: () => void;
   sync: () => void;
   applyCloud: (data: AppData, binding: CloudBinding | null) => Result;
@@ -721,7 +721,7 @@ export const useAppStore = create<State>((set, get) => {
       if (get().reactionUntil > 0 && get().reactionUntil <= Date.now())
         set({ currentAnimation: 'idle', reactionUntil: 0 });
     },
-    showToast: (message, undoId) => set({ toast: { message, undoId } }),
+    showToast: (message, options) => set({ toast: { message, ...options } }),
     dismissToast: () => set({ toast: null }),
     sync: () => {
       const fresh = readInitial();

@@ -366,7 +366,9 @@ export default function ProfilePage() {
                 const result = useAppStore.getState().restore(restoring);
                 if (result.ok) {
                   setRestoring(null);
-                  useAppStore.getState().showToast('Backup restored on this device.');
+                  useAppStore
+                    .getState()
+                    .showToast('Backup restored on this device.', { destination: '/' });
                   navigate('/');
                 } else setError(result.error!);
               }}
