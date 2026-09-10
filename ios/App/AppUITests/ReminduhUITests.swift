@@ -5,16 +5,35 @@ final class ReminduhUITests: XCTestCase {
     func reveal(_ element: XCUIElement, in app: XCUIApplication) {
         for _ in 0..<12 {
             let navigation = app.otherElements.matching(NSPredicate(format: "label BEGINSWITH %@", "Main navigation")).firstMatch
-            let bottom = navigation.exists ? navigation.frame.minY - 8 : app.frame.maxY - 40
+            let modal = app.otherElements.matching(NSPredicate(format: "label ENDSWITH %@", ", web dialogue")).firstMatch
+            let top = modal.exists ? max(60, modal.frame.minY + 8) : 60
+            let pageBottom = navigation.exists ? navigation.frame.minY - 8 : app.frame.maxY - 40
+            let bottom = modal.exists ? min(pageBottom, modal.frame.maxY - 8) : pageBottom
             if element.exists {
                 let frame = element.frame
                 // WKWebView can report isHittable for a button covered by the
                 // fixed bottom navigation. Require the whole control above it.
-                if element.isHittable && frame.minY >= 60 && frame.maxY <= bottom { return }
-                if frame.minY < 60 { app.swipeDown(); continue }
+                if element.isHittable && frame.minY >= top && frame.maxY <= bottom { return }
+                if frame.minY < top || frame.maxY > bottom {
+                    // Full-screen swipes can jump past a large-text control in both
+                    // directions. Move only the measured overflow, without momentum.
+                    let down = frame.minY < top
+                    let distance = min(300, down ? top - frame.minY + 28 : frame.maxY - bottom + 28)
+                    let startY = down ? top + 30 : bottom - 24
+                    let endY = down ? startY + distance : startY - distance
+                    let origin = app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0))
+                    origin.withOffset(CGVector(dx: 0, dy: startY)).press(
+                        forDuration: 0.05,
+                        thenDragTo: origin.withOffset(CGVector(dx: 0, dy: endY)),
+                        withVelocity: .slow,
+                        thenHoldForDuration: 0.15
+                    )
+                    continue
+                }
             }
             app.swipeUp()
         }
+        XCTFail("Could not reveal the entire control inside the visible content: " + element.debugDescription + "\n" + app.debugDescription)
     }
     private func checkbox(_ label: String, in app: XCUIApplication) -> XCUIElement {
         let checkbox = app.checkBoxes[label]
@@ -39,6 +58,355 @@ final class ReminduhUITests: XCTestCase {
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
+    }
+
+    private func medicationSnapshot(in app: XCUIApplication) throws -> (labels: [String], name: String, supply: String) {
+        app.links["History"].tap()
+        let doses = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "mg per tablet"))
+        XCTAssertTrue(doses.firstMatch.waitForExistence(timeout: 15), "Dedicated QA medication fixture is required: " + app.debugDescription)
+        let labels = doses.allElementsBoundByIndex.map(\.label).sorted()
+        let name = try XCTUnwrap(labels.first?.components(separatedBy: ",").first)
+        app.links["Medications"].tap()
+        let edit = app.links["Edit " + name]
+        reveal(edit, in: app); edit.tap()
+        let remaining = app.textFields["Scheduled doses remaining"]
+        reveal(remaining, in: app)
+        let supply = try XCTUnwrap(remaining.value as? String)
+        let cancel = app.links["Cancel"]
+        reveal(cancel, in: app); cancel.tap()
+        return (labels, name, supply)
+    }
+
+    private func assertMedicationSnapshot(_ expected: (labels: [String], name: String, supply: String), in app: XCUIApplication) throws {
+        let actual = try medicationSnapshot(in: app)
+        XCTAssertEqual(actual.labels, expected.labels, "Optional activities must not record or change medication doses")
+        XCTAssertEqual(actual.name, expected.name)
+        XCTAssertEqual(actual.supply, expected.supply, "Optional activities must not consume medication supply")
+    }
+
+    private func openRoomShop(in app: XCUIApplication) {
+        app.links["My Blobby"].tap()
+        let section = app.buttons["Room"]
+        reveal(section, in: app); section.tap()
+        let shop = app.links["Decorate →"]
+        reveal(shop, in: app); shop.tap()
+        XCTAssertTrue(app.buttons["Preview Little bonsai"].waitForExistence(timeout: 15), app.debugDescription)
+    }
+
+    func testNativeBackupFilesRestoreRoundTrip() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        app.links["My Blobby"].tap()
+        let dataSection = app.buttons["Backups & data"]
+        reveal(dataSection, in: app); dataSection.tap()
+        let export = app.buttons["Export backup"]
+        reveal(export, in: app); export.tap()
+        let saveToFiles = app.cells["Save to Files"]
+        XCTAssertTrue(saveToFiles.waitForExistence(timeout: 10), app.debugDescription)
+        saveToFiles.tap()
+        attachScreenshot("Native backup Files save destination", from: app)
+        let local = app.buttons["On My iPhone"]
+        if local.waitForExistence(timeout: 3) { local.tap() }
+        let filename = "reminduh-qa-" + String(UUID().uuidString.prefix(8))
+        let fileNameField = app.textFields.firstMatch
+        XCTAssertTrue(fileNameField.waitForExistence(timeout: 5), app.debugDescription)
+        fileNameField.tap()
+        fileNameField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: (fileNameField.value as? String ?? "").count) + filename)
+        let save = app.buttons["Save"]
+        XCTAssertTrue(save.exists && save.isEnabled, app.debugDescription)
+        save.tap()
+        let restore = app.buttons["Restore backup"]
+        XCTAssertTrue(restore.waitForExistence(timeout: 10), app.debugDescription)
+        reveal(restore, in: app); restore.tap()
+        let choose = app.buttons["Choose File"]
+        if choose.waitForExistence(timeout: 3) { choose.tap() }
+        attachScreenshot("Native backup Files restore picker", from: app)
+        let backupFile = app.cells.matching(NSPredicate(format: "label CONTAINS %@", filename)).firstMatch
+        XCTAssertTrue(backupFile.waitForExistence(timeout: 10), app.debugDescription)
+        backupFile.tap()
+        XCTAssertTrue(app.staticTexts["Restore this backup?"].waitForExistence(timeout: 15), app.debugDescription)
+        attachScreenshot("Native backup restore confirmation", from: app)
+        app.buttons["Replace with backup"].tap()
+        XCTAssertTrue(app.staticTexts["Backup restored on this device."].waitForExistence(timeout: 10), app.debugDescription)
+        try assertMedicationSnapshot(baseline, in: app)
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25))
+        try assertMedicationSnapshot(baseline, in: app)
+        app.links["My Blobby"].tap()
+        let reminders = app.buttons["Reminders"]
+        reveal(reminders, in: app); reminders.tap()
+        XCTAssertTrue(app.buttons["Enable reminders"].waitForExistence(timeout: 10), "Restored reminders must remain off until the user enables them again: " + app.debugDescription)
+        attachScreenshot("Native restored reminders require opt-in", from: app)
+    }
+
+    func testNativeTextScaleAndCoreLayout() throws {
+        // Run at the simulator's normal and accessibility Dynamic Type categories.
+        // Compare these measured native frames across result bundles; no app hook is used.
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25), app.debugDescription)
+        app.links["My Blobby"].tap()
+        let names = app.buttons["Names"]
+        reveal(names, in: app)
+        XCTAssertTrue(names.isHittable, app.debugDescription)
+        print("NATIVE_TEXT_METRICS settingsLabelHeight=\(names.frame.height) settingsLabelWidth=\(names.frame.width)")
+        XCTAssertGreaterThanOrEqual(names.frame.minX, 0)
+        XCTAssertLessThanOrEqual(names.frame.maxX, app.frame.maxX)
+        attachScreenshot("Native system text size in settings", from: app)
+        let backups = app.buttons["Backups & data"]
+        reveal(backups, in: app)
+        XCTAssertTrue(backups.isHittable, "Last settings section must remain reachable with larger system text")
+        app.links["Medications"].tap()
+        app.links["Add medication"].tap()
+        let label = app.staticTexts["Medication name"]
+        let name = app.textFields.firstMatch
+        XCTAssertTrue(name.waitForExistence(timeout: 10), app.debugDescription)
+        reveal(name, in: app)
+        XCTAssertTrue(name.isHittable)
+        XCTAssertGreaterThanOrEqual(name.frame.minY, 60, "Medication name must clear the native status bar")
+        print("NATIVE_TEXT_METRICS medicationLabelHeight=\(label.frame.height) medicationFieldHeight=\(name.frame.height)")
+        XCTAssertGreaterThanOrEqual(name.frame.minX, 0)
+        XCTAssertLessThanOrEqual(name.frame.maxX, app.frame.maxX)
+        let tablets = app.textFields["Number of tablets per dose"]
+        reveal(tablets, in: app)
+        XCTAssertTrue(tablets.isHittable)
+        XCTAssertLessThanOrEqual(tablets.frame.maxX, app.frame.maxX)
+        attachScreenshot("Native medication form with system text size", from: app)
+        let cancel = app.links["Cancel"]
+        reveal(cancel, in: app); cancel.tap()
+        app.links["Today"].tap()
+        let options = app.buttons["Room options"]
+        reveal(options, in: app)
+        attachScreenshot("Native home room and speech with system text size", from: app)
+        let activities = app.buttons["Activities"]
+        reveal(activities, in: app)
+        XCTAssertTrue(activities.isHittable, "Room actions must remain reachable with larger system text")
+        attachScreenshot("Native home speech and controls with system text size", from: app)
+    }
+
+    func testNativeRoutineDateTimeFormLayout() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        app.links["My Blobby"].tap()
+        let routines = app.links["Routines"]
+        reveal(routines, in: app); routines.tap()
+        let template = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Wind down for the night")).firstMatch
+        if !template.exists {
+            let section = app.buttons["Add routine"]
+            reveal(section, in: app); section.tap()
+        }
+        reveal(template, in: app); template.tap()
+        XCTAssertTrue(app.textFields["Routine name"].waitForExistence(timeout: 10), app.debugDescription)
+        let dialog = app.otherElements["Add a routine, web dialogue"]
+        for label in ["Time (optional)", "Start date"] {
+            // WKWebView exposes date/time inputs as Other, in addition to a
+            // short label container with the same accessible name.
+            let field = try XCTUnwrap(app.otherElements.matching(NSPredicate(format: "label == %@", label))
+                .allElementsBoundByIndex.first(where: { $0.frame.height >= 44 }))
+            reveal(field, in: app)
+            print("NATIVE_ROUTINE_FIELD label=\(label) field=\(field.frame) dialog=\(dialog.frame)")
+            XCTAssertGreaterThanOrEqual(field.frame.minX, dialog.frame.minX + 8)
+            XCTAssertLessThanOrEqual(field.frame.maxX, dialog.frame.maxX - 8, "Native date/time input must fit inside the dialog")
+        }
+        attachScreenshot("Native routine date and time fit inside dialog", from: app)
+        let time = try XCTUnwrap(app.otherElements.matching(NSPredicate(format: "label == %@", "Time (optional)"))
+            .allElementsBoundByIndex.first(where: { $0.frame.height >= 44 }))
+        reveal(time, in: app); time.tap()
+        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 5), app.debugDescription)
+        attachScreenshot("Native routine time picker", from: app)
+        let done = app.buttons["Done"]
+        XCTAssertTrue(done.waitForExistence(timeout: 5), app.debugDescription)
+        done.tap()
+        XCTAssertFalse((time.value as? String ?? "").isEmpty, "Native time selection should populate the optional field")
+        let date = try XCTUnwrap(app.otherElements.matching(NSPredicate(format: "label == %@", "Start date"))
+            .allElementsBoundByIndex.first(where: { $0.frame.height >= 44 }))
+        reveal(date, in: app); date.tap()
+        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 5), app.debugDescription)
+        attachScreenshot("Native routine date picker", from: app)
+        XCTAssertTrue(done.waitForExistence(timeout: 5), app.debugDescription)
+        done.tap()
+        let cancel = app.buttons["Cancel"]
+        reveal(cancel, in: app); cancel.tap()
+        XCTAssertFalse(dialog.exists)
+        try assertMedicationSnapshot(baseline, in: app)
+    }
+
+    func testOptionalRoutineActivityAndMedicationIsolation() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["Today"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        app.links["My Blobby"].tap()
+        let routines = app.links["Routines"]
+        reveal(routines, in: app); routines.tap()
+        let template = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "Wind down for the night")).firstMatch
+        if !template.exists {
+            let addSection = app.buttons["Add routine"]
+            reveal(addSection, in: app); addSection.tap()
+        }
+        reveal(template, in: app); template.tap()
+        let prefix = "QA rest " + String(UUID().uuidString.prefix(6)) + " "
+        let nameField = app.textFields["Routine name"]
+        XCTAssertTrue(nameField.waitForExistence(timeout: 10), app.debugDescription)
+        nameField.tap()
+        nameField.typeText(prefix)
+        let name = try XCTUnwrap(nameField.value as? String)
+        XCTAssertTrue(name.contains(prefix), "The routine title must include the typed QA name")
+        if app.buttons["Done"].exists { app.buttons["Done"].tap() }
+        let submit = app.buttons["Add routine"]
+        reveal(submit, in: app)
+        attachScreenshot("Native routine form actions reachable inside dialog", from: app)
+        submit.tap()
+        XCTAssertTrue(app.staticTexts[name].waitForExistence(timeout: 10), app.debugDescription)
+        // The persistent confirmation can cover the next page's action. Dismiss
+        // it explicitly, as a user can, before scrolling to the new routine.
+        let dismissMessage = app.buttons["Dismiss message"]
+        XCTAssertTrue(dismissMessage.waitForExistence(timeout: 5), app.debugDescription)
+        dismissMessage.tap()
+        XCTAssertTrue(dismissMessage.waitForNonExistence(timeout: 5))
+        app.links["Today"].tap()
+        let routine = app.otherElements[name + ", article"].firstMatch
+        let start = routine.buttons["Take a break with Blobby"]
+        reveal(start, in: app)
+        XCTAssertTrue(start.exists, app.debugDescription)
+        XCTAssertFalse(app.buttons["Undo " + name].exists, "Starting an activity should require an explicit completion later")
+        // Native AX taps may implicitly scroll a WKWebView. Check that the
+        // observed target has settled, then tap that visible point once.
+        var visibleFrame = start.frame
+        var stableSamples = 0
+        for _ in 0..<12 {
+            Thread.sleep(forTimeInterval: 0.15)
+            let nextFrame = start.frame
+            stableSamples = abs(nextFrame.minY - visibleFrame.minY) < 1 && abs(nextFrame.minX - visibleFrame.minX) < 1 ? stableSamples + 1 : 0
+            visibleFrame = nextFrame
+            if stableSamples >= 2 { break }
+        }
+        XCTAssertGreaterThanOrEqual(stableSamples, 2, "The routine action must settle before its tap")
+        let navigation = app.otherElements.matching(NSPredicate(format: "label BEGINSWITH %@", "Main navigation")).firstMatch
+        XCTAssertGreaterThanOrEqual(visibleFrame.minY, 60)
+        XCTAssertLessThanOrEqual(visibleFrame.maxY, navigation.frame.minY - 8)
+        XCTAssertTrue(start.isHittable)
+        print("NATIVE_ROUTINE_TAP frame=\(visibleFrame) center=(\(visibleFrame.midX),\(visibleFrame.midY))")
+        attachScreenshot("Native routine action visible before one tap", from: app)
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+            .withOffset(CGVector(dx: visibleFrame.midX, dy: visibleFrame.midY)).tap()
+        XCTAssertTrue(app.staticTexts["A restful moment"].waitForExistence(timeout: 20), app.debugDescription)
+        let pause = app.switches["Pause animation"]
+        reveal(pause, in: app); pause.tap()
+        XCTAssertTrue(app.switches["Resume animation"].waitForExistence(timeout: 5))
+        app.switches["Resume animation"].tap()
+        attachScreenshot("Native optional rest activity", from: app)
+        let finish = app.buttons["Finish break"]
+        reveal(finish, in: app); finish.tap()
+        XCTAssertTrue(app.staticTexts["How did your routine go?"].waitForExistence(timeout: 10), app.debugDescription)
+        let done = app.buttons["Done"]
+        done.tap()
+        let recorded = app.buttons["Undo " + name]
+        XCTAssertTrue(recorded.waitForExistence(timeout: 10), app.debugDescription)
+        attachScreenshot("Native routine completed separately from medication", from: app)
+        try assertMedicationSnapshot(baseline, in: app)
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.links["Today"].waitForExistence(timeout: 25))
+        app.links["Today"].tap()
+        XCTAssertTrue(recorded.waitForExistence(timeout: 15), "Optional routine record must survive process termination")
+        try assertMedicationSnapshot(baseline, in: app)
+    }
+
+    func testShopClothingFeedingAndZenGarden() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["Today"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        openRoomShop(in: app)
+        let outfits = app.switches["Outfits"]
+        reveal(outfits, in: app); outfits.tap()
+        let glasses = app.otherElements["Preview Daydreamer, owned"]
+        reveal(glasses, in: app); glasses.tap()
+        let wear = app.buttons["Wear this outfit"]
+        if wear.waitForExistence(timeout: 3) { reveal(wear, in: app); wear.tap() }
+        XCTAssertTrue(app.buttons["Wearing now"].waitForExistence(timeout: 10), app.debugDescription)
+        attachScreenshot("Native owned outfit equipped from shop", from: app)
+        app.buttons["Close item details"].tap()
+        app.links["Today"].tap()
+        let feed = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Feed ")).firstMatch
+        reveal(feed, in: app); feed.tap()
+        let snacks = app.switches.matching(NSPredicate(format: "label BEGINSWITH %@ AND enabled == true", "Select "))
+        let snack = snacks.firstMatch
+        XCTAssertTrue(snack.waitForExistence(timeout: 10), "Dedicated QA pantry needs one available snack: " + app.debugDescription)
+        let snackName = snack.label.components(separatedBy: ",")[0].replacingOccurrences(of: "Select ", with: "")
+        let countText = snack.label.components(separatedBy: ", ")[1].components(separatedBy: " ")[0]
+        let beforeCount = try XCTUnwrap(Int(countText))
+        reveal(snack, in: app); snack.tap()
+        let give = app.buttons["Feed " + snackName]
+        reveal(give, in: app); give.tap()
+        let consumed = app.switches["Select " + snackName + ", " + String(beforeCount - 1) + " available"]
+        XCTAssertTrue(consumed.waitForExistence(timeout: 15), "Feeding must consume exactly one owned snack: " + app.debugDescription)
+        attachScreenshot("Native feeding consumed one snack", from: app)
+        let closeTray = app.buttons["Close food tray"]
+        reveal(closeTray, in: app); closeTray.tap()
+        openRoomShop(in: app)
+        let useZen = app.buttons["Use Zen garden in room"]
+        let activeZen = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Zen garden is in your room")).firstMatch
+        if !activeZen.exists {
+            if useZen.exists { reveal(useZen, in: app); useZen.tap() }
+            else {
+                // Spend only earned/starter virtual leaves on the isolated QA device.
+                let buy = app.buttons["Buy and use Zen garden for 60 leaves"]
+                reveal(buy, in: app); buy.tap()
+                let confirm = app.buttons["Buy & use 60 leaves"]
+                XCTAssertTrue(confirm.waitForExistence(timeout: 10), app.debugDescription)
+                confirm.tap()
+            }
+        }
+        XCTAssertTrue(activeZen.waitForExistence(timeout: 10), app.debugDescription)
+        app.terminate(); app.launch()
+        XCTAssertTrue(app.links["Today"].waitForExistence(timeout: 25))
+        app.links["My Blobby"].tap()
+        let wardrobe = app.buttons["Wardrobe"]
+        reveal(wardrobe, in: app); wardrobe.tap()
+        XCTAssertEqual(app.switches["Daydreamer"].value as? String, "1", "Owned outfit must survive relaunch")
+        app.links["Today"].tap()
+        let activities = app.buttons["Activities"]
+        reveal(activities, in: app); activities.tap()
+        let zen = app.switches.matching(NSPredicate(format: "label BEGINSWITH %@", "Zen:")).firstMatch
+        reveal(zen, in: app); zen.tap()
+        let back = app.buttons["Back to room"]
+        XCTAssertTrue(back.waitForExistence(timeout: 20), app.debugDescription)
+        let sand = app.otherElements["Freeform sand garden"]
+        XCTAssertTrue(sand.waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertGreaterThan(sand.frame.width, 200)
+        XCTAssertGreaterThan(sand.frame.height, 200)
+        XCTAssertTrue(back.isHittable)
+        let undo = app.buttons["Undo"]
+        XCTAssertFalse(undo.isEnabled, "New sand starts without an undo history")
+        sand.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.35)).press(forDuration: 0.1, thenDragTo: sand.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.65)))
+        expectation(for: NSPredicate(format: "enabled == true"), evaluatedWith: undo)
+        waitForExpectations(timeout: 10)
+        attachScreenshot("Native sand after touch raking", from: app)
+        // Sand has no autoplay: leaving the app pauses its gesture/audio safely.
+        XCUIDevice.shared.press(.home); app.activate()
+        XCTAssertTrue(sand.waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertTrue(undo.isEnabled, "Backgrounding must preserve the drawn sand")
+        reveal(undo, in: app); undo.tap()
+        XCTAssertFalse(undo.isEnabled, "Undo should remove the single native touch stroke")
+        app.switches["Smooth"].tap()
+        XCTAssertEqual(app.switches["Smooth"].value as? String, "1")
+        back.tap()
+        XCTAssertTrue(activities.waitForExistence(timeout: 10))
+        openRoomShop(in: app)
+        let bonsai = app.buttons["Use Little bonsai in room"]
+        reveal(bonsai, in: app); bonsai.tap()
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Little bonsai is in your room")).firstMatch.waitForExistence(timeout: 10))
+        try assertMedicationSnapshot(baseline, in: app)
     }
 
     func testRecordedVoiceAndSoundPreferences() throws {

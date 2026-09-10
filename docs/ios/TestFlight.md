@@ -73,7 +73,11 @@ The optional purchase test uses the separate **Reminduh StoreKit** scheme. Its c
 
 ## Native acceptance checks
 
-Use a separate simulator with no personal medication data. `AppUITests/ReminduhUITests.swift` exercises onboarding, iOS notification permission/test, process termination/relaunch and the native backup sheet. Run via Product → Test with scheme Reminduh. Use a fresh install to exercise onboarding; the smoke test also supports rerunning with its existing test data.
+Use a separate simulator with no personal medication data. `AppUITests/ReminduhUITests.swift` contains eight core flows: medication/supply/relaunch; local reminders/persistence; Files export/restore; radio; recorded voice; bonsai; optional-routine activity/isolation; and clothing/feeding/Zen. Run these through scheme Reminduh and inspect individual results and skips. The separate StoreKit scheme is not part of the offline beta gate. Fresh onboarding is only for a dedicated QA installation; never erase a personal installation.
+
+Use `testNativeRoutineDateTimeFormLayout` to verify native date/time field bounds, picker opening and cancellation. Desktop WebKit does not reproduce all iOS control sizing.
+
+Run `testNativeTextScaleAndCoreLayout` at normal and accessibility-large iOS text categories when typography changes. Compare actual native text frames and screenshots, check fields, count badges and controls above fixed navigation, and restore the QA category afterward. A browser root-font setting alone does not prove Dynamic Type support. Current local refinement evidence and remaining investigations are in [the quality pass](../refinement/quality-pass.md); local branch changes after build 4 are not automatically included in that distributed build.
 
 Before distributing broadly, test on a physical iPhone:
 
