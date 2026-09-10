@@ -172,7 +172,7 @@ export default function RoutinesToday() {
           ))}
         </div>
       )}
-      {!visible.length && (
+      {!visible.length && data.selfCare.introductionDismissed && (
         <p>
           {hidden.length
             ? 'Your optional plan is tucked away for today.'

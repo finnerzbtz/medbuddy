@@ -93,7 +93,7 @@ export function VoicePreferences() {
       <p className="voice-hint">
         {readThoughts
           ? `Once sound is on, ${name} reads each new bubble. Quiet keeps just the words.`
-          : 'Thoughts are muted. Use Unmute beneath the bubble to hear them again.'}
+          : 'Thoughts are muted. Turn on Read thoughts aloud to hear them.'}
       </p>
       <details className="voice-transcript">
         <summary>Preview words</summary>

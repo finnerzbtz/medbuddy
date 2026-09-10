@@ -6,7 +6,7 @@ import { SoundPreferences } from '@/components/app/SoundControls';
 import DisplaySettings from '@/components/app/DisplaySettings';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Check, Download, Leaf, RotateCcw, Upload, X } from 'lucide-react';
+import { Check, Download, RotateCcw, Upload, X } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import { dateKey, OUTFITS, ROOM_ITEMS } from '@/domain/schedule';
 import { DEFAULT_ROOM, ROOM_SLOTS, roomItem } from '@/domain/room';
@@ -84,16 +84,15 @@ export default function ProfilePage() {
           <h1>You & {data.profile.petName}</h1>
         </div>
       </div>
+      <AccountCard />
       <div className="profile-grid">
-        <AccountCard />
         <SettingsSection title="Reminders" id="reminders">
           <ReminderSettings />
         </SettingsSection>
-        <SettingsSection title="Routines" id="routines-settings">
-          <Link className="button secondary" to="/routines">
-            Manage routines
-          </Link>
-        </SettingsSection>
+        <Link className="settings-link" id="routines-settings" to="/routines">
+          <span>Routines</span>
+          <span aria-hidden="true">›</span>
+        </Link>
         <SettingsSection title="Names" id="names">
           <div className="profile-pet">
             <img src={'/assets-v2/' + data.outfit + '-preview.webp'} alt={data.profile.petName} />
@@ -330,12 +329,8 @@ export default function ProfilePage() {
         </p>
       )}
       <div className="profile-footer">
-        <Leaf aria-hidden="true" focusable="false" size={21} />
-        <p>
-          Reminduh keeps your own records; it does not verify ingestion or provide medical advice.
-          Follow your medication instructions and ask a pharmacist if you’re unsure about a dose.
-        </p>
-        {!isNative && <Link to="/studio">Open asset studio →</Link>}
+        <Link to="/help">Help, privacy & accessibility</Link>
+        {import.meta.env.DEV && <Link to="/studio">Asset studio</Link>}
       </div>
       {restoring && (
         <ConfirmDialog title="Restore this backup?" close={() => setRestoring(null)}>

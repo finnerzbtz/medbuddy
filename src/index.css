@@ -2692,25 +2692,63 @@ html[data-native='true'] body::before {
   pointer-events: none;
 }
 
-/* Progressive disclosure keeps everyday settings short without losing options. */
+/* One quiet settings list, with each section expanded on demand. */
 .profile-grid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0;
   max-width: 800px;
+  border: 1px solid #dfe5de;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 8px 28px -24px #35473a35;
 }
-.settings-section {
+.profile-grid > .settings-section {
   padding: 0;
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
-.settings-section > summary {
+.profile-grid > * + * {
+  border-top: 1px solid #e7ece5;
+}
+.profile-grid > .settings-section:not(:first-child) {
+  border-top: 1px solid #e7ece5;
+}
+.settings-section > summary,
+.settings-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   cursor: pointer;
-  padding: 19px 22px;
-  min-height: 58px;
+  padding: 18px 22px;
+  min-height: 64px;
+  color: var(--text-primary);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 550;
+  text-decoration: none;
+  list-style: none;
+}
+.settings-section > summary::-webkit-details-marker {
+  display: none;
+}
+.settings-section > summary::after {
+  content: '⌄';
+  color: #627768;
+}
+.settings-section[open] > summary::after {
+  content: '⌃';
+}
+.settings-link > span:last-child {
+  font-size: 24px;
+  color: #627768;
+  line-height: 1;
 }
 .settings-section[open] > summary {
-  border-bottom: 1px solid var(--border, #dce2d7);
+  border-bottom: 1px solid #edf0e9;
 }
 .settings-content {
   padding: 20px 22px;
@@ -2725,4 +2763,19 @@ html[data-native='true'] body::before {
 }
 .profile-footer {
   max-width: 800px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 24px;
+  padding: 24px 12px;
+  font-size: 13px;
+}
+
+.profile-footer a {
+  margin: 0;
+  font-size: 13px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: #506757;
 }
