@@ -7,7 +7,10 @@ final class ReminduhUITests: XCTestCase {
             let navigation = app.otherElements.matching(NSPredicate(format: "label BEGINSWITH %@", "Main navigation")).firstMatch
             let modal = app.otherElements.matching(NSPredicate(format: "label ENDSWITH %@", ", web dialogue")).firstMatch
             let top = modal.exists ? max(60, modal.frame.minY + 8) : 60
-            let pageBottom = navigation.exists ? navigation.frame.minY - 8 : app.frame.maxY - 40
+            // The dedicated iPhone QA simulator has a 34-point home-indicator
+            // inset. A larger guessed margin rejects the last fully visible
+            // control when a full-screen activity has reached its scroll end.
+            let pageBottom = navigation.exists ? navigation.frame.minY - 8 : app.frame.maxY - 34
             let bottom = modal.exists ? min(pageBottom, modal.frame.maxY - 8) : pageBottom
             if element.exists {
                 let frame = element.frame
@@ -769,6 +772,251 @@ final class ReminduhUITests: XCTestCase {
         back.tap()
         XCTAssertTrue(activities.waitForExistence(timeout: 10), app.debugDescription)
         XCTAssertFalse(back.exists)
+    }
+
+    func testNativeMelodyRoundsAndBackground() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["Today"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        let sound = app.buttons["Sound settings"]
+        reveal(sound, in: app); sound.tap()
+        let originalEnabled = checkbox("Enable audio", in: app).value as? String == "1"
+        let originalEffects = checkbox("Sound effects", in: app).value as? String == "1"
+        setCheckbox("Sound effects", enabled: false, in: app)
+        app.buttons["Close sound settings"].tap()
+        openRoomShop(in: app)
+        let table = checkbox("Table", in: app)
+        reveal(table, in: app); table.tap()
+        let current = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "Vinyl corner is in your room")).firstMatch
+        let originallyVinyl = current.exists
+        if !originallyVinyl {
+            let use = app.buttons["Use Vinyl corner in room"]
+            if use.exists { reveal(use, in: app); use.tap() }
+            else {
+                // Existing earned/starter leaves on the isolated QA save only.
+                let buy = app.buttons["Buy and use Vinyl corner for 70 leaves"]
+                reveal(buy, in: app); buy.tap()
+                let confirm = app.buttons["Buy & use 70 leaves"]
+                XCTAssertTrue(confirm.waitForExistence(timeout: 10) && confirm.isEnabled, "QA save needs enough virtual leaves: " + app.debugDescription)
+                confirm.tap()
+            }
+        }
+        XCTAssertTrue(current.waitForExistence(timeout: 10), app.debugDescription)
+        app.links["Today"].tap()
+        let activities = app.buttons["Activities"]
+        reveal(activities, in: app); activities.tap()
+        let player = app.switches["Music: Open record player"]
+        reveal(player, in: app); player.tap()
+        let mode = checkbox("Make a melody", in: app)
+        XCTAssertTrue(mode.waitForExistence(timeout: 20), app.debugDescription)
+        reveal(mode, in: app); mode.tap()
+        let wrong = app.buttons["Play La"]
+        reveal(wrong, in: app); wrong.tap()
+        XCTAssertTrue(app.staticTexts["Try Do next. No need to start over."].waitForExistence(timeout: 5))
+        let soundOff = checkbox("Sound off", in: app)
+        reveal(soundOff, in: app); soundOff.tap()
+        let hear = app.buttons["Hear pattern"]
+        XCTAssertTrue(hear.waitForExistence(timeout: 5))
+        reveal(hear, in: app); hear.tap()
+        XCTAssertFalse(hear.isEnabled)
+        XCUIDevice.shared.press(.home); app.activate()
+        XCTAssertTrue(hear.waitForExistence(timeout: 10) && hear.isEnabled, "Backgrounding must cancel the heard pattern")
+        let soundOn = checkbox("Sound on", in: app)
+        reveal(soundOn, in: app); soundOn.tap()
+        XCTAssertFalse(hear.exists)
+        for (index, sequence) in [["Do", "Mi", "Sol"], ["Sol", "Mi", "Do", "La"], ["Do", "Sol", "La", "Mi", "Do"]].enumerated() {
+            for note in sequence {
+                let pad = app.buttons["Play " + note]
+                reveal(pad, in: app); pad.tap()
+            }
+            if index < 2 {
+                let next = app.buttons["Next melody"]
+                XCTAssertTrue(next.waitForExistence(timeout: 5), app.debugDescription)
+                reveal(next, in: app); next.tap()
+            }
+        }
+        XCTAssertTrue(app.staticTexts["Your little mixtape."].waitForExistence(timeout: 5), app.debugDescription)
+        attachScreenshot("Native melody completes all three untimed rounds", from: app)
+        let replay = app.buttons["Make another"]
+        reveal(replay, in: app); replay.tap()
+        XCTAssertTrue(app.buttons["Play Do"].isEnabled)
+        let back = app.buttons["Back to room"]
+        reveal(back, in: app); back.tap()
+        XCTAssertTrue(activities.waitForExistence(timeout: 10))
+        if !originallyVinyl {
+            openRoomShop(in: app)
+            reveal(table, in: app); table.tap()
+            let tea = app.buttons["Use Tea for two in room"]
+            reveal(tea, in: app); tea.tap()
+        }
+        reveal(sound, in: app); sound.tap()
+        setCheckbox("Sound effects", enabled: originalEffects, in: app)
+        setCheckbox("Enable audio", enabled: originalEnabled, in: app)
+        app.buttons["Close sound settings"].tap()
+        try assertMedicationSnapshot(baseline, in: app)
+    }
+
+    func testNativeBonsaiRainBreezeAndStillRoom() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["Today"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        app.links["Today"].tap()
+        let activities = app.buttons["Activities"]
+        reveal(activities, in: app); activities.tap()
+        let garden = app.switches["Garden: Tend the bonsai"]
+        reveal(garden, in: app); garden.tap()
+        let back = app.buttons["Back to room"]
+        XCTAssertTrue(back.waitForExistence(timeout: 20), app.debugDescription)
+        let canvas = app.images["Interactive bonsai tree"]
+        XCTAssertTrue(canvas.exists)
+        let shower = checkbox("Shower the tree", in: app)
+        reveal(shower, in: app); shower.tap()
+        Thread.sleep(forTimeInterval: 1)
+        reveal(canvas, in: app)
+        let rain = canvas.screenshot()
+        let rainAttachment = XCTAttachment(screenshot: rain)
+        rainAttachment.name = "Native bonsai rain and wet leaves"; rainAttachment.lifetime = .keepAlways; add(rainAttachment)
+        let stop = checkbox("Stop", in: app)
+        if stop.exists { reveal(stop, in: app); stop.tap() }
+        let breeze = checkbox("Breeze", in: app)
+        reveal(breeze, in: app); breeze.tap()
+        XCTAssertEqual(breeze.value as? String, "1")
+        let brush = checkbox("Brush the tree", in: app)
+        reveal(brush, in: app); brush.tap()
+        Thread.sleep(forTimeInterval: 1.5)
+        reveal(canvas, in: app)
+        let blown = canvas.screenshot()
+        let blownAttachment = XCTAttachment(screenshot: blown)
+        blownAttachment.name = "Native bonsai after breeze clears the wet leaves"; blownAttachment.lifetime = .keepAlways; add(blownAttachment)
+        XCTAssertNotEqual(rain.pngRepresentation, blown.pngRepresentation, "Native rain and breeze must produce different visible canvas feedback; inspect the paired images")
+        if stop.exists { reveal(stop, in: app); stop.tap() }
+        let rainTool = checkbox("Rain", in: app)
+        reveal(rainTool, in: app); rainTool.tap()
+        reveal(shower, in: app); shower.tap()
+        XCUIDevice.shared.press(.home); app.activate()
+        XCTAssertTrue(shower.waitForExistence(timeout: 10), "A held shower must stop when leaving the native app")
+        XCTAssertFalse(stop.exists)
+        reveal(back, in: app); back.tap()
+        app.links["My Blobby"].tap()
+        let comfort = app.buttons["Accessibility & comfort"]
+        reveal(comfort, in: app); comfort.tap()
+        let originalStill = checkbox("Use a still image", in: app).value as? String == "1"
+        setCheckbox("Use a still image", enabled: true, in: app)
+        app.links["Today"].tap()
+        reveal(activities, in: app); activities.tap()
+        reveal(garden, in: app); garden.tap()
+        XCTAssertTrue(back.waitForExistence(timeout: 15), "The still-room Garden button must open the same sensory activity")
+        Thread.sleep(forTimeInterval: 18)
+        XCTAssertTrue(back.exists, "The sensory garden must remain open until explicitly closed")
+        reveal(shower, in: app); shower.tap()
+        XCTAssertTrue(stop.waitForExistence(timeout: 5))
+        reveal(stop, in: app); stop.tap()
+        let pause = app.buttons["Pause garden"]
+        reveal(pause, in: app); pause.tap()
+        XCTAssertTrue(app.buttons["Resume garden"].waitForExistence(timeout: 5))
+        app.buttons["Resume garden"].tap()
+        attachScreenshot("Native sensory garden remains available with a still room", from: app)
+        reveal(back, in: app); back.tap()
+        app.links["My Blobby"].tap()
+        reveal(comfort, in: app); comfort.tap()
+        setCheckbox("Use a still image", enabled: originalStill, in: app)
+        try assertMedicationSnapshot(baseline, in: app)
+    }
+
+    func testScheduledMedicationNotificationTap() throws {
+        // Dedicated QA simulator only. Schedule through the real form and leave
+        // the app before delivery; no fabricated notification or app-state hook.
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25), app.debugDescription)
+        app.links["My Blobby"].tap()
+        let section = app.buttons["Reminders"]
+        reveal(section, in: app); section.tap()
+        let enable = app.buttons["Enable reminders"]
+        let originallyEnabled = !enable.exists
+        if enable.exists { reveal(enable, in: app); enable.tap() }
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        if springboard.buttons["Allow"].waitForExistence(timeout: 2) { springboard.buttons["Allow"].tap() }
+        XCTAssertTrue(app.buttons["Turn off reminders"].waitForExistence(timeout: 15), app.debugDescription)
+        app.links["Medications"].tap()
+        app.links["Add medication"].tap()
+        let name = "QA alert " + String(UUID().uuidString.prefix(6))
+        let nameField = app.textFields.firstMatch
+        XCTAssertTrue(nameField.waitForExistence(timeout: 10), app.debugDescription)
+        nameField.tap(); nameField.typeText(name)
+        let strength = app.textFields["Strength per tablet (mg)"]
+        reveal(strength, in: app); strength.tap(); strength.typeText("10")
+        let tablets = app.textFields["Number of tablets per dose"]
+        reveal(tablets, in: app); tablets.tap(); tablets.typeText("1")
+        if app.buttons["Done"].exists { app.buttons["Done"].tap() }
+        let time = try XCTUnwrap(app.otherElements.matching(NSPredicate(format: "label == %@", "Time 1"))
+            .allElementsBoundByIndex.first(where: { $0.frame.height >= 44 }))
+        reveal(time, in: app); time.tap()
+        XCTAssertTrue(app.datePickers.firstMatch.waitForExistence(timeout: 5), app.debugDescription)
+        let wheels = app.datePickers.firstMatch.pickerWheels
+        XCTAssertEqual(wheels.count, 2, "Dedicated QA simulator uses the observed 24-hour native picker: " + app.debugDescription)
+        let calendar = Calendar.current
+        let due = calendar.date(byAdding: .minute, value: 2, to: Date())!
+        let hour = calendar.component(.hour, from: due)
+        let minute = calendar.component(.minute, from: due)
+        wheels.element(boundBy: 0).adjust(toPickerWheelValue: String(hour))
+        wheels.element(boundBy: 1).adjust(toPickerWheelValue: String(format: "%02d", minute))
+        app.buttons["Done"].tap()
+        print("NATIVE_SCHEDULED_ALERT time=\(String(format: "%02d:%02d", hour, minute))")
+        let supply = app.switches.matching(NSPredicate(format: "label BEGINSWITH %@", "Track remaining supply")).firstMatch
+        reveal(supply, in: app)
+        if supply.value as? String != "1" { supply.tap() }
+        let add = app.buttons["Add medication"]
+        reveal(add, in: app); add.tap()
+        XCTAssertTrue(app.staticTexts[name].waitForExistence(timeout: 10), app.debugDescription)
+        // Start away from Today so the actual notification must navigate back.
+        app.links["My Blobby"].tap()
+        reveal(section, in: app); section.tap()
+        XCTAssertTrue(app.buttons["Turn off reminders"].exists)
+        attachScreenshot("Native scheduled medication before leaving the app", from: app)
+        XCUIDevice.shared.press(.home)
+        let body = "Your Reminduh schedule is ready. Open the app to check in."
+        let notification = springboard.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", body)).firstMatch
+        XCTAssertTrue(notification.waitForExistence(timeout: 145), "A real scheduled medication reminder must arrive with the app in the background: " + springboard.debugDescription)
+        XCTAssertFalse(notification.label.contains(name), "Notification text must not expose the medication name")
+        let shot = XCTAttachment(screenshot: springboard.screenshot())
+        shot.name = "Scheduled medication alert delivered in iOS"; shot.lifetime = .keepAlways; self.add(shot)
+        notification.tap()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 15), app.debugDescription)
+        let heading = app.staticTexts["Today’s check-ins"]
+        XCTAssertTrue(heading.waitForExistence(timeout: 15) && heading.isHittable, "Tapping the notification must reveal Today's check-ins: " + app.debugDescription)
+        XCTAssertFalse(app.staticTexts["Record your dose"].exists, "Notification taps must not automatically confirm medication")
+        attachScreenshot("Scheduled alert tap opens native Today check-ins", from: app)
+        app.links["History"].tap()
+        let dose = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", name + ",")).firstMatch
+        XCTAssertTrue(dose.waitForExistence(timeout: 10), app.debugDescription)
+        XCTAssertFalse(dose.label.hasSuffix("Taken") || dose.label.hasSuffix("Skipped"), "Notification delivery/tap must leave the dose unrecorded")
+        reveal(dose, in: app); dose.tap()
+        XCTAssertTrue(app.staticTexts["Record your dose"].waitForExistence(timeout: 5), app.debugDescription)
+        app.buttons["Close check-in"].tap()
+        app.links["Medications"].tap()
+        let edit = app.links["Edit " + name]
+        reveal(edit, in: app); edit.tap()
+        let remaining = app.textFields["Scheduled doses remaining"]
+        reveal(remaining, in: app)
+        XCTAssertEqual(remaining.value as? String, "30", "Notification delivery/tap must not consume supply")
+        let cancel = app.links["Cancel"]
+        reveal(cancel, in: app); cancel.tap()
+        // Archive only this test's synthetic medication; retain all other QA data.
+        let archive = app.buttons["Archive " + name]
+        reveal(archive, in: app); archive.tap()
+        if !originallyEnabled {
+            app.links["My Blobby"].tap()
+            reveal(section, in: app); section.tap()
+            let off = app.buttons["Turn off reminders"]
+            reveal(off, in: app); off.tap()
+            XCTAssertTrue(enable.waitForExistence(timeout: 5))
+        }
     }
 
     func testOnboardingRemindersAndPersistence() throws {
