@@ -1,18 +1,18 @@
 # Reminduh · iPhone beta
 
-Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 3). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
+Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 4). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
 
 The app bundles its web UI, Blender models, games and audio. It does not need a development server, accounts or a backend. Medication data stays on the device. Each scheduled check-in earns leaves. StoreKit consumable leaf packs and MusicKit library playback are implemented but explicitly disabled pending Apple account/service configuration and end-to-end testing. The free record player supports Blobby radio and local audio files now. See [Leaves and Music](Leaves-and-Music.md).
 
 ## Current internal beta
 
-Build 3 adds native recorded-audio fixes, compact Blobby speech bubbles and
-expandable settings to the Release A beta. Build it with
+Build 4 adds simpler room controls, focused History/routines, mobile shop details
+and explicit music/voice loading, failure and retry states to the Release A beta. Build it with
 `APPLE_TEAM_ID=37N43RUU8P npm run ios:beta`. This leaves cloud endpoints empty in the
 bundle because production has not received the new schema protocol. All local data,
 reminders and backup features remain available. The ordinary `ios:archive` command
 uses the configured production environment; do not use it for this offline beta.
-See [build 3 notes](releases/0.1.0-3.md) for validation and distribution status.
+See [build 4 notes](releases/0.1.0-4.md) for validation and distribution status.
 
 ## Build locally
 
@@ -50,7 +50,7 @@ The owner handled the macOS Keychain prompt, and the signed archive completed at
 
 - Use the existing app record and bundle ID; do not create duplicates.
 - Handle any macOS signing-key authorization prompt if shown. Enter passwords only into the native macOS prompt.
-- Run `APPLE_TEAM_ID=37N43RUU8P npm run ios:archive`, or open Xcode and choose Product → Archive. The Release profile requires the matching distribution identity in the login Keychain.
+- For the current offline beta, run `APPLE_TEAM_ID=37N43RUU8P npm run ios:beta`. The Release profile requires the matching distribution identity in the login Keychain. Recheck the working tree after asset preparation and ensure the archive matches its source commit.
 - Validate and upload the signed archive in Xcode Organizer. Alternatively use `xcodebuild -exportArchive -archivePath ios/App/build/Reminduh.xcarchive -exportOptionsPlist ios/App/ExportOptions.plist -exportPath ios/App/build/TestFlight-export -allowProvisioningUpdates`. The export options upload to App Store Connect; they do not submit an App Store release.
 - Increment `CURRENT_PROJECT_VERSION` for every new upload. Verify Apple processing, then add the build to **Reminduh Beta**, where the owner is already a tester. External testing may require beta review.
 - Confirm published privacy/support URLs before external testing; `Privacy-policy-draft.md` remains an unpublished draft.
