@@ -61,6 +61,7 @@ import { useNow } from './AppRuntime';
 import { useCheckIn } from './CheckIn';
 const SceneCanvas = lazy(() => import('@/components/scene/SceneCanvas'));
 const RoomGame = lazy(() => import('@/components/scene/RoomGame'));
+const GardenCutscene = lazy(() => import('@/components/scene/GardenCutscene'));
 const idleSequence: AnimationName[] = [
   'idle',
   'curious',
@@ -435,6 +436,24 @@ export default function CompanionPanel() {
             />
           </Suspense>
         )}
+        {data.preferences.staticScene && clip === 'tend' && !customGame && (
+          <Suspense fallback={null}>
+            <GardenCutscene
+              key={clip + reactionId}
+              outfit={data.outfit}
+              name={data.profile.petName}
+              reduced={reduced}
+              paused={previewPaused}
+              onPauseChange={() => useAppStore.getState().setPreviewPaused(!previewPaused)}
+              onFinish={() => {
+                const s = useAppStore.getState();
+                s.setPreviewPaused(false);
+                s.previewState(null);
+                s.react('recovering');
+              }}
+            />
+          </Suspense>
+        )}
         {preview && (
           <div className="preview-badge">
             <Code2 aria-hidden="true" focusable="false" size={13} /> Preview: {state.label}
@@ -545,7 +564,10 @@ export default function CompanionPanel() {
                       ? 'Rake the Zen garden'
                       : activity.label
               }
-              onClick={() => {
+              onClick={(event) => {
+                // Safari doesn't focus pointer-activated buttons automatically.
+                // Keep a real return target while Blobby approaches the activity.
+                event.currentTarget.focus({ preventScroll: true });
                 useAppStore.getState().previewState(null);
                 useAppStore.getState().react(activity.id);
               }}

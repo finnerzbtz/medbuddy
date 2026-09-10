@@ -68,7 +68,7 @@ export function activityAvailable(clip: AnimationName, hidden: string[]): boolea
 }
 export function activityDuration(clip: AnimationName): number {
   if (clip === 'walk_to_cushion') return 14000;
-  // Static-image mode uses a timeout; the animated scene completes on arrival + film end.
+  // Tea in still-image mode uses a timeout; interactive gardens own their completion.
   if (clip === 'tend') return 16000;
   if (clip === 'tea') return 14000;
   if (clip === 'feeding') return FEED.duration * 1000;

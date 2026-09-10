@@ -125,7 +125,9 @@
   transform: rotate(-7deg);
 }
 .mixtape-sleeve span {
-  font-size: 1.75rem;
+  /* Printed artwork is decorative; keep it fitted to the fixed record sleeve.
+     The surrounding instructions and controls still follow the user's text size. */
+  font-size: 28px;
   line-height: 0.96;
   letter-spacing: -0.05em;
   font-weight: 650;

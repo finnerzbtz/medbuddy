@@ -709,11 +709,12 @@ export const useAppStore = create<State>((set, get) => {
         currentAnimation: animation,
         reactionId: state.reactionId + 1,
         // -1 means the scene owns completion. A paused/hidden room sequence must
-        // not be interrupted by a wall-clock timer. Still-image mode retains one.
+        // not be interrupted by a wall-clock timer. Still-room tea/feeding retains one.
         reactionUntil:
           roomGameFor(animation, state.data.room) ||
           animation === 'rest' ||
-          (['tend', 'tea', 'feeding'].includes(animation) && !state.data.preferences.staticScene)
+          animation === 'tend' ||
+          (['tea', 'feeding'].includes(animation) && !state.data.preferences.staticScene)
             ? -1
             : Date.now() + activityDuration(animation),
       })),

@@ -573,7 +573,7 @@ test('Gardening stays at the bonsai until the film finishes, then walks home con
   for (let i = 0; i < 400; i++) journey.update(0.05);
   assert.deepEqual(journey.position, choreography.PLACES.cushion);
 });
-test('Scene-owned garden completion survives timeouts while still-image mode still settles', () => {
+test('Bonsai sessions stay open in animated and still rooms until an explicit exit', () => {
   const previousClock = clock;
   state().setPreference('staticScene', false);
   state().react('tend');
@@ -587,6 +587,11 @@ test('Scene-owned garden completion survives timeouts while still-image mode sti
   state().setPreference('staticScene', true);
   state().react('tend');
   clock = '2026-09-20T12:01:00+01:00';
+  state().settle();
+  assert.equal(state().currentAnimation, 'tend');
+  assert.equal(state().reactionUntil, -1);
+  state().react('recovering');
+  clock = '2026-09-20T12:02:00+01:00';
   state().settle();
   assert.equal(state().currentAnimation, 'idle');
   state().setPreference('staticScene', false);

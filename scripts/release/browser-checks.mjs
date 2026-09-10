@@ -50,6 +50,7 @@ try {
     'scripts/mvp/voice-browser-test.mjs',
     'scripts/mvp/voice-auto-browser-test.mjs',
     'scripts/refinement/sound-dialog-browser-test.mjs',
+    'scripts/refinement/sensory-games-browser-test.mjs',
     'scripts/refinement/toast-navigation-browser-test.mjs',
     'scripts/refinement/companion-browser-test.mjs',
     'scripts/refinement/home-priority-browser-test.mjs',
