@@ -135,18 +135,22 @@ export function SoundPreferences() {
     </div>
   );
 }
-function SoundDialog({ close }: { close: () => void }) {
+function SoundDialog({ close, trigger }: { close: () => void; trigger: HTMLButtonElement | null }) {
   const ref = useRef<HTMLDialogElement>(null),
     id = useId();
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement,
-      dialog = ref.current!;
+    const dialog = ref.current!,
+      returnPath = window.location.pathname;
     dialog.showModal();
     return () => {
       dialog.close();
-      if (previous?.isConnected) previous.focus({ preventScroll: true });
+      // Restore the opener after unmount, but let navigation own focus on a new page.
+      requestAnimationFrame(() => {
+        if (!dialog.open && window.location.pathname === returnPath && trigger?.isConnected)
+          trigger.focus({ preventScroll: true });
+      });
     };
-  }, []);
+  }, [trigger]);
   useEffect(() => {
     window.addEventListener('open-record-player', close);
     return () => window.removeEventListener('open-record-player', close);
@@ -159,21 +163,28 @@ function SoundDialog({ close }: { close: () => void }) {
           <X size={20} aria-hidden="true" />
         </button>
       </div>
-      <SoundPreferences />
+      <div className="sound-dialog-body">
+        <SoundPreferences />
+      </div>
     </dialog>,
     document.body,
   );
 }
 export default function SoundControls() {
   const [open, setOpen] = useState(false),
+    trigger = useRef<HTMLButtonElement>(null),
     enabled = useSoundSettings((s) => s.enabled);
   return (
     <>
       <button
         className="icon-button"
+        ref={trigger}
         aria-label="Sound settings"
         title="Sound settings"
-        onClick={() => setOpen(true)}
+        onClick={(event) => {
+          event.currentTarget.focus({ preventScroll: true });
+          setOpen(true);
+        }}
       >
         {enabled ? (
           <Volume2 size={19} aria-hidden="true" />
@@ -181,7 +192,7 @@ export default function SoundControls() {
           <VolumeX size={19} aria-hidden="true" />
         )}
       </button>
-      {open && <SoundDialog close={() => setOpen(false)} />}
+      {open && <SoundDialog close={() => setOpen(false)} trigger={trigger.current} />}
     </>
   );
 }

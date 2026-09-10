@@ -1,10 +1,29 @@
-.sound-dialog {
+body .sound-dialog {
   position: fixed;
   inset: 0;
   margin: auto;
   width: min(420px, calc(100vw - 28px));
-  max-height: calc(100dvh - 28px);
-  overflow: auto;
+  max-width: calc(100vw - 28px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: hidden;
+}
+.sound-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+/* Only preferences scroll; dismissal stays in the dialog's compact header. */
+.sound-dialog > .dialog-heading {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 16px 22px;
+  border-bottom: 1px solid #dce5db;
+}
+.sound-dialog-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 22px 24px;
 }
 .sound-preferences .toggle-row {
   margin: 0;

@@ -300,25 +300,29 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
               </p>
             </>
           )}
-          <section className="record-connect" aria-labelledby="apple-library-heading">
-            <div>
-              <h3 id="apple-library-heading">Apple Music</h3>
-              <p>
-                {s.apple.connected
-                  ? 'Choose from your library.'
-                  : s.apple.available
-                    ? 'Listen to your songs and playlists.'
-                    : 'Library connection is coming to the iPhone app.'}
-              </p>
-            </div>
-            <button
-              className="button secondary"
-              disabled={!s.apple.available || busy}
-              onClick={() => void run(s.apple.connected ? disconnectAppleMusic : connectAppleMusic)}
-            >
-              {s.apple.connected ? 'Disconnect' : 'Connect'}
-            </button>
-          </section>
+          {(s.apple.available || s.apple.connected) && (
+            <section className="record-connect" aria-labelledby="apple-library-heading">
+              <div>
+                <h3 id="apple-library-heading">Apple Music</h3>
+                <p>
+                  {s.apple.connected
+                    ? 'Choose from your library.'
+                    : s.apple.available
+                      ? 'Listen to your songs and playlists.'
+                      : 'Library connection is coming to the iPhone app.'}
+                </p>
+              </div>
+              <button
+                className="button secondary"
+                disabled={!s.apple.available || busy}
+                onClick={() =>
+                  void run(s.apple.connected ? disconnectAppleMusic : connectAppleMusic)
+                }
+              >
+                {s.apple.connected ? 'Disconnect' : 'Connect'}
+              </button>
+            </section>
+          )}
           {s.apple.connected && (
             <div className="apple-library">
               <div
