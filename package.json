@@ -54,7 +54,11 @@
     "test:cloud": "node scripts/backend/integration-test.mjs && node scripts/backend/browser-test.mjs",
     "test:medication-names": "node scripts/mvp/medication-name-tests.mjs",
     "test:release-a": "node scripts/release-a/contract-tests.mjs && node scripts/release-a/cloud-version-tests.mjs && node scripts/ios/reminder-tests.mjs && node scripts/mvp/domain-tests.mjs",
-    "test:release-a-ui": "node scripts/release-a/quiet-break-browser-test.mjs && node scripts/release-a/ui-browser-test.mjs && node scripts/release-a/activity-browser-test.mjs"
+    "test:release-a-ui": "node scripts/release-a/quiet-break-browser-test.mjs && node scripts/release-a/ui-browser-test.mjs && node scripts/release-a/activity-browser-test.mjs",
+    "check:repo": "node scripts/release/check-repository.mjs",
+    "check:release": "npm run check:repo && npm run test:release-a && npm run assets:check && npm run build",
+    "test:release-browser": "node scripts/release/browser-checks.mjs",
+    "ios:beta": "node scripts/ios/build.mjs beta"
   },
   "dependencies": {
     "@capacitor/app": "8.1.1",

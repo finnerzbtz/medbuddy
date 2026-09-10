@@ -1,8 +1,18 @@
 # Reminduh · iPhone beta
 
-Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 1). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
+Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 2). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
 
 The app bundles its web UI, Blender models, games and audio. It does not need a development server, accounts or a backend. Medication data stays on the device. Each scheduled check-in earns leaves. StoreKit consumable leaf packs and MusicKit library playback are implemented but explicitly disabled pending Apple account/service configuration and end-to-end testing. The free record player supports Blobby radio and local audio files now. See [Leaves and Music](Leaves-and-Music.md).
+
+## Current internal beta
+
+Build 2 includes Release A optional routines, medication-name autocomplete,
+notification onboarding and the audio, sand layout and switch fixes. Build it with
+`APPLE_TEAM_ID=37N43RUU8P npm run ios:beta`. This leaves cloud endpoints empty in the
+bundle because production has not received the new schema protocol. All local data,
+reminders and backup features remain available. The ordinary `ios:archive` command
+uses the configured production environment; do not use it for this offline beta.
+See [build 2 notes](releases/0.1.0-2.md) for validation and distribution status.
 
 ## Build locally
 

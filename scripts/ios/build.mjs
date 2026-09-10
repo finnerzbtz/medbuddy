@@ -1,9 +1,16 @@
 import { spawnSync } from 'node:child_process';
 import { mkdirSync } from 'node:fs';
 const mode = process.argv[2];
-if (!['simulator', 'archive'].includes(mode)) throw new Error('Choose simulator or archive.');
+if (!['simulator', 'archive', 'beta'].includes(mode))
+  throw new Error('Choose simulator, archive or beta.');
 if (Number(process.versions.node.split('.')[0]) < 22)
   throw new Error('Use Node 22 or newer (see .nvmrc).');
+// Internal beta stays offline until the Release A server protocol is deployed.
+if (mode === 'beta') {
+  process.env.VITE_NEON_AUTH_URL = '';
+  process.env.VITE_NEON_DATA_URL = '';
+  if (!process.env.APPLE_TEAM_ID) throw new Error('Set APPLE_TEAM_ID for a signed beta archive.');
+}
 const run = (cmd, args) => {
   const result = spawnSync(cmd, args, { stdio: 'inherit' });
   if (result.status !== 0) process.exit(result.status || 1);
