@@ -36,7 +36,7 @@ class SceneErrorBoundary extends Component<Props, State> {
               height: '100%',
               color: 'var(--text-muted)',
               fontFamily: "'DM Sans', sans-serif",
-              fontSize: 13,
+              fontSize: '0.8125rem',
               padding: 24,
               textAlign: 'center',
             }}

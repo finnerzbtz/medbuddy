@@ -1,31 +1,77 @@
+/* Reserve only layout, never a second visible or announced message. */
+.companion-speech-slot {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  width: 100%;
+}
+.companion-speech-slot[hidden] {
+  display: none;
+}
+.wisdom-reserve,
+.companion-speech-slot > .blobby-speech {
+  grid-area: 1 / 1;
+}
+.wisdom-reserve {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+  visibility: hidden;
+  pointer-events: none;
+  width: min(320px, calc(100% - 32px));
+  margin: 4px auto 14px;
+}
+.wisdom-reserve-item {
+  grid-area: 1 / 1;
+  min-width: 0;
+  padding: 10px 14px;
+}
 /* Thoughts and reactions share the room's single, compact speech bubble. */
 .blobby-speech.blobby-wisdom {
-  width: max-content;
+  position: relative;
+  inset: auto;
+  transform: none;
+  align-self: center;
+  flex-shrink: 0;
+  width: fit-content;
+  min-width: 0;
   max-width: min(320px, calc(100% - 32px));
-  margin: 0;
+  margin: 4px auto 14px;
   padding: 10px 14px;
   pointer-events: auto;
   color: #344b3c;
   background: #fffef5f5;
 }
+/* A small tail connects the thought to the room without covering the canvas. */
+.blobby-speech.blobby-wisdom::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: calc(50% - 5px);
+  width: 10px;
+  height: 10px;
+  background: inherit;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
 .blobby-wisdom[hidden] {
   display: none !important;
 }
-.wisdom-message {
+:is(.wisdom-message, .wisdom-reserve-item) {
   overflow-wrap: anywhere;
 }
-.wisdom-message p {
+:is(.wisdom-message, .wisdom-reserve-item) p {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.45;
   color: inherit;
 }
-.wisdom-message :is(figure, blockquote) {
+:is(.wisdom-message, .wisdom-reserve-item) :is(figure, blockquote) {
   margin: 0;
 }
-.wisdom-message figcaption {
+:is(.wisdom-message, .wisdom-reserve-item) figcaption {
   margin-top: 4px;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.4;
   color: #4e6251;
 }

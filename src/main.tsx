@@ -8,6 +8,7 @@ import './index.css';
 import './components/app/app-refresh.css';
 import './components/app/accessibility.css';
 import './components/shop/shop.css';
+import './typography.css';
 import './registerOffline';
 
 async function start() {

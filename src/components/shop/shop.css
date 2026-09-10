@@ -11,7 +11,7 @@
 }
 .shop-heading h1 {
   margin: 14px 0 0;
-  font-size: clamp(28px, 4vw, 40px);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
   letter-spacing: -0.045em;
 }
 .shop-heading .text-link {
@@ -32,10 +32,10 @@
   color: #405d48;
 }
 .leaf-wallet strong {
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 .leaf-wallet span {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .shop-gift {
   display: flex;
@@ -114,17 +114,17 @@
   box-shadow: inset 0 0 0 1px #54715a;
 }
 .product-card strong {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .product-price {
   display: flex;
   align-items: center;
   gap: 4px;
   color: #50644b;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .product-stock {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #596853;
 }
 .product-art {
@@ -176,7 +176,7 @@
   right: 16px;
   text-align: center;
   pointer-events: none;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #53694f;
 }
 .shop-detail-copy {
@@ -186,7 +186,7 @@
   gap: 12px;
 }
 .shop-detail-copy h2 {
-  font-size: 25px;
+  font-size: 1.5625rem;
   letter-spacing: -0.035em;
 }
 .shop-detail-copy p {
@@ -195,7 +195,7 @@
   line-height: 1.5;
 }
 .shop-detail-copy .shop-quantity {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .shop-detail-copy .button {
   width: 100%;
@@ -203,7 +203,7 @@
 }
 .shop-detail-copy .text-link {
   text-align: center;
-  font-size: 13px;
+  font-size: 0.8125rem;
   padding: 6px;
 }
 .shop-help {
@@ -212,7 +212,7 @@
   border-radius: 20px;
   border: 1px solid #d7ded0;
   color: #4d624d;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.7;
 }
 .shop-help summary {
@@ -241,14 +241,14 @@
 }
 .purchase-balance {
   color: #54654d;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .companion-footer > .shop-link {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   color: #49624c;
-  font-size: 12px;
+  font-size: 0.75rem;
   min-height: 44px;
   margin-right: auto;
 }
@@ -267,10 +267,10 @@
   margin-bottom: 10px;
 }
 .feeding-tray-heading h3 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .feeding-tray-heading a {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .feeding-foods {
   display: grid;
@@ -304,7 +304,7 @@
   height: 56px;
 }
 .feeding-food > span {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 600;
 }
 .feeding-food .food-count {
@@ -315,12 +315,12 @@
   border-radius: 8px;
   min-width: 17px;
   padding: 1px 4px;
-  font-size: 10px;
+  font-size: 0.625rem;
 }
 .feeding-tray p {
   margin: 10px 0 0;
   color: #52664e;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.6;
 }
 .feeding-tray .feed-selected {
@@ -334,7 +334,7 @@
   min-height: 44px;
 }
 .feed-selected > span {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #4d654d;
 }
 .feed-target {
@@ -365,7 +365,7 @@
   width: max-content;
   border-radius: 20px;
   padding: 6px 10px;
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #344e3c;
   background: #fffff5;
   box-shadow: 0 2px 8px #24382c10;
@@ -416,32 +416,32 @@
     gap: 8px;
   }
   .shop-detail-copy h2 {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
   .shop-detail-copy p {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .shop-detail-copy .shop-quantity {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .shop-detail-copy .button {
     padding: 9px 8px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .shop-detail-copy .text-link {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .shop-gift {
     padding: 12px;
     gap: 8px;
   }
   .shop-gift > div {
-    font-size: 12px;
+    font-size: 0.75rem;
     gap: 8px;
   }
   .shop-gift .button {
     padding: 8px 12px;
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .product-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -452,13 +452,13 @@
     border-radius: 18px;
   }
   .product-card strong {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .product-price {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .product-stock {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .feeding-foods {
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -474,18 +474,18 @@
     height: 42px;
   }
   .feeding-food > span {
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .feeding-food .food-count {
     top: 3px;
     right: 3px;
-    font-size: 9px;
+    font-size: 0.5625rem;
   }
   .feeding-tray {
     padding: 12px;
   }
   .feeding-tray p {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
 }
 @media (max-width: 380px) {
@@ -539,7 +539,7 @@
   min-height: 44px;
   background: #f6f8f0;
   color: #435e49;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .room-shop-slots button[aria-pressed='true'] {
   background: #dce8d5;
@@ -587,7 +587,7 @@
   gap: 6px;
   color: #41594a;
   min-height: 44px;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 @media (max-width: 500px) {
   .shop-tabs {
@@ -596,7 +596,7 @@
   .shop-tabs button {
     flex: 1;
     padding-inline: 9px;
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .room-shop-slots {
     gap: 6px;
@@ -633,7 +633,7 @@
   border-radius: 16px;
   background: #fafcf6;
   color: #425b49;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .room-area-tabs button[aria-pressed='true'] {
   background: #deeadc;
@@ -642,7 +642,7 @@
 }
 .room-items-title {
   margin: 0 0 16px;
-  font-size: 21px;
+  font-size: 1.3125rem;
   letter-spacing: -0.025em;
 }
 .room-item-grid {
@@ -680,11 +680,11 @@
 .room-item-copy h3 {
   margin: 4px 0 8px;
   color: #30493a;
-  font-size: 20px;
+  font-size: 1.25rem;
   letter-spacing: -0.025em;
 }
 .room-item-copy p {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.5;
   color: #53644e;
   margin: 0;
@@ -693,7 +693,7 @@
   display: inline-block;
   margin-top: 8px;
   color: #53644e;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .room-item-actions {
   grid-column: 1 / -1;
@@ -708,7 +708,7 @@
   min-height: 48px;
   padding: 10px;
   gap: 6px;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .room-item-actions .button svg {
   flex-shrink: 0;
@@ -721,7 +721,7 @@
   border-radius: 14px;
   min-height: 48px;
   color: #3f6048;
-  font-size: 13px;
+  font-size: 0.8125rem;
   font-weight: 600;
 }
 .room-in-use svg {
@@ -752,7 +752,7 @@
   margin-bottom: 16px;
 }
 .room-item-preview-heading h2 {
-  font-size: 22px;
+  font-size: 1.375rem;
   letter-spacing: -0.025em;
   margin: 0;
 }
@@ -771,7 +771,7 @@
 .room-preview-placement {
   margin: 14px 0;
   color: #52654e;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .room-preview-controls {
   display: flex;
@@ -782,7 +782,7 @@
 }
 .room-preview-controls .button {
   min-height: 44px;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .room-preview-controls .ghost {
   margin-right: auto;
@@ -808,7 +808,7 @@
     flex-direction: column;
     gap: 5px;
     min-height: 62px;
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .room-item-card {
     grid-template-columns: 82px minmax(0, 1fr);
@@ -822,35 +822,35 @@
     border-radius: 16px;
   }
   .room-item-copy h3 {
-    font-size: 18px;
+    font-size: 1.125rem;
     margin-top: 2px;
   }
   .room-item-copy p {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .room-item-actions {
     gap: 8px;
   }
   .room-item-actions .button {
-    font-size: 12px;
+    font-size: 0.75rem;
     padding-inline: 7px;
   }
   .room-in-use {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .room-item-preview {
     padding: 16px;
     border-radius: 22px;
   }
   .room-item-preview-heading h2 {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .room-preview-controls {
     gap: 8px;
   }
   .room-preview-controls .button {
     padding-inline: 10px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
 }
 @media (forced-colors: active) {
@@ -915,15 +915,15 @@
   gap: 12px;
 }
 .shop-product-dialog .shop-detail-copy h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
 }
 .shop-product-dialog .shop-detail-copy p,
 .shop-product-dialog .shop-detail-copy .text-link {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .shop-product-dialog .shop-detail-copy .button {
   min-height: 48px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 @media (forced-colors: active) {
   .shop-product-dialog,

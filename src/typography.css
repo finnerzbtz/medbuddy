@@ -1,0 +1,111 @@
+/* Text uses rem throughout the app, so browser font preferences scale real copy,
+   labels and controls rather than only inherited body text. Keep room geometry
+   independent. WKWebView opts into the user's native Dynamic Type body size.
+   https://bugs.webkit.org/show_bug.cgi?id=187013 */
+@supports (font: -apple-system-body) {
+  html[data-native='true'] {
+    font: -apple-system-body;
+  }
+}
+
+/* Text may grow independently of the viewport. Let controls wrap before they
+   force the page sideways; do not hide labels or cap the user's text size. */
+body .button {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+body .shop-heading,
+body .shop-tabs {
+  flex-wrap: wrap;
+}
+body .shop-heading > * {
+  min-width: 0;
+  max-width: 100%;
+}
+body .shop-tabs button {
+  flex: 1 1 auto;
+  white-space: normal;
+}
+body .day-picker {
+  display: flex;
+  flex-wrap: wrap;
+}
+body .day-picker button {
+  flex: 1 0 2em;
+}
+body .care-goals ul {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 6em), 1fr));
+}
+@media (max-width: 860px) {
+  body .app-navigation {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  body .nav-item {
+    min-width: 0;
+    max-width: none;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+  }
+}
+@media (max-width: 600px) {
+  body .app-topbar {
+    height: auto;
+    min-height: 56px;
+    flex-wrap: wrap;
+    gap: 0 12px;
+    padding-block: 6px;
+  }
+  body .topbar-right {
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  body .profile-avatar {
+    flex-shrink: 0;
+  }
+}
+
+body .segmented-control {
+  max-width: 100%;
+  flex-wrap: wrap;
+}
+body .segmented-control button {
+  min-width: 0;
+  flex: 1 1 auto;
+  white-space: normal;
+}
+body .dose-card {
+  flex-wrap: wrap;
+}
+body .dose-card .dose-copy {
+  flex: 1 1 6em;
+}
+body .dose-card .dose-time {
+  margin-left: auto;
+}
+body .companion-actions {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 3.25rem), 1fr));
+}
+body .room-activities-drawer:not([hidden]) {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 3.5rem), 1fr));
+}
+body .room-tools .room-controls {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 3.5rem), 1fr));
+}
+html body .companion-card .companion-caption {
+  flex-wrap: wrap;
+}
+@media (max-width: 860px) {
+  body .nav-item {
+    padding-inline: 2px;
+  }
+}
+body .form-actions {
+  flex-wrap: wrap;
+}
+body .form-actions > .button {
+  flex: 0 1 auto;
+  min-width: min(100%, 8em);
+}

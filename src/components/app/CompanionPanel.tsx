@@ -20,7 +20,6 @@ import {
   Sun,
   Apple,
   ArrowRight,
-  Pill,
   Check,
   ChevronDown,
   Code2,
@@ -279,6 +278,44 @@ export default function CompanionPanel() {
           </button>
         </div>
       </div>
+      {due && !preview && (
+        <div className="companion-checkin" data-snoozed={snoozed}>
+          <div
+            className="companion-checkin-copy"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <p id="companion-checkin-reason">
+              {snoozed
+                ? 'Check-in snoozed until ' +
+                  new Date(snooze!).toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })
+                : ['worried', 'sick', 'critical'].includes(mood)
+                  ? data.profile.petName +
+                    (mood === 'worried'
+                      ? ' is sad — a check-in is missing.'
+                      : ' is feeling low — a check-in is missing.')
+                  : 'Your medication check-in is waiting.'}
+            </p>
+            <strong>{due.name}</strong>
+            <span>
+              {pastCheckIn ? formatDay(due.date, true) + ' · ' : ''}
+              {formatTime(due.time)} · {due.dosage}
+            </span>
+          </div>
+          <button
+            className="button primary companion-checkin-button"
+            aria-describedby="companion-checkin-reason"
+            onClick={() => openCheckIn(due.id)}
+          >
+            {pastCheckIn ? 'Review missed check-in' : 'Review dose'}
+            <ArrowRight aria-hidden="true" focusable="false" size={16} />
+          </button>
+        </div>
+      )}
       {roomTools && (
         <div
           id="room-tools"
@@ -409,12 +446,12 @@ export default function CompanionPanel() {
             </button>
           </div>
         )}
-        <BlobbyWisdom
-          message={speech ? state.message : undefined}
-          fallback={state.message}
-          suspended={pantry || !!customGame || ['tend', 'tea', 'feeding'].includes(clip)}
-        />
       </div>
+      <BlobbyWisdom
+        message={speech ? state.message : undefined}
+        fallback={state.message}
+        suspended={pantry || !!customGame || ['tend', 'tea', 'feeding'].includes(clip)}
+      />
       {pantry && (
         <FeedingTray
           scene={scene}
@@ -426,45 +463,6 @@ export default function CompanionPanel() {
             document.querySelector<HTMLButtonElement>('.feed-button')?.focus();
           }}
         />
-      )}
-      {due && !preview && (
-        <div className="companion-checkin" data-snoozed={snoozed}>
-          <div
-            className="companion-checkin-copy"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <p id="companion-checkin-reason">
-              {snoozed
-                ? 'Check-in snoozed until ' +
-                  new Date(snooze!).toLocaleTimeString([], {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })
-                : ['worried', 'sick', 'critical'].includes(mood)
-                  ? data.profile.petName +
-                    (mood === 'worried'
-                      ? ' is sad — a check-in is missing.'
-                      : ' is feeling low — a check-in is missing.')
-                  : 'Your medication check-in is waiting.'}
-            </p>
-            <strong>{due.name}</strong>
-            <span>
-              {pastCheckIn ? formatDay(due.date, true) + ' · ' : ''}
-              {formatTime(due.time)} · {due.dosage}
-            </span>
-          </div>
-          <button
-            className="button primary companion-checkin-button"
-            aria-describedby="companion-checkin-reason"
-            onClick={() => openCheckIn(due.id)}
-          >
-            <Pill aria-hidden="true" focusable="false" size={17} />
-            {pastCheckIn ? 'Review missed check-in' : snoozed ? 'Review dose' : 'Check in now'}
-            <ArrowRight aria-hidden="true" focusable="false" size={16} />
-          </button>
-        </div>
       )}
       <div className="companion-actions" role="group" aria-label="Care and activities">
         <button

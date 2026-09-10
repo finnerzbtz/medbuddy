@@ -32,7 +32,7 @@
 .room-game-header h2 {
   flex: 1;
   margin: 0;
-  font-size: clamp(23px, 4vw, 32px);
+  font-size: clamp(1.4375rem, 4vw, 2rem);
   letter-spacing: -0.045em;
 }
 .room-game-symbol {
@@ -62,13 +62,13 @@
   max-width: 420px;
   line-height: 1.55;
   color: #53604c;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .game-count {
   flex-shrink: 0;
   white-space: nowrap;
   color: #405b44;
-  font-size: 13px;
+  font-size: 0.8125rem;
   padding: 9px 12px;
   background: #f9fbf3;
   border: 1px solid #c2cbb3;
@@ -83,7 +83,7 @@
 .room-game-status {
   min-height: 24px;
   margin: 20px auto 16px;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.6;
   color: #405b44;
 }
@@ -99,7 +99,7 @@
 }
 .game-complete-title {
   margin: 12px 0 20px;
-  font-size: 32px;
+  font-size: 2rem;
   letter-spacing: -0.04em;
 }
 .mixtape-art {
@@ -125,7 +125,7 @@
   transform: rotate(-7deg);
 }
 .mixtape-sleeve span {
-  font-size: 28px;
+  font-size: 1.75rem;
   line-height: 0.96;
   letter-spacing: -0.05em;
   font-weight: 650;
@@ -183,7 +183,7 @@
   font-weight: 600;
 }
 .melody-pattern li > span {
-  font-size: 10px;
+  font-size: 0.625rem;
   font-weight: 400;
 }
 .melody-pattern li.current {
@@ -253,7 +253,7 @@
     gap: 10px;
   }
   .room-game-intro p {
-    font-size: 14px;
+    font-size: 0.875rem;
   }
   .game-count {
     align-self: flex-end;
@@ -271,7 +271,7 @@
   .melody-pattern li {
     min-width: 46px;
     padding-inline: 7px;
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .melody-pattern li.current {
     padding-inline: 6px;

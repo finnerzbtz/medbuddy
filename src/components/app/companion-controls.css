@@ -46,7 +46,7 @@ body .room-tools .room-controls {
   border-top: 1px solid #dce5db;
 }
 .room-tools-links .text-link {
-  font-size: 13px;
+  font-size: 0.8125rem;
   min-height: 44px;
 }
 .room-activities-drawer:not([hidden]) {
@@ -66,7 +66,7 @@ body .room-tools .room-controls {
   min-height: 58px;
   padding: 8px 2px;
   gap: 6px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #405b49;
   background: transparent;
   border: 0;
@@ -86,11 +86,11 @@ body .room-tools .room-controls {
   gap: 16px;
   min-height: 44px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .care-details summary::after {
   content: '+';
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .care-details[open] summary::after {
   content: '−';
@@ -100,7 +100,7 @@ body .room-tools .room-controls {
   font-weight: 600;
 }
 .care-details summary > span:nth-child(2) {
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 .care-details ul {
   margin-top: 14px;
@@ -110,7 +110,7 @@ body .room-tools .room-controls {
     padding-inline: 16px;
   }
   body .companion-caption h2 {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .room-tools {
     margin-inline: 12px;

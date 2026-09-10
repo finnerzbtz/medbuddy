@@ -44,8 +44,11 @@ try {
     'scripts/ios/mobile-browser-tests.mjs',
     'scripts/ios/bundled-audio-browser-tests.mjs',
     'scripts/ios/radio-playback-browser-tests.mjs',
+    'scripts/ios/file-player-browser-tests.mjs',
     'scripts/ios/sound-test-control-browser-tests.mjs',
     'scripts/refinement/companion-browser-test.mjs',
+    'scripts/refinement/home-priority-browser-test.mjs',
+    'scripts/refinement/typography-browser-test.mjs',
     'scripts/refinement/history-routines-browser-test.mjs',
     'scripts/mvp/shop-details-browser-test.mjs',
   ]) {

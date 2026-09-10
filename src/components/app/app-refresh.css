@@ -39,7 +39,7 @@
 .page-heading .eyebrow {
   text-transform: none;
   letter-spacing: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--muted);
 }
 .button {
@@ -65,7 +65,7 @@
 }
 .panel h2,
 .today-panel h2 {
-  font-size: 21px;
+  font-size: 1.3125rem;
 }
 .today-panel {
   padding: 24px;
@@ -130,7 +130,7 @@
   gap: 10px;
 }
 .companion-caption h2 {
-  font-size: 23px;
+  font-size: 1.4375rem;
   margin: 0;
   color: #35473a;
 }
@@ -138,8 +138,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
-  color: #4d6455;
+  font-size: 0.6875rem;
+  color: #405745;
 }
 .mood-dot {
   width: 6px;
@@ -159,7 +159,8 @@
   padding: 0 24px;
   gap: 7px;
   margin-top: 3px;
-  font-size: 10px;
+  font-size: 0.75rem;
+  color: #405745;
 }
 .friendship-row strong {
   font-weight: 500;
@@ -223,7 +224,7 @@
   border: 0;
   border-radius: 15px;
   color: #526c5a;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 .companion-actions .scene-button:hover:not(:disabled),
@@ -241,8 +242,10 @@
   color: #fff;
 }
 .companion-actions .treat-count {
-  min-width: 16px;
-  height: 16px;
+  min-width: 1.6em;
+  min-height: 1.6em;
+  height: auto;
+  padding-inline: 0.25em;
   background: #ffffff26;
   border-radius: 5px;
 }
@@ -251,7 +254,7 @@
 }
 .cheat-toggle {
   min-height: 40px;
-  font-size: 10px;
+  font-size: 0.625rem;
   color: #41594a;
 }
 .blobby-pantry {
@@ -288,7 +291,7 @@
   margin: 0 0 12px;
 }
 .care-goals h2 {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .care-goals ul {
   display: grid;
@@ -298,7 +301,7 @@
 }
 .care-goals li {
   padding: 0;
-  font-size: 12px;
+  font-size: 0.75rem;
   gap: 7px;
 }
 .care-goals .ritual-icon {
@@ -335,12 +338,12 @@
   min-width: 0;
 }
 .reminder-summary strong {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 550;
   display: block;
 }
 .reminder-summary small {
-  font-size: 11px;
+  font-size: 0.6875rem;
   color: #687463;
   display: block;
   margin-top: 2px;
@@ -352,7 +355,7 @@
   scroll-margin-top: 24px;
 }
 .reminder-status {
-  font-size: 11px;
+  font-size: 0.6875rem;
   background: #f0f1ec;
   color: #657063;
   border-radius: 20px;
@@ -383,11 +386,11 @@
   flex-shrink: 0;
 }
 .reminder-setup h3 {
-  font-size: 16px;
+  font-size: 1rem;
   letter-spacing: -0.025em;
 }
 .reminder-setup p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #6e7a6e;
   line-height: 1.6;
   margin-top: 5px;
@@ -399,7 +402,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #55735b;
   margin: 14px 0 0 58px;
 }
@@ -437,7 +440,7 @@
   background: #fff;
 }
 .reminder-details {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #717e70;
   margin-top: 18px;
 }
@@ -448,7 +451,7 @@
 }
 .reminder-details p {
   margin-top: 8px;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.65;
   max-width: 700px;
 }
@@ -456,7 +459,7 @@
   gap: 18px;
 }
 .profile-pet h2 {
-  font-size: 22px;
+  font-size: 1.375rem;
 }
 .outfit-card {
   border-radius: 18px;
@@ -477,7 +480,7 @@
 }
 .snooze-help {
   text-align: center;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #778171;
 }
 .snooze-help a {
@@ -523,13 +526,13 @@
     padding: 20px 22px 0;
   }
   .companion-caption h2 {
-    font-size: 22px;
+    font-size: 1.375rem;
   }
   .friendship-row {
     padding-inline: 22px;
   }
   .companion-mood {
-    font-size: 10px;
+    font-size: 0.625rem;
   }
   .companion-actions {
     padding: 7px;
@@ -538,7 +541,7 @@
   .companion-actions .scene-button,
   .companion-actions .room-activity-button {
     min-height: 55px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .companion-footer {
     padding-inline: 22px;
@@ -558,7 +561,8 @@
     padding-inline: 16px;
   }
   .app-topbar {
-    height: 70px;
+    min-height: 56px;
+    height: auto;
     border: 0;
   }
   .app-layout {
@@ -569,18 +573,18 @@
     margin-bottom: 20px;
   }
   .page-heading h1 {
-    font-size: 28px;
+    font-size: 1.75rem;
     margin: 3px 0;
   }
   .page-heading .eyebrow {
-    font-size: 11px;
+    font-size: 0.6875rem;
   }
   .today-panel {
     padding: 20px;
     border-radius: 24px;
   }
   .today-panel h2 {
-    font-size: 20px;
+    font-size: 1.25rem;
   }
   .reminder-settings {
     padding: 22px 18px;
@@ -594,7 +598,7 @@
     border-radius: 13px;
   }
   .reminder-setup p {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .calendar-reminders {
     padding: 17px;
@@ -604,52 +608,53 @@
     white-space: normal;
   }
   .reminder-main .button {
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .app-dialog {
     border-radius: 24px;
   }
 }
 
-/* The pending dose stays beside Blobby, above play and care actions. */
+/* One medication review stays beside Blobby, before the room and optional play. */
 .companion-checkin {
   display: flex;
   align-items: center;
-  gap: 18px;
-  margin: 0 14px 12px;
-  padding: 17px 18px;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin: 12px 14px;
+  padding: 12px 14px;
   background: #fffdf5;
   border: 1px solid #e9dfc6;
   border-radius: 22px;
   box-shadow: 0 4px 18px #6c684008;
 }
 .companion-checkin-copy {
-  flex: 1;
+  flex: 1 1 160px;
   min-width: 0;
 }
 .companion-checkin-copy p {
   color: #6a6349;
-  font-size: 12px;
+  font-size: 0.75rem;
   line-height: 1.5;
-  margin-bottom: 7px;
+  margin: 0 0 4px;
 }
 .companion-checkin-copy strong {
   display: block;
-  font-size: 15px;
+  font-size: 0.9375rem;
   line-height: 1.35;
   overflow-wrap: anywhere;
   color: #35493a;
 }
 .companion-checkin-copy > span {
   display: block;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #69745e;
   line-height: 1.5;
   margin-top: 3px;
   overflow-wrap: anywhere;
 }
 .companion-checkin-button {
-  flex-shrink: 0;
+  flex: 1 1 110px;
   min-height: 46px;
   white-space: normal;
   text-align: center;
@@ -661,24 +666,6 @@
   background: #f7faf4;
   border-color: #e0e8db;
 }
-@media (max-width: 1150px) {
-  .companion-checkin {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 13px;
-  }
-  .companion-checkin-button {
-    width: 100%;
-  }
-}
-@media (max-width: 760px) {
-  .companion-checkin {
-    margin-inline: 12px;
-    padding: 16px;
-    border-radius: 20px;
-  }
-}
-
 @media (min-width: 1100px) {
   .home-scene {
     height: 500px;
@@ -720,10 +707,27 @@
     height: 44px;
   }
   .companion-caption h2 {
-    font-size: 21px;
+    font-size: 1.3125rem;
   }
 }
 
 .native-reminder-settings-link {
   margin-top: 12px;
+}
+
+/* The greeting and date share a quiet line without competing with the room. */
+.home-heading > div {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+}
+@media (max-width: 600px) {
+  .home-heading {
+    margin-bottom: 12px;
+  }
+  .home-heading > div {
+    width: 100%;
+    justify-content: space-between;
+  }
 }
