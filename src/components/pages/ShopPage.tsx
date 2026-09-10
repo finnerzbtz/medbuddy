@@ -5,7 +5,7 @@ import RoomArt, { RoomStill } from '@/components/shop/RoomArt';
 import { ROOM_SLOTS, roomItem } from '@/domain/room';
 import { roomEnvironment } from '@/domain/environment';
 import { useReducedMotion } from '@/components/app/useReducedMotion';
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, Check, Gift, Leaf, X, Pause, Play } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
@@ -35,8 +35,10 @@ function PurchaseDialog({ product, close }: { product: ShopProduct; close: () =>
           trigger.current?.isConnected &&
           !(trigger.current instanceof HTMLButtonElement && trigger.current.disabled)
             ? trigger.current
-            : document.getElementById('room-item-status-' + product.item);
-        target?.focus({ preventScroll: true });
+            : (document.getElementById('room-item-status-' + product.item) ??
+              document.getElementById('shop-preview-title') ??
+              document.getElementById('shop-product-' + product.id));
+        target?.focus({ preventScroll: target === trigger.current });
       });
     };
   }, []);
@@ -128,6 +130,51 @@ function ProductArt({ product }: { product: ShopProduct }) {
     <img src={'/assets-v2/' + product.item + '-preview.webp'} alt="" loading="lazy" />
   );
 }
+function ProductDetails({
+  mobile,
+  open,
+  close,
+  children,
+}: {
+  mobile: boolean;
+  open: boolean;
+  close: () => void;
+  children: ReactNode;
+}) {
+  const ref = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    if (!mobile || !open) return;
+    const dialog = ref.current!;
+    const trigger = document.activeElement as HTMLElement | null;
+    dialog.showModal();
+    return () => {
+      dialog.close();
+      requestAnimationFrame(() => {
+        if (trigger?.isConnected) trigger.focus({ preventScroll: true });
+      });
+    };
+  }, [mobile, open]);
+  if (!mobile) return children;
+  if (!open) return null;
+  return (
+    <dialog
+      className="shop-product-dialog"
+      ref={ref}
+      aria-labelledby="shop-preview-title"
+      onCancel={close}
+    >
+      <button
+        className="icon-button shop-product-close"
+        aria-label="Close item details"
+        onClick={close}
+      >
+        <X aria-hidden="true" size={20} />
+      </button>
+      {children}
+    </dialog>
+  );
+}
+
 export default function ShopPage() {
   const balance = useLeafBalance();
   const data = useAppStore((s) => s.data),
@@ -138,6 +185,17 @@ export default function ShopPage() {
     : 'food';
   const reduced = useReducedMotion();
   const [previewPlaying, setPreviewPlaying] = useState(true);
+  const [mobile, setMobile] = useState(() => matchMedia('(max-width: 700px)').matches);
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  useEffect(() => {
+    const media = matchMedia('(max-width: 700px)');
+    const update = () => {
+      setMobile(media.matches);
+      setDetailsOpen(false);
+    };
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
   const slot = (
     ROOM_SLOTS.some((s) => s.id === params.get('slot')) ? params.get('slot')! : 'garden'
   ) as RoomSlot;
@@ -189,6 +247,7 @@ export default function ShopPage() {
             onClick={() => {
               setParams(value === 'food' ? {} : { tab: value });
               setSelection(null);
+              setDetailsOpen(false);
             }}
           >
             {label}
@@ -219,9 +278,15 @@ export default function ShopPage() {
                 return (
                   <button
                     key={product.id}
+                    id={'shop-product-' + product.id}
                     className="product-card"
-                    aria-pressed={selected?.id === product.id}
-                    onClick={() => setSelection(product.id)}
+                    aria-pressed={mobile ? undefined : selected?.id === product.id}
+                    aria-haspopup={mobile ? 'dialog' : undefined}
+                    onClick={(event) => {
+                      event.currentTarget.focus({ preventScroll: true });
+                      setSelection(product.id);
+                      if (mobile) setDetailsOpen(true);
+                    }}
                     aria-label={
                       'Preview ' +
                       product.name +
@@ -263,136 +328,149 @@ export default function ShopPage() {
             </div>
           </section>
           {selected && (
-            <section
-              className={'shop-detail' + (selectedRoomItem ? ' room-detail' : '')}
-              aria-label="Selected item"
-            >
-              <div
-                className={'shop-preview' + (selectedRoomItem ? ' room-shop-preview' : '')}
-                role="img"
-                aria-label={selected.name + ' preview'}
+            <ProductDetails mobile={mobile} open={detailsOpen} close={() => setDetailsOpen(false)}>
+              <section
+                className={'shop-detail' + (selectedRoomItem ? ' room-detail' : '')}
+                aria-label="Selected item"
               >
-                {selectedRoomItem ? (
-                  data.preferences.staticScene ? (
-                    <RoomStill room={previewRoom} name={data.profile.petName} />
-                  ) : (
-                    <SceneErrorBoundary
-                      fallback={<RoomStill room={previewRoom} name={data.profile.petName} />}
-                    >
-                      <Suspense
+                <div
+                  className={'shop-preview' + (selectedRoomItem ? ' room-shop-preview' : '')}
+                  role="img"
+                  aria-label={selected.name + ' preview'}
+                >
+                  {selectedRoomItem ? (
+                    data.preferences.staticScene ? (
+                      <RoomStill room={previewRoom} name={data.profile.petName} />
+                    ) : (
+                      <SceneErrorBoundary
                         fallback={<RoomStill room={previewRoom} name={data.profile.petName} />}
                       >
+                        <Suspense
+                          fallback={<RoomStill room={previewRoom} name={data.profile.petName} />}
+                        >
+                          <AssetScene
+                            outfit={data.outfit}
+                            room
+                            cosy
+                            roomStyle={previewRoom}
+                            clip="idle"
+                            playing={
+                              previewPlaying &&
+                              !reduced &&
+                              !data.preferences.reducedMotion &&
+                              !data.preferences.pauseScene
+                            }
+                            environment={roomEnvironment(now)}
+                            lampOn
+                          />
+                        </Suspense>
+                      </SceneErrorBoundary>
+                    )
+                  ) : selected.kind === 'outfit' && !data.preferences.staticScene ? (
+                    <SceneErrorBoundary fallback={image}>
+                      <Suspense fallback={image}>
                         <AssetScene
-                          outfit={data.outfit}
-                          room
-                          cosy
-                          roomStyle={previewRoom}
+                          outfit={selected.item as BlobbyVariant}
                           clip="idle"
-                          playing={
-                            previewPlaying &&
-                            !reduced &&
-                            !data.preferences.reducedMotion &&
-                            !data.preferences.pauseScene
-                          }
-                          environment={roomEnvironment(now)}
-                          lampOn
+                          playing={false}
                         />
                       </Suspense>
                     </SceneErrorBoundary>
-                  )
-                ) : selected.kind === 'outfit' && !data.preferences.staticScene ? (
-                  <SceneErrorBoundary fallback={image}>
-                    <Suspense fallback={image}>
-                      <AssetScene
-                        outfit={selected.item as BlobbyVariant}
-                        clip="idle"
-                        playing={false}
-                      />
-                    </Suspense>
-                  </SceneErrorBoundary>
-                ) : (
-                  image
-                )}
-              </div>
-              {selectedRoomItem &&
-                !data.preferences.staticScene &&
-                !reduced &&
-                !data.preferences.reducedMotion &&
-                !data.preferences.pauseScene && (
-                  <button
-                    className="room-preview-motion text-link"
-                    onClick={() => setPreviewPlaying(!previewPlaying)}
-                  >
-                    {previewPlaying ? (
-                      <Pause aria-hidden="true" size={15} />
-                    ) : (
-                      <Play aria-hidden="true" size={15} />
-                    )}{' '}
-                    {previewPlaying ? 'Pause room preview' : 'Play room preview'}
-                  </button>
-                )}
-              <div className="shop-detail-copy">
-                <h2>{selected.name}</h2>
-                <p>{selected.description}</p>
-                {selected.kind === 'food' && (
-                  <p className="shop-quantity">
-                    Pack of 3 · {foodQuantity(data, selected.item as FoodId)} in your pantry
-                  </p>
-                )}
-                {owned ? (
-                  <button
-                    className="button primary"
-                    disabled={worn}
-                    onClick={() => {
-                      const result =
-                        selected.kind === 'room'
-                          ? useAppStore.getState().equipRoomItem(selected.item as RoomItemId)
-                          : useAppStore.getState().setOutfit(selected.item as BlobbyVariant);
-                      useAppStore
-                        .getState()
-                        .showToast(
-                          result.ok
-                            ? selected.name +
-                                (selected.kind === 'room' ? ' is in your room.' : ' is on!')
-                            : result.error!,
-                        );
-                    }}
-                  >
-                    {worn ? (
-                      <>
-                        <Check aria-hidden="true" size={17} />{' '}
-                        {selected.kind === 'room' ? 'In your room' : 'Wearing now'}
-                      </>
-                    ) : selected.kind === 'room' ? (
-                      'Use in room'
-                    ) : (
-                      'Wear this outfit'
-                    )}
-                  </button>
-                ) : (
-                  <button
-                    className="button primary"
-                    disabled={balance < selected.price}
-                    onClick={() => setPurchase(selected)}
-                  >
-                    <Leaf aria-hidden="true" size={17} />
-                    {balance < selected.price
-                      ? 'Need ' + (selected.price - balance) + ' more leaves'
-                      : 'Buy for ' + selected.price + ' leaves'}
-                  </button>
-                )}
-                {selected.kind === 'food' && foodQuantity(data, selected.item as FoodId) > 0 && (
-                  <Link className="button secondary" to={'/?feed=' + selected.item}>
-                    Feed Blobby
-                  </Link>
-                )}
-                {owned && (
-                  <Link className="text-link" to="/">
-                    See Blobby in the room →
-                  </Link>
-                )}
-              </div>
-            </section>
+                  ) : (
+                    image
+                  )}
+                </div>
+                {selectedRoomItem &&
+                  !data.preferences.staticScene &&
+                  !reduced &&
+                  !data.preferences.reducedMotion &&
+                  !data.preferences.pauseScene && (
+                    <button
+                      className="room-preview-motion text-link"
+                      onClick={() => setPreviewPlaying(!previewPlaying)}
+                    >
+                      {previewPlaying ? (
+                        <Pause aria-hidden="true" size={15} />
+                      ) : (
+                        <Play aria-hidden="true" size={15} />
+                      )}{' '}
+                      {previewPlaying ? 'Pause room preview' : 'Play room preview'}
+                    </button>
+                  )}
+                <div className="shop-detail-copy">
+                  <h2 id="shop-preview-title" tabIndex={-1}>
+                    {selected.name}
+                  </h2>
+                  <p>{selected.description}</p>
+                  {selected.kind === 'food' && (
+                    <p className="shop-quantity">
+                      Pack of 3 · {foodQuantity(data, selected.item as FoodId)} in your pantry
+                    </p>
+                  )}
+                  {owned ? (
+                    <button
+                      className="button primary"
+                      disabled={worn}
+                      onClick={() => {
+                        const result =
+                          selected.kind === 'room'
+                            ? useAppStore.getState().equipRoomItem(selected.item as RoomItemId)
+                            : useAppStore.getState().setOutfit(selected.item as BlobbyVariant);
+                        useAppStore
+                          .getState()
+                          .showToast(
+                            result.ok
+                              ? selected.name +
+                                  (selected.kind === 'room' ? ' is in your room.' : ' is on!')
+                              : result.error!,
+                          );
+                        if (result.ok)
+                          requestAnimationFrame(() =>
+                            document
+                              .getElementById('shop-preview-title')
+                              ?.focus({ preventScroll: true }),
+                          );
+                      }}
+                    >
+                      {worn ? (
+                        <>
+                          <Check aria-hidden="true" size={17} />{' '}
+                          {selected.kind === 'room' ? 'In your room' : 'Wearing now'}
+                        </>
+                      ) : selected.kind === 'room' ? (
+                        'Use in room'
+                      ) : (
+                        'Wear this outfit'
+                      )}
+                    </button>
+                  ) : (
+                    <button
+                      className="button primary"
+                      disabled={balance < selected.price}
+                      onClick={(event) => {
+                        event.currentTarget.focus({ preventScroll: true });
+                        setPurchase(selected);
+                      }}
+                    >
+                      <Leaf aria-hidden="true" size={17} />
+                      {balance < selected.price
+                        ? 'Need ' + (selected.price - balance) + ' more leaves'
+                        : 'Buy for ' + selected.price + ' leaves'}
+                    </button>
+                  )}
+                  {selected.kind === 'food' && foodQuantity(data, selected.item as FoodId) > 0 && (
+                    <Link className="button secondary" to={'/?feed=' + selected.item}>
+                      Feed Blobby
+                    </Link>
+                  )}
+                  {owned && (
+                    <Link className="text-link" to="/">
+                      See Blobby in the room →
+                    </Link>
+                  )}
+                </div>
+              </section>
+            </ProductDetails>
           )}
         </div>
       )}
