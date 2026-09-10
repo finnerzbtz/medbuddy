@@ -19,7 +19,8 @@ body .page-heading > * {
   min-width: 0;
   max-width: 100%;
 }
-body .page-heading h1 {
+body .page-heading h1,
+body .medication-form .eyebrow {
   overflow-wrap: anywhere;
 }
 body .outfit-grid {
