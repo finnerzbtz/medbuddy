@@ -1,0 +1,299 @@
+.bonsai-garden {
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  border: 0;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  padding: max(22px, env(safe-area-inset-top)) max(22px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom)) max(22px, env(safe-area-inset-left));
+  color: #354c3c;
+  background: #f6f6ee;
+  overflow-y: auto;
+}
+.bonsai-garden::backdrop {
+  background: #354c3c80;
+}
+.bonsai-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.bonsai-header,
+.bonsai-header > div,
+.bonsai-header-actions,
+.bonsai-tool-row,
+.bonsai-audio,
+.bonsai-footer {
+  display: flex;
+  align-items: center;
+}
+.bonsai-header {
+  justify-content: space-between;
+  gap: 16px;
+}
+.bonsai-header > div {
+  gap: 12px;
+}
+.bonsai-header h2 {
+  font-size: clamp(24px, 4vw, 32px);
+  letter-spacing: -0.045em;
+  font-weight: 620;
+  margin: 0;
+}
+.bonsai-mark {
+  font-size: 30px;
+  color: #708c64;
+}
+.bonsai-header-actions {
+  gap: 8px;
+}
+.bonsai-header .icon-button {
+  border: 1px solid #c6cfbb;
+  background: #fffdf6;
+  color: #465c42;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
+}
+#bonsai-intro {
+  color: #5f6e59;
+  margin: 10px 0 22px;
+  font-size: 15px;
+}
+.bonsai-playfield {
+  position: relative;
+  height: min(61dvh, 620px);
+  min-height: 280px;
+  border-radius: 28px;
+  overflow: hidden;
+  border: 1px solid #dde3d2;
+  background: #eaf0e3;
+  isolation: isolate;
+}
+.bonsai-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: crosshair;
+}
+.bonsai-canvas:focus-visible {
+  outline: 3px solid #577957;
+  outline-offset: -7px;
+  border-radius: 28px;
+}
+.bonsai-companion {
+  position: absolute;
+  left: 12%;
+  bottom: 13%;
+  width: clamp(82px, 16%, 152px);
+  height: auto;
+  pointer-events: none;
+  filter: saturate(0.62);
+}
+.bonsai-companion .garden-can,
+.bonsai-companion .garden-grip {
+  display: none;
+}
+.bonsai-paused {
+  position: absolute;
+  inset: 16px auto auto 16px;
+  padding: 8px 14px;
+  border-radius: 14px;
+  color: #405638;
+  background: #fffdf4eb;
+  font-size: 14px;
+  pointer-events: none;
+}
+.bonsai-unavailable {
+  position: absolute;
+  inset: 20% 10% auto;
+  padding: 24px;
+  background: #f6f6ee;
+  border-radius: 16px;
+}
+.bonsai-tool-row {
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 22px 0 0;
+}
+.bonsai-tool-switch {
+  display: flex;
+  padding: 4px;
+  background: #e7ecdf;
+  border: 1px solid #cbd4be;
+  border-radius: 20px;
+}
+.bonsai-garden button {
+  font: inherit;
+  cursor: pointer;
+}
+.bonsai-tool-switch button {
+  min-height: 48px;
+  min-width: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 15px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #465c42;
+  font-size: 15px;
+  padding: 10px 17px;
+}
+.bonsai-tool-switch button[aria-pressed='true'] {
+  background: #fffef6;
+  border-color: #bac9aa;
+  box-shadow: 0 2px 5px #50664309;
+  color: #334d34;
+}
+.bonsai-auto {
+  min-height: 52px;
+  padding: 12px 18px;
+  border: 1px solid #b9c8ae;
+  border-radius: 18px;
+  color: #3d5a3b;
+  background: #edf2e5;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.bonsai-clear {
+  border: 0;
+  color: #536b47;
+  padding: 10px 12px;
+  min-height: 48px;
+  background: transparent;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  font-size: 14px !important;
+}
+.bonsai-help {
+  text-align: center;
+  margin: 13px 0 21px;
+  color: #5f6e59;
+  font-size: 14px;
+}
+.bonsai-footer {
+  justify-content: space-between;
+  gap: 16px;
+  border-top: 1px solid #dce2d3;
+  padding-top: 14px;
+  flex-wrap: wrap;
+}
+.bonsai-audio {
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.bonsai-audio button,
+.bonsai-footer summary {
+  min-height: 44px;
+  font-size: 14px;
+}
+.bonsai-audio button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 15px;
+  padding: 9px 14px;
+  background: #fffdf5;
+  border: 1px solid #c3ceb7;
+  color: #465e40;
+}
+.bonsai-footer details {
+  max-width: 440px;
+  color: #526746;
+  font-size: 14px;
+}
+.bonsai-footer summary {
+  padding: 12px 2px;
+  cursor: pointer;
+}
+.bonsai-footer details p {
+  line-height: 1.65;
+  margin: 4px 0;
+}
+html[data-native='true'] .bonsai-garden:modal {
+  max-height: none;
+}
+@media (max-width: 600px) {
+  .bonsai-garden {
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  .bonsai-playfield {
+    height: 49dvh;
+    min-height: 280px;
+    border-radius: 23px;
+  }
+  .bonsai-companion {
+    left: 5%;
+    bottom: 17%;
+    width: 22%;
+  }
+  .bonsai-tool-row {
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .bonsai-tool-switch {
+    flex: 1;
+  }
+  .bonsai-tool-switch button {
+    flex: 1;
+    min-width: 80px;
+    padding: 8px 10px;
+  }
+  .bonsai-auto {
+    font-size: 13px !important;
+    padding: 10px 12px;
+  }
+  .bonsai-clear {
+    flex-basis: 100%;
+    min-height: 38px;
+    padding: 7px;
+  }
+  #bonsai-intro {
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  .bonsai-help {
+    margin: 7px 0 15px;
+    font-size: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bonsai-garden * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+.bonsai-garden[data-reduced='true'] * {
+  animation: none !important;
+  transition: none !important;
+}
+
+.garden-approach,
+.garden-replay {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: calc(100% - 24px);
+  padding: 12px 18px;
+  border: 1px solid #c4cfb6;
+  border-radius: 18px;
+  color: #465c3d;
+  background: #fffdf2ed;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+.garden-replay {
+  min-height: 44px;
+  cursor: pointer;
+}

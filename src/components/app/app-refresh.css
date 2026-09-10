@@ -1,0 +1,732 @@
+/* Calm app chrome. The room and games keep their own art direction. */
+:root {
+  --bg-base: #f6f7f4;
+  --text-primary: #303d36;
+  --panel: #ffffff;
+  --line: #e5e9e2;
+  --muted: #637168;
+  --sage: #557662;
+}
+.app-topbar {
+  height: 88px;
+  border-color: #e5e9e280;
+}
+.app-layout {
+  padding-top: 28px;
+  gap: 30px;
+}
+.app-navigation {
+  gap: 5px;
+}
+.nav-item {
+  border-radius: 16px;
+}
+.nav-item.active {
+  background: #e6ede5;
+  color: #365943;
+}
+.studio-link {
+  margin-top: 32px;
+  opacity: 0.8;
+}
+.page-heading {
+  margin-bottom: 24px;
+}
+.page-heading h1 {
+  margin: 4px 0;
+  letter-spacing: -0.045em;
+}
+.page-heading .eyebrow {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.button {
+  border-radius: 14px;
+}
+.button.primary {
+  background: #557662;
+  border-color: #557662;
+}
+.button.primary:hover {
+  background: #43644e;
+}
+.button.secondary {
+  background: #f8faf6;
+  border-color: #e0e7de;
+  color: #405b48;
+}
+.panel,
+.today-panel,
+.care-goals {
+  border-color: #e5e9e2;
+  box-shadow: 0 4px 22px #354b3c03;
+}
+.panel h2,
+.today-panel h2 {
+  font-size: 21px;
+}
+.today-panel {
+  padding: 24px;
+  scroll-margin-top: 24px;
+}
+.today-panel .section-heading {
+  margin-bottom: 18px;
+}
+.today-panel .progress-track {
+  margin-bottom: 18px;
+  height: 4px;
+  background: #edf1eb;
+}
+.progress-track span {
+  background: #87a48a;
+}
+.count-badge {
+  background: #eef3ed;
+  border: 0;
+  border-radius: 12px;
+  color: #526c57;
+}
+.dose-card {
+  border-color: #e6ebe3;
+  background: #fcfdfb;
+  border-radius: 18px;
+}
+.dose-card:hover {
+  background: #f2f6ef;
+}
+.dose-status.due {
+  color: #4a7055;
+}
+.dose-icon {
+  border-radius: 15px;
+}
+.next-dose {
+  border-color: #edf0e9;
+}
+.home-sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  gap: 16px;
+}
+.companion-card {
+  grid-column: 1;
+  grid-row: 1;
+  min-height: 0;
+  border: 1px solid #e0e7df;
+  border-radius: 28px;
+  background: color-mix(in srgb, var(--room-backdrop, #d6e2d8) 45%, #e8eee8);
+  box-shadow: 0 12px 40px -28px #35574245;
+}
+.companion-caption {
+  padding: 22px 24px 0;
+  gap: 12px;
+}
+.companion-caption > div {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.companion-caption h2 {
+  font-size: 23px;
+  margin: 0;
+  color: #35473a;
+}
+.companion-mood {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #4d6455;
+}
+.mood-dot {
+  width: 6px;
+  height: 6px;
+}
+.scene-zoom {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: #ffffff80;
+  border: 0;
+}
+.scene-zoom:hover {
+  background: #fff;
+}
+.friendship-row {
+  padding: 0 24px;
+  gap: 7px;
+  margin-top: 3px;
+  font-size: 10px;
+}
+.friendship-row strong {
+  font-weight: 500;
+}
+.friendship-track {
+  width: 54px;
+  height: 3px;
+  background: #ffffff90;
+}
+.friendship-track > span {
+  background: #a98181;
+}
+.friendship-row > svg {
+  width: 12px;
+  height: 12px;
+}
+.home-scene {
+  height: 430px;
+  min-height: 300px;
+}
+.blobby-speech {
+  bottom: 14px;
+  background: #ffffffed;
+  border: 0;
+  border-radius: 16px;
+  padding: 10px 16px;
+  color: #4b6352;
+  box-shadow: 0 4px 20px #3048380c;
+  backdrop-filter: blur(14px);
+}
+.preview-badge {
+  background: #344e42e8;
+  border-radius: 30px;
+  top: 8px;
+  left: 18px;
+  padding: 2px 4px 2px 12px;
+}
+.preview-badge button {
+  width: 36px;
+  height: 36px;
+  padding: 8px;
+}
+.companion-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 14px;
+  padding: 8px;
+  background: #ffffffa8;
+  border: 1px solid #ffffffc0;
+  border-radius: 23px;
+  box-shadow: 0 4px 20px #35574204;
+}
+.companion-actions .scene-button,
+.companion-actions .room-activity-button {
+  grid-column: span 1;
+  min-height: 56px;
+  padding: 8px 3px;
+  gap: 5px;
+  background: transparent;
+  border: 0;
+  border-radius: 15px;
+  color: #526c5a;
+  font-size: 12px;
+  font-weight: 500;
+}
+.companion-actions .scene-button:hover:not(:disabled),
+.companion-actions .room-activity-button[aria-pressed='true'] {
+  background: #e4eddf;
+  color: #35533d;
+}
+.companion-actions .feed-button {
+  background: #557662;
+  color: #fff;
+}
+.companion-actions .feed-button:hover:not(:disabled),
+.companion-actions .feed-button.selected {
+  background: #43634e;
+  color: #fff;
+}
+.companion-actions .treat-count {
+  min-width: 16px;
+  height: 16px;
+  background: #ffffff26;
+  border-radius: 5px;
+}
+.companion-footer {
+  padding: 3px 24px 4px;
+}
+.cheat-toggle {
+  min-height: 40px;
+  font-size: 10px;
+  color: #41594a;
+}
+.blobby-pantry {
+  background: #fffffff0;
+  border: 0;
+  border-radius: 22px;
+}
+.pantry-note summary {
+  cursor: pointer;
+  padding-block: 5px;
+}
+.pantry-note p {
+  margin-top: 5px;
+}
+.snack-card {
+  background: #f8faf4;
+  border-color: #e4e9dc;
+  border-radius: 16px;
+}
+.cheat-panel {
+  background: #f9fbf7e8;
+  border-color: #e3eadd;
+}
+.state-chips button {
+  min-height: 36px;
+}
+.care-goals {
+  padding: 18px 22px;
+  background: #f0f3ed;
+  border: 0;
+  border-radius: 22px;
+}
+.care-goals .section-heading {
+  margin: 0 0 12px;
+}
+.care-goals h2 {
+  font-size: 16px;
+}
+.care-goals ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin: 0;
+}
+.care-goals li {
+  padding: 0;
+  font-size: 12px;
+  gap: 7px;
+}
+.care-goals .ritual-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  background: #fff9;
+}
+.care-goals .count-badge {
+  background: transparent;
+  min-width: 0;
+  height: auto;
+  padding: 0;
+}
+.reminder-summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 18px;
+  margin-top: 18px;
+  border-top: 1px solid #edf0e9;
+  color: #536c5b;
+}
+.reminder-summary-icon {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  background: #f1f5ed;
+  border-radius: 12px;
+}
+.reminder-summary > span:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+.reminder-summary strong {
+  font-size: 12px;
+  font-weight: 550;
+  display: block;
+}
+.reminder-summary small {
+  font-size: 11px;
+  color: #687463;
+  display: block;
+  margin-top: 2px;
+}
+.reminder-summary:hover strong {
+  color: #2d5037;
+}
+.reminder-settings {
+  scroll-margin-top: 24px;
+}
+.reminder-status {
+  font-size: 11px;
+  background: #f0f1ec;
+  color: #657063;
+  border-radius: 20px;
+  padding: 5px 11px;
+}
+.reminder-status.on {
+  color: #3f6c4d;
+  background: #e7f1e6;
+}
+.reminder-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.reminder-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.reminder-feature-icon {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: #eef4e9;
+  color: #627b5e;
+  flex-shrink: 0;
+}
+.reminder-setup h3 {
+  font-size: 16px;
+  letter-spacing: -0.025em;
+}
+.reminder-setup p {
+  font-size: 13px;
+  color: #6e7a6e;
+  line-height: 1.6;
+  margin-top: 5px;
+}
+.reminder-main .button-row {
+  margin: 16px 0 0 58px;
+}
+.reminder-next {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: #55735b;
+  margin: 14px 0 0 58px;
+}
+.status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #749974;
+}
+.reminder-setup .reminder-help,
+.reminder-setup .reminder-feedback {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #f1f5ed;
+  margin: 14px 0 0 58px;
+}
+.reminder-setup .reminder-feedback.error,
+.reminder-setup .reminder-help {
+  background: #faf3e7;
+  color: #806c4e;
+}
+.calendar-reminders {
+  display: flex;
+  gap: 25px;
+  align-items: center;
+  padding: 20px;
+  background: #f5f7f2;
+  border-radius: 20px;
+}
+.calendar-reminders > div {
+  flex: 1;
+}
+.calendar-reminders .button {
+  flex-shrink: 0;
+  background: #fff;
+}
+.reminder-details {
+  font-size: 12px;
+  color: #717e70;
+  margin-top: 18px;
+}
+.reminder-details summary {
+  cursor: pointer;
+  width: fit-content;
+  padding-block: 4px;
+}
+.reminder-details p {
+  margin-top: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+  max-width: 700px;
+}
+.profile-grid {
+  gap: 20px;
+}
+.profile-pet {
+  gap: 18px;
+}
+.profile-pet h2 {
+  font-size: 22px;
+}
+.outfit-card {
+  border-radius: 18px;
+}
+.outfit-card.selected {
+  background: #eaf1e5;
+  border-color: #9db297;
+}
+.app-dialog {
+  border: 1px solid #ffffffa8;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow: 0 24px 100px #24362e24;
+}
+.app-dialog::backdrop {
+  background: #263f3742;
+  backdrop-filter: blur(6px);
+}
+.snooze-help {
+  text-align: center;
+  font-size: 12px;
+  color: #778171;
+}
+.snooze-help a {
+  color: #4c7056;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.app-toast {
+  border-radius: 20px;
+}
+
+@media (max-width: 1050px) {
+  .calendar-reminders {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .home-scene {
+    height: 390px;
+  }
+}
+@media (max-width: 760px) {
+  .home-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .home-sidebar {
+    display: contents;
+  }
+  .today-panel {
+    width: 100%;
+  }
+  .companion-card,
+  .care-goals {
+    width: 100%;
+  }
+  .home-scene {
+    height: clamp(300px, 88vw, 430px);
+    min-height: 300px;
+  }
+  .companion-caption {
+    padding: 20px 22px 0;
+  }
+  .companion-caption h2 {
+    font-size: 22px;
+  }
+  .friendship-row {
+    padding-inline: 22px;
+  }
+  .companion-mood {
+    font-size: 10px;
+  }
+  .companion-actions {
+    padding: 7px;
+    margin-inline: 12px;
+  }
+  .companion-actions .scene-button,
+  .companion-actions .room-activity-button {
+    min-height: 55px;
+    font-size: 12px;
+  }
+  .companion-footer {
+    padding-inline: 22px;
+  }
+  .care-goals ul {
+    gap: 6px;
+  }
+  .reminder-main .button-row,
+  .reminder-next,
+  .reminder-setup .reminder-help,
+  .reminder-setup .reminder-feedback {
+    margin-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  .app-shell {
+    padding-inline: 16px;
+  }
+  .app-topbar {
+    height: 70px;
+    border: 0;
+  }
+  .app-layout {
+    padding-top: 14px;
+  }
+  .page-heading {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .page-heading h1 {
+    font-size: 28px;
+    margin: 3px 0;
+  }
+  .page-heading .eyebrow {
+    font-size: 11px;
+  }
+  .today-panel {
+    padding: 20px;
+    border-radius: 24px;
+  }
+  .today-panel h2 {
+    font-size: 20px;
+  }
+  .reminder-settings {
+    padding: 22px 18px;
+  }
+  .reminder-feature {
+    gap: 12px;
+  }
+  .reminder-feature-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+  }
+  .reminder-setup p {
+    font-size: 12px;
+  }
+  .calendar-reminders {
+    padding: 17px;
+  }
+  .calendar-reminders .button {
+    width: 100%;
+    white-space: normal;
+  }
+  .reminder-main .button {
+    font-size: 12px;
+  }
+  .app-dialog {
+    border-radius: 24px;
+  }
+}
+
+/* The pending dose stays beside Blobby, above play and care actions. */
+.companion-checkin {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 14px 12px;
+  padding: 17px 18px;
+  background: #fffdf5;
+  border: 1px solid #e9dfc6;
+  border-radius: 22px;
+  box-shadow: 0 4px 18px #6c684008;
+}
+.companion-checkin-copy {
+  flex: 1;
+  min-width: 0;
+}
+.companion-checkin-copy p {
+  color: #6a6349;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 7px;
+}
+.companion-checkin-copy strong {
+  display: block;
+  font-size: 15px;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+  color: #35493a;
+}
+.companion-checkin-copy > span {
+  display: block;
+  font-size: 12px;
+  color: #69745e;
+  line-height: 1.5;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+.companion-checkin-button {
+  flex-shrink: 0;
+  min-height: 46px;
+  white-space: normal;
+  text-align: center;
+}
+.companion-checkin-button svg {
+  flex-shrink: 0;
+}
+.companion-checkin[data-snoozed='true'] {
+  background: #f7faf4;
+  border-color: #e0e8db;
+}
+@media (max-width: 1150px) {
+  .companion-checkin {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 13px;
+  }
+  .companion-checkin-button {
+    width: 100%;
+  }
+}
+@media (max-width: 760px) {
+  .companion-checkin {
+    margin-inline: 12px;
+    padding: 16px;
+    border-radius: 20px;
+  }
+}
+
+@media (min-width: 1100px) {
+  .home-scene {
+    height: 500px;
+  }
+}
+
+/* Room controls remain in reach without adding another activity row. */
+.companion-caption .room-controls {
+  flex-wrap: nowrap;
+  gap: 5px;
+  flex-shrink: 0;
+}
+.room-controls .scene-zoom {
+  width: 42px;
+  height: 42px;
+  border-radius: 15px;
+}
+.room-controls button[aria-pressed='true'] {
+  background: #fff9d5;
+  color: #776234;
+}
+.room-controls button:disabled {
+  opacity: 0.4;
+}
+.companion-caption > div:first-child {
+  min-width: 0;
+}
+@media (max-width: 380px) {
+  .companion-caption {
+    padding-left: 16px;
+    padding-right: 16px;
+    gap: 6px;
+  }
+  .companion-caption .room-controls {
+    gap: 2px;
+  }
+  .room-controls .scene-zoom {
+    width: 40px;
+    height: 44px;
+  }
+  .companion-caption h2 {
+    font-size: 21px;
+  }
+}
+
+.native-reminder-settings-link {
+  margin-top: 12px;
+}

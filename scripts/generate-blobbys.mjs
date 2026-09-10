@@ -48,10 +48,34 @@ const HEADERS = {
 };
 
 const VARIANTS = [
-  { name: 'base',     image: 'base.png' },
-  { name: 'raincoat', image: 'raincoat.png' },
-  { name: 'sweater',  image: 'sweater.png' },
-  { name: 'glasses',  image: 'glasses.png' },
+  {
+    name: 'base',
+    image: 'base.png',
+    texturePrompt:
+      'Cute white cartoon blob character, simple round body, small dot eyes and tiny mouth on front face only, ' +
+      'smooth matte white skin, soft pastel tones, kawaii style, clean flat shading, back is plain smooth white, no baked shadows',
+  },
+  {
+    name: 'raincoat',
+    image: 'raincoat.png',
+    texturePrompt:
+      'Cute cartoon blob wearing a bright yellow raincoat with hood, smooth glossy raincoat surface, ' +
+      'clean solid yellow color, small face peeking from hood, kawaii style, clean flat shading, no baked shadows',
+  },
+  {
+    name: 'sweater',
+    image: 'sweater.png',
+    texturePrompt:
+      'Cute cartoon blob wearing a cozy knit sweater and straw hat, warm wool texture, ' +
+      'soft pastel colors, kawaii style, clean flat shading, no baked shadows',
+  },
+  {
+    name: 'glasses',
+    image: 'glasses.png',
+    texturePrompt:
+      'Cute cartoon blob wearing round glasses and a straw hat, smooth matte skin, ' +
+      'distinct glasses on front face, kawaii style, clean flat shading, no baked shadows',
+  },
 ];
 
 const OUTPUT_DIR = path.join(ROOT, 'public', 'models');
@@ -125,7 +149,7 @@ async function downloadFile(url, destPath) {
 
 // ── Pipeline ────────────────────────────────────────────────────────────────
 async function processVariant(variant) {
-  const { name, image } = variant;
+  const { name, image, texturePrompt } = variant;
   const imagePath = path.join(REF_DIR, image);
 
   if (!fs.existsSync(imagePath)) {
@@ -145,13 +169,11 @@ async function processVariant(variant) {
     ai_model: 'meshy-6',
     topology: 'triangle',
     target_polycount: 8000,
-    symmetry_mode: 'on',
+    symmetry_mode: 'auto',
     should_texture: true,
     enable_pbr: true,
     pose_mode: 't-pose',
-    texture_prompt:
-      'Cute cartoon character, vibrant colors, clean flat shading, ' +
-      'soft pastel tones, kawaii style, smooth matte surface, no baked shadows',
+    texture_prompt: texturePrompt,
   });
 
   const taskId = createRes.result;
@@ -217,9 +239,24 @@ async function main() {
     console.log(`\n  (Could not check credit balance)`);
   }
 
+  // Optional CLI filter: node scripts/generate-blobbys.mjs --variant base
+  const variantArg = process.argv.find((a) => a.startsWith('--variant='))?.split('=')[1]
+    ?? (process.argv.indexOf('--variant') !== -1 ? process.argv[process.argv.indexOf('--variant') + 1] : null);
+
+  const variantsToRun = variantArg
+    ? VARIANTS.filter((v) => v.name === variantArg)
+    : VARIANTS;
+
+  if (variantArg && variantsToRun.length === 0) {
+    console.error(`Unknown variant "${variantArg}". Available: ${VARIANTS.map((v) => v.name).join(', ')}`);
+    process.exit(1);
+  }
+
+  console.log(`\n  Variants to generate: ${variantsToRun.map((v) => v.name).join(', ')}`);
+
   // Run variants sequentially to avoid rate limits
   const results = [];
-  for (const variant of VARIANTS) {
+  for (const variant of variantsToRun) {
     try {
       const result = await processVariant(variant);
       results.push(result);

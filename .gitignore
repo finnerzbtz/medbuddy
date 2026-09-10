@@ -14,7 +14,44 @@ COMPACTION.md
 
 # Large binary assets — tracked via Git LFS or downloaded separately
 assets/final/*.glb
+assets/final-backup-preanim/
 public/models/*.glb
 *-raw.glb
 shots/
 .worktrees/
+
+# Local audio authoring credentials
+.env.local
+.env.audio.local
+
+# Native build outputs and signing credentials
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+ios/App/build/
+ios/App/CapApp-SPM/.build/
+**/xcuserdata/
+*.xcarchive
+*.ipa
+*.p12
+*.mobileprovision
+AuthKey_*.p8
+
+# Cloud development credentials and account test data
+.env.backend.*.local
+.neon
+rebuild/generated/qa-cloud/private/
+
+.env.*.local
+
+# Personal editor settings and design scratch files (preserved locally)
+.claude/
+/Screenshot*.png
+/txt
+
+# Reproducible QA output; keep test sources and concise acceptance docs
+/docs/release-a/verification/
+/playwright-report/
+/test-results/
+*.xcresult
+*.log

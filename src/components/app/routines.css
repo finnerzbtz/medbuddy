@@ -1,0 +1,234 @@
+.routines-today,
+.routine-page {
+  margin-top: 1.25rem;
+}
+.routine-card {
+  padding: 1.15rem 0;
+  border-top: 1px solid var(--border, #d6ded3);
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+.routine-card h3 {
+  margin: 0;
+  font-size: 1.08rem;
+  overflow-wrap: anywhere;
+}
+.routine-card p {
+  margin: 0.35rem 0 0;
+}
+.routine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+.routine-card .button {
+  min-height: 44px;
+}
+.routine-message {
+  font-size: 0.9rem;
+}
+.routine-dialog {
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+.routine-dialog > .text-link {
+  display: block;
+  margin-top: 1.25rem;
+}
+.routines-today .section-heading {
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+.routine-introduction {
+  padding-bottom: 1rem;
+}
+.routine-page > .button {
+  margin: 1rem 0.5rem 1rem 0;
+}
+.medication-shortcut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.8rem;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-radius: 20px;
+  background: var(--surface, #fff);
+  margin-bottom: 1rem;
+  border: 1px solid #ccd7c9;
+}
+.medication-shortcut span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 420px) {
+  .routine-actions .button {
+    flex-grow: 1;
+  }
+  .routine-dialog {
+    padding: 1.2rem;
+  }
+}
+.routine-form input:not([type='checkbox']),
+.routine-form select {
+  width: 100%;
+  min-width: 0;
+}
+.routine-form .field {
+  display: grid;
+  gap: 0.45rem;
+}
+.routine-form select {
+  padding: 0.8rem;
+  min-height: 48px;
+  color: inherit;
+  background: #fbfcf9;
+  border: 1px solid #75886e;
+  border-radius: 14px;
+  font: inherit;
+}
+.routine-weekdays {
+  border: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.3rem;
+}
+.routine-weekdays legend {
+  margin-bottom: 0.6rem;
+}
+.routine-weekdays label {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-height: 44px;
+}
+.routine-weekdays input {
+  width: 22px;
+  height: 22px;
+  accent-color: #46674c;
+}
+.routine-templates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin: 1rem 0;
+}
+.routine-template {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 1rem;
+  gap: 0.4rem;
+  text-align: left;
+  border: 1px solid #b7c8b2;
+  border-radius: 18px;
+  color: #314d3c;
+  background: #eff4ec;
+  font: inherit;
+  min-width: 0;
+}
+.routine-template > span:first-child {
+  grid-column: 1/-1;
+  font-size: 0.8rem;
+}
+.routine-template strong {
+  overflow-wrap: anywhere;
+}
+.routine-page h2 {
+  margin: 1.5rem 0 0.6rem;
+}
+.routine-archive {
+  margin-top: 1.5rem;
+}
+.routine-archive summary {
+  min-height: 44px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .routine-templates {
+    grid-template-columns: 1fr;
+  }
+}
+.routine-small-list {
+  display: grid;
+  gap: 0.65rem;
+  margin: 1rem 0;
+}
+.routine-small-list label,
+.routine-preview-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  min-height: 44px;
+}
+.routine-small-list input,
+.routine-preview-toggle input {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+.routines-later {
+  margin-top: 1rem;
+}
+.routine-room {
+  height: clamp(230px, 45dvh, 430px);
+  width: 100%;
+  position: relative;
+}
+.return-welcome {
+  margin: -0.3rem 0 1rem;
+  color: #546a59;
+}
+.routines-today {
+  width: 100%;
+  align-self: stretch;
+}
+@media (max-width: 420px) {
+  .app-dialog.routine-dialog {
+    width: calc(100vw - 24px);
+    max-width: calc(100vw - 24px);
+    padding: 18px;
+  }
+  .routine-weekdays {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .routine-weekdays label {
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+  }
+  .routine-dialog .dialog-heading h2 {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .routine-dialog .icon-button {
+    flex-shrink: 0;
+  }
+}
+.cheat-heading:has(.routine-preview-toggle) {
+  flex-wrap: wrap;
+}
+.routine-preview-toggle {
+  flex-basis: 100%;
+  order: 3;
+  font-size: 0.9rem;
+}
+@media (max-width: 420px) {
+  .routine-template {
+    position: relative;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 16px;
+  }
+  .routine-template > span:first-child {
+    padding-right: 28px;
+  }
+  .routine-template > span:last-child {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+  }
+  .routine-template strong {
+    overflow-wrap: break-word;
+  }
+}

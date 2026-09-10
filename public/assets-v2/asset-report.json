@@ -1,0 +1,153 @@
+{
+  "version": 2,
+  "assets": {
+    "characters": {
+      "before": {
+        "vertices": 66783,
+        "triangles": 127056,
+        "primitives": 22,
+        "materials": 17,
+        "textures": [
+          {
+            "name": "Straw · seamless 256",
+            "size": [
+              256,
+              256
+            ]
+          },
+          {
+            "name": "Knit · seamless 256",
+            "size": [
+              256,
+              256
+            ]
+          }
+        ],
+        "clips": [
+          "idle",
+          "wave",
+          "happy",
+          "celebrating",
+          "worried",
+          "sick",
+          "critical",
+          "recovering",
+          "walk_to_cushion",
+          "rest",
+          "feeding",
+          "petting",
+          "dance",
+          "curious",
+          "stretch",
+          "tea",
+          "tend",
+          "ball",
+          "window"
+        ],
+        "drawCallsByOutfit": {
+          "base": 5,
+          "glasses": 8,
+          "sweater": 6,
+          "raincoat": 6,
+          "frog": 8,
+          "starlight": 7,
+          "strawberry": 9
+        }
+      },
+      "after": {
+        "vertices": 48389,
+        "triangles": 90500,
+        "primitives": 22,
+        "materials": 17,
+        "textures": [
+          {
+            "name": "Straw · seamless 256",
+            "size": [
+              256,
+              256
+            ]
+          },
+          {
+            "name": "Knit · seamless 256",
+            "size": [
+              256,
+              256
+            ]
+          }
+        ],
+        "clips": [
+          "idle",
+          "wave",
+          "happy",
+          "celebrating",
+          "worried",
+          "sick",
+          "critical",
+          "recovering",
+          "walk_to_cushion",
+          "rest",
+          "feeding",
+          "petting",
+          "dance",
+          "curious",
+          "stretch",
+          "tea",
+          "tend",
+          "ball",
+          "window"
+        ],
+        "drawCallsByOutfit": {
+          "base": 5,
+          "glasses": 8,
+          "sweater": 6,
+          "raincoat": 6,
+          "frog": 8,
+          "starlight": 7,
+          "strawberry": 9
+        }
+      },
+      "sourceBytes": 4186716,
+      "bytes": 2390636,
+      "hash": "8cbf63d9e7a0"
+    },
+    "room": {
+      "before": {
+        "vertices": 27699,
+        "triangles": 34132,
+        "primitives": 43,
+        "materials": 22,
+        "textures": [],
+        "clips": [],
+        "drawCallsByOutfit": {
+          "base": 0,
+          "glasses": 0,
+          "sweater": 0,
+          "raincoat": 0,
+          "frog": 0,
+          "starlight": 0,
+          "strawberry": 0
+        }
+      },
+      "after": {
+        "vertices": 25647,
+        "triangles": 30620,
+        "primitives": 43,
+        "materials": 22,
+        "textures": [],
+        "clips": [],
+        "drawCallsByOutfit": {
+          "base": 0,
+          "glasses": 0,
+          "sweater": 0,
+          "raincoat": 0,
+          "frog": 0,
+          "starlight": 0,
+          "strawberry": 0
+        }
+      },
+      "sourceBytes": 1102064,
+      "bytes": 619392,
+      "hash": "da45eb99ad79"
+    }
+  }
+}

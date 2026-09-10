@@ -1,0 +1,148 @@
+.account-page {
+  max-width: 600px;
+  margin: 0 auto;
+  display: grid;
+  gap: 24px;
+}
+.account-panel {
+  padding: clamp(24px, 5vw, 40px);
+}
+.account-panel h1 {
+  font-size: clamp(27px, 4vw, 34px);
+  line-height: 1.2;
+  margin: 20px 0 12px;
+}
+.account-panel h2 {
+  font-size: 21px;
+  margin: 8px 0;
+}
+.account-panel p {
+  line-height: 1.6;
+}
+.account-hero-icon,
+.account-icon {
+  display: grid;
+  place-items: center;
+  color: #4b6546;
+  background: #e9efe5;
+  border-radius: 20px;
+  width: 64px;
+  height: 64px;
+}
+.account-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  text-decoration: none;
+  color: inherit;
+}
+.account-card > span:nth-child(2) {
+  display: grid;
+  gap: 5px;
+  flex: 1;
+}
+.account-card .account-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+}
+.account-email {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+.account-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  line-height: 1.6;
+}
+.account-consent input {
+  width: 22px;
+  height: 22px;
+  min-width: 22px;
+  margin-top: 3px;
+  accent-color: #557348;
+}
+.account-sync-status {
+  display: grid;
+  gap: 5px;
+  padding: 18px;
+  background: #edf2e9;
+  border-radius: 18px;
+  margin: 20px 0;
+}
+.account-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  border-top: 1px solid #d8ded2;
+  margin-top: 28px;
+  padding-top: 20px;
+}
+.account-danger {
+  border-top: 1px solid #d8ded2;
+  padding-top: 20px;
+  margin-top: 24px;
+}
+.account-copies {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.account-copies > div {
+  padding: 16px;
+  border: 1px solid #d8ded2;
+  border-radius: 18px;
+}
+.account-privacy {
+  margin: 0;
+  text-align: center;
+  max-width: 470px;
+  justify-self: center;
+}
+.account-skip {
+  justify-self: center;
+}
+.account-hint {
+  padding: 12px 16px;
+  background: #edf2e9;
+  border-radius: 12px;
+}
+.cloud-notice {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
+  margin-bottom: 20px;
+  border-radius: 16px;
+  background: #edf2e9;
+  color: #35452f;
+}
+.cloud-notice a {
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+.account-panel input {
+  font-size: 16px;
+}
+.account-panel button {
+  min-height: 44px;
+}
+.account-panel form {
+  margin: 24px 0;
+}
+.account-panel button:disabled {
+  cursor: default;
+}
+@media (max-width: 420px) {
+  .account-copies {
+    grid-template-columns: 1fr;
+  }
+  .cloud-notice {
+    align-items: flex-start;
+  }
+}

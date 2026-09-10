@@ -1,0 +1,27 @@
+.app-update {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px 20px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border: 1px solid #c7d5c8;
+  border-radius: 16px;
+  background: #f0f5ed;
+  color: #303d36;
+}
+.app-update p {
+  margin: 0;
+  font-size: 14px;
+}
+.app-update > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.app-update .button {
+  min-height: 44px;
+  padding: 9px 14px;
+  font-size: 14px;
+}

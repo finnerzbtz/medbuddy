@@ -6,12 +6,14 @@ import type { AnimationName, BlobbyVariant } from '@/types';
 
 const ANIMATIONS: AnimationName[] = [
   'idle',
+  'wave',
   'happy',
   'celebrating',
   'worried',
   'sick',
   'critical',
   'recovering',
+  'rest',
 ];
 
 const VARIANTS: { label: string; value: BlobbyVariant }[] = [

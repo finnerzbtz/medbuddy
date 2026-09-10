@@ -20,6 +20,10 @@ class SceneErrorBoundary extends Component<Props, State> {
     return { hasError: true, error: error.message };
   }
 
+  componentDidCatch(error: Error) {
+    console.error('[SceneErrorBoundary]', error.message, error.stack);
+  }
+
   render() {
     if (this.state.hasError) {
       return (
@@ -37,7 +41,20 @@ class SceneErrorBoundary extends Component<Props, State> {
               textAlign: 'center',
             }}
           >
-            3D viewport requires WebGL
+            <div>
+              <img
+                src="/assets-v2/room-preview.webp"
+                alt="Blobby in the room"
+                style={{ maxHeight: 300, objectFit: 'contain' }}
+              />
+              <p>The 3D room couldn’t load.</p>
+              <button
+                style={{ color: 'var(--accent-mint)', padding: 12 }}
+                onClick={() => this.setState({ hasError: false, error: '' })}
+              >
+                Retry 3D
+              </button>
+            </div>
           </div>
         )
       );

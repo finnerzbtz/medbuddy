@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "onboarded": true,
+  "profile": {
+    "name": "",
+    "petName": "Blobby"
+  },
+  "medications": [
+    {
+      "id": "baseline-med",
+      "name": "Fixture medication",
+      "dosage": "1 tablet",
+      "instructions": "User-entered instructions",
+      "color": "#738962",
+      "createdAt": "2026-09-01T12:00:00.000Z",
+      "archived": false,
+      "schedules": [
+        {
+          "from": "2026-09-01",
+          "active": true,
+          "times": [
+            "08:00"
+          ],
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        },
+        {
+          "from": "2026-09-08",
+          "active": true,
+          "times": [
+            "09:00",
+            "20:00"
+          ],
+          "days": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6
+          ]
+        }
+      ],
+      "stock": {
+        "quantity": 30,
+        "baselineTakenIds": []
+      },
+      "refillAt": 5
+    }
+  ],
+  "records": {
+    "baseline-med@2026-09-02@08:00": {
+      "id": "baseline-med@2026-09-02@08:00",
+      "medicationId": "baseline-med",
+      "date": "2026-09-02",
+      "time": "08:00",
+      "status": "taken",
+      "name": "Fixture medication",
+      "dosage": "1 tablet",
+      "instructions": "User-entered instructions",
+      "note": "",
+      "color": "#738962",
+      "recordedAt": "2026-09-02T08:10:00.000Z"
+    },
+    "baseline-med@2026-09-03@08:00": {
+      "id": "baseline-med@2026-09-03@08:00",
+      "medicationId": "baseline-med",
+      "date": "2026-09-03",
+      "time": "08:00",
+      "status": "skipped",
+      "name": "Fixture medication",
+      "dosage": "1 tablet",
+      "instructions": "User-entered instructions",
+      "note": "",
+      "color": "#738962",
+      "recordedAt": "2026-09-03T08:10:00.000Z"
+    }
+  },
+  "outfit": "base",
+  "voice": "cloud",
+  "room": {
+    "garden": "bonsai",
+    "table": "tea_set",
+    "lamp": "paper_lamp",
+    "view": "garden_view"
+  },
+  "hiddenGroups": [],
+  "preferences": {
+    "reducedMotion": false,
+    "staticScene": false,
+    "reminders": false,
+    "lampOn": true,
+    "pauseScene": false,
+    "hideRewards": false,
+    "gentleMoods": false,
+    "relaxedGarden": true,
+    "showWisdom": true
+  },
+  "reminders": {
+    "baseline-med@2026-09-10@09:00": {
+      "snoozedUntil": "2026-09-10T10:00:00.000Z"
+    }
+  },
+  "care": {
+    "xp": 23,
+    "days": {}
+  },
+  "market": {
+    "coins": 147,
+    "checkInRewards": {
+      "baseline-med@2026-09-02@08:00": 10,
+      "baseline-med@2026-09-03@08:00": 10
+    },
+    "foods": {
+      "apple": 0,
+      "berries": 1,
+      "dumpling": 1,
+      "strawberry": 0,
+      "cookie": 0,
+      "mochi": 0
+    },
+    "ownedOutfits": [
+      "base",
+      "glasses",
+      "sweater",
+      "raincoat",
+      "frog"
+    ],
+    "ownedRoomItems": [
+      "bonsai",
+      "tea_set",
+      "paper_lamp",
+      "garden_view",
+      "sand_garden"
+    ],
+    "orders": []
+  },
+  "updatedAt": "2026-09-09T12:00:00.000Z"
+}

@@ -1,0 +1,62 @@
+{
+  "identifier": "30dfbc32-bafb-43ad-a673-5417325cba6c",
+  "nonRenewingSubscriptions": [],
+  "products": [
+    {
+      "displayPrice": "0.99",
+      "familyShareable": false,
+      "internalID": "10001",
+      "localizations": [
+        {
+          "description": "100 test leaves. Simulated purchase only.",
+          "displayName": "100 leaves",
+          "locale": "en_GB"
+        }
+      ],
+      "productID": "com.reminduh.leaves.100",
+      "referenceName": "100 leaves (local test)",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "2.99",
+      "familyShareable": false,
+      "internalID": "10002",
+      "localizations": [
+        {
+          "description": "350 test leaves. Simulated purchase only.",
+          "displayName": "350 leaves",
+          "locale": "en_GB"
+        }
+      ],
+      "productID": "com.reminduh.leaves.350",
+      "referenceName": "350 leaves (local test)",
+      "type": "Consumable"
+    },
+    {
+      "displayPrice": "5.99",
+      "familyShareable": false,
+      "internalID": "10003",
+      "localizations": [
+        {
+          "description": "800 test leaves. Simulated purchase only.",
+          "displayName": "800 leaves",
+          "locale": "en_GB"
+        }
+      ],
+      "productID": "com.reminduh.leaves.800",
+      "referenceName": "800 leaves (local test)",
+      "type": "Consumable"
+    }
+  ],
+  "settings": {
+    "_failTransactionsEnabled": false,
+    "_locale": "en_GB",
+    "_storefront": "GBR",
+    "_storeKitErrors": []
+  },
+  "subscriptionGroups": [],
+  "version": {
+    "major": 3,
+    "minor": 0
+  }
+}

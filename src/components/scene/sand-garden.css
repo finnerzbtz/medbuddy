@@ -1,0 +1,259 @@
+.room-game[data-game='sand'] {
+  background: #f3f2e9;
+  padding: max(24px, env(safe-area-inset-top))
+    max(clamp(14px, 3vw, 42px), env(safe-area-inset-right)) max(20px, env(safe-area-inset-bottom))
+    max(clamp(14px, 3vw, 42px), env(safe-area-inset-left));
+}
+.room-game[data-game='sand'] .room-game-shell {
+  max-width: 1120px;
+}
+.room-game[data-game='sand'] .room-game-header {
+  margin-bottom: 10px;
+}
+.sensory-sand {
+  color: #425845;
+}
+.sand-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 14px;
+}
+.sand-topline p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #57654f;
+}
+.sand-topline .sand-sound {
+  flex-shrink: 0;
+  background: #fffdf6;
+  border: 1px solid #c7d0bd;
+  padding: 10px 14px;
+  font-size: 13px;
+  border-radius: 16px;
+}
+.sand-volume {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  min-height: 44px;
+  font-size: 12px;
+  margin: -4px 0 12px;
+}
+.sensory-sand input[type='range'] {
+  width: min(160px, 40vw);
+  min-height: 44px;
+  accent-color: #5a7452;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+.sand-volume span {
+  min-width: 32px;
+}
+.sand-tray {
+  padding: 15px;
+  border-radius: 32px;
+  background:
+    repeating-linear-gradient(4deg, #be9b6a16 0 1px, transparent 2px 8px),
+    linear-gradient(115deg, #dbc5a0, #b69466 55%, #d5be95);
+  box-shadow:
+    inset 0 2px 2px #fff9df99,
+    inset 0 -4px 4px #76572e40,
+    0 14px 30px -18px #63553965;
+  border: 1px solid #b59a75;
+}
+.sand-surface {
+  position: relative;
+  height: clamp(
+    220px,
+    calc(100dvh - 330px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),
+    700px
+  );
+  overflow: hidden;
+  border-radius: 20px;
+  background: #dccaa4;
+  isolation: isolate;
+}
+.sand-board.sensory-sand-board {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 0;
+  box-shadow: none;
+  cursor: none;
+  touch-action: none;
+}
+.sand-cursor {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.sand-edge-shadow {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 4px 12px #5a472b52,
+    inset 0 0 4px #71552c42;
+}
+.sand-surface:focus-within {
+  outline: 3px solid #526e49;
+  outline-offset: 5px;
+}
+.sand-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 18px 0 8px;
+}
+.sand-tools,
+.sand-edits {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sand-tools {
+  padding: 4px;
+  border-radius: 18px;
+  background: #e3e8dc;
+}
+.sand-toolbar .button {
+  min-height: 44px;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  color: #40583f;
+  border: 1px solid transparent;
+}
+.sand-tools .button[aria-pressed='true'] {
+  background: #fffef8;
+  border-color: #acbba2;
+  box-shadow: 0 2px 4px #3d503010;
+}
+.sand-edits .button {
+  border-color: #c3cbb7;
+  background: #f9faf3;
+}
+.sand-edits .button:disabled {
+  opacity: 1;
+  color: #697461;
+  border-color: #d4dacb;
+  background: #ecf0e6;
+}
+.sand-options {
+  color: #52624b;
+  font-size: 13px;
+}
+.sand-options summary {
+  width: fit-content;
+  min-height: 44px;
+  padding: 12px 4px;
+  cursor: pointer;
+}
+.sand-options-content {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px 28px;
+  padding: 10px 4px 0;
+}
+.sand-options label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sand-options p {
+  flex-basis: 100%;
+  margin: 0;
+  max-width: 700px;
+  font-size: 13px;
+  line-height: 1.65;
+}
+.sand-options .button {
+  font-size: 13px;
+}
+@media (max-width: 560px) {
+  .room-game[data-game='sand'] {
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+  .sand-topline {
+    gap: 12px;
+  }
+  .sand-topline p {
+    font-size: 13px;
+  }
+  .sand-topline .sand-sound {
+    padding-inline: 10px;
+    font-size: 12px;
+  }
+  .sand-tray {
+    padding: 10px;
+    border-radius: 24px;
+  }
+  .sand-surface {
+    border-radius: 15px;
+    height: clamp(
+      220px,
+      calc(100dvh - 355px - env(safe-area-inset-top) - env(safe-area-inset-bottom)),
+      650px
+    );
+  }
+  .sand-toolbar {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 9px;
+    margin-top: 14px;
+  }
+  .sand-toolbar .button {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+  .sand-tools,
+  .sand-edits {
+    flex: 1;
+    justify-content: center;
+  }
+  .sand-tools .button,
+  .sand-edits .button {
+    flex: 1;
+    white-space: nowrap;
+  }
+  .sand-edits {
+    min-width: 180px;
+  }
+}
+@media (forced-colors: active) {
+  .sand-tools .button[aria-pressed='true'] {
+    border: 2px solid Highlight;
+  }
+  .sand-tray {
+    border: 2px solid CanvasText;
+  }
+  .sand-surface:focus-within {
+    outline-color: Highlight;
+  }
+}
+
+/* Both canvases must share exactly the tray's coordinate space after rotation. */
+.sand-board.sensory-sand-board,
+.sand-cursor {
+  position: absolute;
+  inset: 0;
+}
+.room-game[data-game='sand'] .room-game-header h2 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 360px) {
+  .room-game[data-game='sand'] .room-game-symbol {
+    display: none;
+  }
+}

@@ -1,0 +1,112 @@
+.medication-name-field {
+  margin-top: 20px;
+}
+.medication-name-control {
+  position: relative;
+}
+.medication-name-control input {
+  padding-left: 44px;
+}
+.medication-name-icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #526c5a;
+  pointer-events: none;
+}
+.medication-name-popup {
+  margin-top: 10px;
+  overflow: hidden;
+  border: 1px solid #94a38d;
+  border-radius: 16px;
+  background: #fffefa;
+  box-shadow: 0 8px 22px #334f3e0a;
+}
+.medication-name-popup ul {
+  margin: 0;
+  padding: 5px;
+  list-style: none;
+}
+.medication-name-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  color: #30483a;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.medication-name-option + .medication-name-option {
+  margin-top: 2px;
+}
+.medication-name-option[aria-selected='true'] {
+  background: #e7efe3;
+  border-color: #55725e;
+}
+.medication-name-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 550;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+.medication-name-detail {
+  display: block;
+  margin-top: 2px;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #50634f;
+}
+.medication-name-check {
+  flex-shrink: 0;
+  visibility: hidden;
+}
+.medication-name-option[aria-selected='true'] .medication-name-check {
+  visibility: visible;
+}
+.medication-name-field .medication-name-footnote {
+  margin: 0;
+  padding: 11px 19px;
+  border-top: 1px solid #d7dfd1;
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #50634f;
+}
+.medication-name-field .medication-name-empty {
+  margin: 10px 0 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #50634f;
+}
+@media (hover: hover) {
+  .medication-name-option:hover {
+    background: #f0f4eb;
+  }
+}
+@media (forced-colors: active) {
+  .medication-name-popup {
+    border-color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+  .medication-name-option {
+    color: CanvasText;
+  }
+  .medication-name-option[aria-selected='true'] {
+    border-color: Highlight;
+  }
+  .medication-name-icon,
+  .medication-name-detail,
+  .medication-name-footnote,
+  .medication-name-empty {
+    color: CanvasText;
+  }
+}

@@ -337,11 +337,25 @@ def import_animations():
         animations.append(action)
 
     # Remove ALL imported objects (we only want the actions)
+    # Collect all objects to remove, then delete deepest-children first
+    to_remove = set()
     for obj in imported:
-        # Remove children first
-        for child in list(obj.children_recursive):
-            bpy.data.objects.remove(child, do_unlink=True)
-        bpy.data.objects.remove(obj, do_unlink=True)
+        to_remove.add(obj)
+        for child in obj.children_recursive:
+            to_remove.add(child)
+    # Sort by depth (deepest first) to avoid dangling references
+    def _depth(o):
+        d = 0
+        p = o.parent
+        while p:
+            d += 1
+            p = p.parent
+        return d
+    for obj in sorted(to_remove, key=_depth, reverse=True):
+        try:
+            bpy.data.objects.remove(obj, do_unlink=True)
+        except ReferenceError:
+            pass  # already removed
 
     print(f"  Animations found: {len(animations)}")
     for a in animations[:8]:
@@ -387,7 +401,7 @@ def export_variant(variant_name, arm_obj, mesh_obj):
         export_animations=True,
         export_skins=True,
         export_normals=True,
-        export_tangents=False,
+        export_tangents=True,
         export_materials='EXPORT',
         export_image_format='AUTO',
         export_texcoords=True,

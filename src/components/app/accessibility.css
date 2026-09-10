@@ -1,0 +1,297 @@
+/* WCAG-oriented defaults. Soft surfaces, readable text, visible boundaries. */
+:root {
+  --notice-height: 0px;
+}
+html {
+  scroll-padding-block: 5rem calc(var(--notice-height) + 7rem);
+}
+body :is(button, a, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid #274f46;
+  outline-offset: 4px;
+  box-shadow: 0 0 0 2px #fff;
+}
+body :is(button, a, input, select, textarea, summary) {
+  scroll-margin-block: 6rem;
+}
+body :is(button, .button, .icon-button, summary, .text-link, .help-link, .back-link) {
+  min-height: 44px;
+}
+body .text-link,
+body .help-link,
+body .back-link {
+  display: inline-flex;
+  align-items: center;
+}
+body :is(input:not([type='checkbox']), select, textarea) {
+  font-size: 1rem;
+}
+body :is(input, select, textarea) {
+  border-color: #788772;
+}
+body input[type='checkbox'] {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  accent-color: #476441;
+}
+body .toggle-row {
+  min-height: 64px;
+  gap: 18px;
+}
+body .toggle-row small {
+  line-height: 1.6;
+}
+body .app-main {
+  padding-bottom: calc(2rem + var(--notice-height));
+}
+body
+  :is(
+    .optional,
+    .muted,
+    .welcome-caption,
+    .streak-badge,
+    .studio-link,
+    .next-dose,
+    .care-goals li,
+    .status-chip,
+    .supply-note,
+    .back-link,
+    legend,
+    .history-stats span,
+    .history-stats small,
+    .history-stats em,
+    .device-badge,
+    .reminder-feature p,
+    .calendar-reminders p,
+    .reminder-details summary,
+    .checkbox-card span,
+    .data-status,
+    .checkin-med p,
+    .subtle-row,
+    .instruction-note,
+    .help-link,
+    .button.ghost,
+    .segmented-control button,
+    .day-picker button
+  ) {
+  color: #4c5f45;
+}
+body .studio-link {
+  opacity: 1;
+}
+body .dose-card .dose-status {
+  color: #4c5f45;
+  font-size: 0.75rem;
+}
+body .dose-card .dose-status.due {
+  color: #805725;
+}
+body .danger-link {
+  color: #8a493b;
+}
+body .calendar-day.outside:not(:disabled) {
+  opacity: 1;
+  color: #54624e;
+  background: #f1f3ed;
+}
+body .calendar-day.selected {
+  color: #fff;
+  background: #4d6744;
+}
+body .calendar-day {
+  min-width: 0;
+}
+body
+  :is(
+    .button.secondary,
+    .scene-button,
+    .icon-button,
+    .day-picker button,
+    .segmented-control,
+    .calendar-day.today
+  ) {
+  border-color: #7c8e70;
+}
+body .companion-caption {
+  flex-wrap: wrap;
+}
+body .companion-caption .room-controls {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+body .room-controls .scene-zoom {
+  width: auto;
+  height: auto;
+  min-height: 52px;
+  padding: 8px 4px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.75rem;
+}
+body .room-controls .scene-zoom svg {
+  flex-shrink: 0;
+}
+body .live-scene > [role='img'] {
+  width: 100%;
+  height: 100%;
+}
+body .help-page {
+  max-width: 820px;
+}
+body .help-page p,
+body .help-page li {
+  max-width: 65ch;
+  line-height: 1.7;
+}
+body .help-page li + li {
+  margin-top: 0.75rem;
+}
+body .help-page h3 {
+  margin-top: 1.5rem;
+}
+body .welcome-help {
+  margin-bottom: 1rem;
+}
+body .form-error h2 {
+  font-size: 1rem;
+  color: inherit;
+}
+body .form-error a {
+  color: inherit;
+  text-decoration: underline;
+}
+body :is(.button, .field, .panel, .dose-card, .dose-copy, .companion-checkin-copy, .topbar-right) {
+  min-width: 0;
+}
+body :is(.dose-copy strong, .companion-checkin-copy strong, .app-toast span) {
+  overflow-wrap: anywhere;
+}
+body .app-dialog {
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+}
+body .app-toast {
+  max-height: min(36dvh, 240px);
+  overflow-y: auto;
+}
+body
+  .asset-studio
+  :is(
+    .studio-brand strong span,
+    .studio-eyebrow,
+    .studio-segment button,
+    .stage-footer,
+    .panel-note,
+    label,
+    .delivery-total span,
+    .studio-delivery p,
+    .studio-delivery a
+  ) {
+  color: #4b5c41;
+}
+html[data-hide-rewards='true'] .history-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+html[data-reduced-motion='true'] *,
+html[data-reduced-motion='true'] *::before,
+html[data-reduced-motion='true'] *::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 600px) {
+  body .app-main {
+    padding-bottom: calc(7rem + var(--notice-height));
+  }
+  body .room-controls .scene-zoom {
+    flex-direction: column;
+  }
+  body .topbar-right {
+    gap: 10px;
+  }
+  body .streak-badge {
+    display: none;
+  }
+  body .help-link {
+    font-size: 0.875rem;
+  }
+  body .day-picker {
+    gap: 3px;
+  }
+  body .day-picker button {
+    padding-inline: 1px;
+  }
+  body .calendar-days {
+    gap: 2px;
+  }
+  body .calendar-day {
+    min-height: 44px;
+  }
+}
+@media (forced-colors: active) {
+  body :is(button, .button, input, select, textarea, .calendar-day, .dose-card, .scene-button) {
+    border: 1px solid ButtonText;
+  }
+  body :is(button[aria-pressed='true'], .calendar-day.selected, a[aria-current='page']) {
+    outline: 2px solid Highlight;
+    outline-offset: -3px;
+  }
+  body :is(button, a, input, select, textarea, summary):focus-visible {
+    outline-color: Highlight;
+    box-shadow: none;
+  }
+  body .garden-water-zone {
+    border: 3px dashed Highlight;
+  }
+}
+
+body .app-dialog > p,
+body .snooze-help {
+  color: #4c5f45;
+}
+body .studio-camera-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 20px;
+}
+body .studio-camera-buttons button {
+  min-height: 44px;
+  padding: 8px 12px;
+  color: #3e5135;
+  background: #f4f6ee;
+  border: 1px solid #788772;
+  border-radius: 12px;
+}
+
+/* Route focus is announced through the main landmark; interactive targets keep their ring. */
+body .app-main:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+body .color-picker button[aria-pressed='true'] {
+  outline: 3px solid #304b38;
+  outline-offset: 4px;
+}
+body .color-picker button svg {
+  stroke: #172b1d;
+}
+body .app-navigation .nav-item {
+  min-height: 44px;
+}

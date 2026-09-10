@@ -1,149 +1,128 @@
-import { lazy, Suspense } from 'react';
-import type { FC } from 'react';
-import TopBar from '@/components/ui/TopBar';
-import BottomNav from '@/components/ui/BottomNav';
-import PillChip from '@/components/ui/PillChip';
-import PrimaryButton from '@/components/ui/PrimaryButton';
-import SceneErrorBoundary from '@/components/scene/SceneErrorBoundary';
-import AnimationControls from '@/components/scene/AnimationControls';
+import RoutinesToday from '@/components/app/RoutinesToday';
+import { useCheckIn } from '@/components/app/CheckIn';
+import { scheduledAt } from '@/domain/schedule';
+import { Link } from 'react-router-dom';
+import { ArrowRight, Check, Clock3, Plus } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
-
-const SceneCanvas = lazy(() => import('@/components/scene/SceneCanvas'));
-
-const HomePage: FC = () => {
-  const streak = useAppStore((state) => state.streak);
-  const medications = useAppStore((state) => state.medications);
-
+import { dateKey, dosesForDay, nextDose, relativeTime } from '@/domain/schedule';
+import CompanionPanel, { CompanionGoals } from '@/components/app/CompanionPanel';
+import { ReminderSummary } from '@/components/app/ReminderSettings';
+import DoseCard from '@/components/app/DoseCard';
+import { useNow } from '@/components/app/AppRuntime';
+export default function HomePage() {
+  const data = useAppStore((s) => s.data),
+    now = useNow();
+  const today = dateKey(now),
+    doses = dosesForDay(data, today),
+    checked = doses.filter((d) => d.record).length;
+  const pending = doses.filter((d) => !d.record),
+    upcoming = nextDose(data, now);
+  const openCheckIn = useCheckIn();
+  const due = pending.find((d) => +scheduledAt(d) <= +now);
+  const previousRecord = Object.values(data.records).sort((a, b) =>
+    b.recordedAt.localeCompare(a.recordedAt),
+  )[0];
+  const returning = previousRecord && previousRecord.date < today;
+  const active = data.medications.filter((m) => !m.archived);
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        overflow: 'hidden',
-      }}
-    >
-      <TopBar />
-
-      {/* Streak section */}
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '12px 0 8px',
-        }}
-      >
-        <span
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 11,
-            fontWeight: 500,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-          }}
-        >
-          DAY STREAK
-        </span>
-        <span
-          style={{
-            fontFamily: "'Sora', sans-serif",
-            fontSize: 96,
-            fontWeight: 700,
-            color: '#FFFFFF',
-            lineHeight: 1,
-            textShadow: '0 0 40px rgba(212, 165, 116, 0.25)',
-          }}
-        >
-          {streak}
-        </span>
+    <>
+      <div className="page-heading">
+        <div>
+          <span className="eyebrow">
+            {new Intl.DateTimeFormat(undefined, {
+              weekday: 'long',
+              month: 'long',
+              day: 'numeric',
+            }).format(now)}
+          </span>
+          <h1>{data.profile.name ? 'Hi, ' + data.profile.name + '.' : 'Today'}</h1>
+        </div>
+        <Link to="/meds/new" className="button secondary desktop-add">
+          <Plus aria-hidden="true" focusable="false" size={17} /> Add medication
+        </Link>
       </div>
+      {returning && (
+        <p className="return-welcome">Welcome back. We can take today one thing at a time.</p>
+      )}
+      {due && (
+        <div className="medication-shortcut">
+          <span>
+            <strong>{due.name}</strong> · Medication check-in
+          </span>
+          <button className="button primary" onClick={() => openCheckIn(due.id)}>
+            Review dose
+          </button>
+        </div>
+      )}
+      <div className="home-grid">
+        <CompanionPanel />
+        <div className="home-sidebar">
+          <section className="today-panel" id="check-ins" tabIndex={-1}>
+            <div className="section-heading">
+              <div>
+                <h2>Today’s check-ins</h2>
+              </div>
+              <span className="count-badge">
+                {checked}/{doses.length}
+              </span>
+            </div>
+            {doses.length > 0 ? (
+              <>
+                <div
+                  className="progress-track"
+                  role="progressbar"
+                  aria-label="Today's recorded doses"
+                  aria-valuemin={0}
+                  aria-valuemax={doses.length}
+                  aria-valuenow={checked}
+                >
+                  <span style={{ width: (checked / doses.length) * 100 + '%' }} />
+                </div>
 
-      {/* Today's doses */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        <span
-          style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: 11,
-            fontWeight: 500,
-            color: 'var(--text-muted)',
-            letterSpacing: '0.08em',
-            textTransform: 'uppercase',
-            textAlign: 'center',
-          }}
-        >
-          TODAY'S DOSES
-        </span>
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            gap: 8,
-            overflow: 'hidden',
-            padding: '0 16px',
-          }}
-        >
-          {medications.map((med) => (
-            <PillChip
-              key={med.id}
-              name={med.name}
-              time={med.time}
-              color={med.color}
-            />
-          ))}
+                <div className="dose-list">
+                  {doses.map((d) => (
+                    <DoseCard key={d.id} dose={d} />
+                  ))}
+                </div>
+                {!pending.length && (
+                  <div className="done-note">
+                    <Check aria-hidden="true" focusable="false" size={19} /> All checked in for
+                    today.
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="empty-state compact">
+                <span className="empty-icon">
+                  <Clock3 aria-hidden="true" focusable="false" size={26} strokeWidth={1.5} />
+                </span>
+                <h3>{active.length ? 'Nothing scheduled today' : 'Add your first medication'}</h3>
+                <p>
+                  {active.length
+                    ? 'Nothing is scheduled for today. Your next check-in will appear here.'
+                    : 'Add your first medication and choose the times that match your instructions.'}
+                </p>
+                <Link to={active.length ? '/meds' : '/meds/new'} className="button primary">
+                  {active.length ? 'View medications' : 'Add a medication'}
+                  <ArrowRight aria-hidden="true" focusable="false" size={17} />
+                </Link>
+              </div>
+            )}
+            {upcoming && (
+              <div className="next-dose">
+                <Clock3 aria-hidden="true" focusable="false" size={16} />
+                <span>
+                  Next: <strong>{upcoming.name}</strong>
+                  <small>{relativeTime(upcoming, now)}</small>
+                </span>
+              </div>
+            )}
+            <ReminderSummary />
+          </section>
+          <RoutinesToday />
+          <CompanionGoals />
         </div>
       </div>
-
-      {/* 3D Room Diorama */}
-      <div
-        style={{
-          position: 'relative',
-          flex: 1,
-          minHeight: 0,
-        }}
-      >
-        <SceneErrorBoundary>
-          <Suspense
-            fallback={
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  height: '100%',
-                  color: 'var(--text-muted)',
-                  fontFamily: "'DM Sans', sans-serif",
-                  fontSize: 14,
-                }}
-              >
-                Loading room...
-              </div>
-            }
-          >
-            <SceneCanvas />
-          </Suspense>
-        </SceneErrorBoundary>
-        <AnimationControls />
-      </div>
-
-      {/* Log a Dose CTA */}
-      <div style={{ padding: '0 16px 8px 16px' }}>
-        <PrimaryButton>Log a Dose ✦</PrimaryButton>
-      </div>
-
-      {/* Divider */}
-      <div
-        style={{
-          height: 1,
-          background: '#A3B18A33',
-          boxShadow: '0 0 8px rgba(163, 177, 138, 0.12)',
-        }}
-      />
-
-      <BottomNav />
-    </div>
+    </>
   );
-};
-
-export default HomePage;
+}

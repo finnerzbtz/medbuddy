@@ -1,0 +1,303 @@
+/* A brief, silent flourish. Every control beneath it remains usable. */
+.dose-celebration {
+  position: fixed;
+  inset: 0;
+  z-index: 180;
+  pointer-events: none;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 12px 12px calc(32px + var(--notice-height, 0px));
+  animation: checkin-veil 4.2s both;
+  contain: layout paint;
+}
+.dose-celebration-wash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 42%,
+    #fbf9eafc 0%,
+    #f7f7ecf5 35%,
+    #edf3e8c7 75%,
+    #e4eee6a8
+  );
+  backdrop-filter: blur(3px);
+}
+.dose-celebration-stage {
+  position: relative;
+  isolation: isolate;
+  width: min(520px, 100%);
+  text-align: center;
+  animation: checkin-arrive 0.65s cubic-bezier(0.18, 0.8, 0.28, 1.15) both;
+}
+.dose-celebration-halo {
+  position: absolute;
+  z-index: -1;
+  top: 2%;
+  left: 50%;
+  width: 90%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fce5aa9c 0%, #e4eec776 45%, transparent 70%);
+}
+.dose-celebration-halo::before,
+.dose-celebration-halo::after {
+  content: '';
+  position: absolute;
+  inset: 6%;
+  border: 2px solid #b3c59490;
+  border-radius: 50%;
+  animation: checkin-ripple 1.6s 0.16s ease-out both;
+}
+.dose-celebration-halo::after {
+  inset: 0;
+  border-color: #e9c36b85;
+  animation-delay: 0.35s;
+}
+.dose-celebration-blobby {
+  position: relative;
+  height: clamp(230px, 39dvh, 380px);
+  width: 100%;
+}
+.dose-celebration-blobby > div:not(.dose-celebration-seal) {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.dose-celebration-blobby[data-ready='true'] > div:not(.dose-celebration-seal) {
+  opacity: 1;
+}
+.dose-celebration-seal {
+  position: absolute;
+  inset: 20% 0;
+  margin: auto;
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #426043;
+  background: #e2eccd;
+  box-shadow:
+    inset 0 0 0 9px #f6f8ee,
+    0 0 0 2px #adc191;
+  transition: opacity 0.18s ease;
+}
+.dose-celebration-seal svg {
+  width: 74px;
+  height: 74px;
+}
+.dose-celebration-blobby[data-ready='true'] .dose-celebration-seal {
+  opacity: 0;
+}
+.dose-celebration-copy {
+  position: relative;
+  margin-top: -12px;
+}
+.dose-celebration-tick {
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  background: #537448;
+  border-radius: 50%;
+  box-shadow: 0 0 0 5px #f3f6e5;
+}
+.dose-celebration-copy h2 {
+  margin: 14px 0 6px;
+  color: #344e3d;
+  font-size: clamp(32px, 6.5vw, 50px);
+  font-weight: 650;
+  line-height: 1.08;
+  letter-spacing: -0.055em;
+  text-wrap: balance;
+}
+.dose-celebration-copy p {
+  margin: 0;
+  padding: 0 12px;
+  color: #51654e;
+  font-size: 16px;
+  text-wrap: balance;
+}
+.dose-celebration-orbit {
+  position: absolute;
+  inset: 0 0 20%;
+}
+.celebration-star,
+.celebration-heart {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  stroke-width: 1.5px;
+  animation: checkin-spark 3.7s 0.15s both;
+}
+.celebration-star {
+  color: #ae853e;
+  fill: #efd17f;
+}
+.celebration-heart {
+  color: #b77981;
+  fill: #e4a8af;
+}
+.star-one {
+  left: 16%;
+  top: 19%;
+  rotate: -16deg;
+}
+.star-two {
+  right: 12%;
+  top: 37%;
+  width: 45px;
+  height: 45px;
+  animation-delay: 0.35s;
+}
+.heart-one {
+  left: 12%;
+  top: 58%;
+  width: 27px;
+  height: 27px;
+  rotate: -18deg;
+  animation-delay: 0.25s;
+}
+.heart-two {
+  right: 23%;
+  top: 8%;
+  width: 27px;
+  height: 27px;
+  rotate: 20deg;
+  animation-delay: 0.4s;
+}
+.dose-confetti {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.dose-confetti > span {
+  position: absolute;
+  top: 65%;
+  will-change: transform, opacity;
+  animation: checkin-confetti var(--duration) var(--delay) cubic-bezier(0.2, 0.55, 0.6, 1) both;
+}
+.app-toast.checkin-confirmation {
+  background: #3d5945;
+}
+.checkin-confirmation-icon {
+  flex: 0 0 32px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #344d37;
+  background: #d5e6be;
+}
+@keyframes checkin-veil {
+  0% {
+    opacity: 0;
+  }
+  9%,
+  87% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+@keyframes checkin-arrive {
+  0% {
+    transform: translateY(30px) scale(0.85);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes checkin-ripple {
+  0% {
+    transform: scale(0.35);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+@keyframes checkin-spark {
+  0% {
+    transform: translateY(25px) scale(0);
+    opacity: 0;
+  }
+  15% {
+    transform: translateY(0) scale(1.2);
+    opacity: 1;
+  }
+  30% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  90% {
+    transform: translateY(-28px) scale(0.9);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-35px) scale(0.7);
+    opacity: 0;
+  }
+}
+@keyframes checkin-confetti {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(0.3);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  35% {
+    transform: translate3d(calc(var(--x) * 0.45), var(--rise), 0) rotate(calc(var(--spin) * 0.4));
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(var(--x), var(--fall), 0) rotate(var(--spin));
+    opacity: 0;
+  }
+}
+@media (max-width: 760px) {
+  .dose-celebration {
+    padding-bottom: calc(105px + var(--notice-height, 0px));
+  }
+}
+@media (max-height: 540px) {
+  .dose-celebration-blobby {
+    height: 150px;
+  }
+  .dose-celebration-stage {
+    width: 340px;
+  }
+  .dose-celebration-copy h2 {
+    font-size: 30px;
+  }
+  .dose-celebration-copy p {
+    font-size: 13px;
+  }
+  .dose-celebration-tick {
+    display: none;
+  }
+}
+/* Defense in depth: never animate before the JS preference effect runs. */
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+  .dose-celebration {
+    display: none;
+  }
+}
+:root[data-reduced-motion='true'] .dose-celebration,
+:root[data-hide-rewards='true'] .dose-celebration {
+  display: none;
+}
+
+.celebration-leaves { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; margin-top: 8px; border-radius: 99px; background: #e1edd7; color: #354e31; font-weight: 650; }

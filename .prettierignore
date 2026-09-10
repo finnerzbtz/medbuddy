@@ -1,0 +1,6 @@
+src/generated/
+rebuild/generated/
+rebuild/legacy/
+public/
+dist/
+node_modules/

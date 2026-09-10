@@ -1,0 +1,40 @@
+.reminder-onboarding {
+  width: 100%;
+  max-width: 540px;
+  margin: clamp(0px, 3vh, 28px) auto;
+  padding: clamp(22px, 5vw, 40px);
+}
+.reminder-onboarding-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 22px;
+  background: #e8eee3;
+  color: #476441;
+  margin-bottom: 24px;
+}
+.reminder-onboarding h1 {
+  font-size: clamp(1.75rem, 5vw, 2.2rem);
+}
+.reminder-onboarding p {
+  line-height: 1.6;
+  color: #4c5f45;
+}
+.reminder-onboarding-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 28px;
+}
+.reminder-onboarding-actions .button {
+  white-space: normal;
+  text-align: center;
+}
+.reminder-onboarding-feedback:empty {
+  display: none;
+}
+.reminder-onboarding .reminder-onboarding-later {
+  margin-bottom: 0;
+  font-size: 0.875rem;
+}

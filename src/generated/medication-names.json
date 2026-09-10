@@ -1,0 +1,1031 @@
+{
+  "source": "https://www.nhs.uk/medicines/",
+  "retrievedAt": "2026-09-09",
+  "scope": "Selected names from the NHS medicines A-Z, excluding general medicine classes. Not a complete prescribing catalogue. No strengths, indications or dose recommendations.",
+  "names": [
+    {
+      "name": "Aciclovir (Zovirax)",
+      "source": "https://www.nhs.uk/medicines/aciclovir/"
+    },
+    {
+      "name": "Acrivastine",
+      "source": "https://www.nhs.uk/medicines/acrivastine/"
+    },
+    {
+      "name": "Adalimumab",
+      "source": "https://www.nhs.uk/medicines/adalimumab/"
+    },
+    {
+      "name": "Alendronic acid",
+      "source": "https://www.nhs.uk/medicines/alendronic-acid/"
+    },
+    {
+      "name": "Allopurinol",
+      "source": "https://www.nhs.uk/medicines/allopurinol/"
+    },
+    {
+      "name": "Alogliptin",
+      "source": "https://www.nhs.uk/medicines/alogliptin/"
+    },
+    {
+      "name": "Amitriptyline",
+      "source": "https://www.nhs.uk/medicines/amitriptyline-for-depression/"
+    },
+    {
+      "name": "Amlodipine",
+      "source": "https://www.nhs.uk/medicines/amlodipine/"
+    },
+    {
+      "name": "Amoxicillin",
+      "source": "https://www.nhs.uk/medicines/amoxicillin/"
+    },
+    {
+      "name": "Anastrozole",
+      "source": "https://www.nhs.uk/medicines/anastrozole/"
+    },
+    {
+      "name": "Apixaban",
+      "source": "https://www.nhs.uk/medicines/apixaban/"
+    },
+    {
+      "name": "Aripiprazole",
+      "source": "https://www.nhs.uk/medicines/aripiprazole/"
+    },
+    {
+      "name": "Aspirin",
+      "source": "https://www.nhs.uk/medicines/aspirin/"
+    },
+    {
+      "name": "Atenolol",
+      "source": "https://www.nhs.uk/medicines/atenolol/"
+    },
+    {
+      "name": "Atorvastatin",
+      "source": "https://www.nhs.uk/medicines/atorvastatin/"
+    },
+    {
+      "name": "Azathioprine",
+      "source": "https://www.nhs.uk/medicines/azathioprine/"
+    },
+    {
+      "name": "Azithromycin",
+      "source": "https://www.nhs.uk/medicines/azithromycin/"
+    },
+    {
+      "name": "Baclofen",
+      "source": "https://www.nhs.uk/medicines/baclofen/"
+    },
+    {
+      "name": "Beclometasone inhalers",
+      "source": "https://www.nhs.uk/medicines/beclometasone-inhalers/"
+    },
+    {
+      "name": "Beclometasone nasal spray",
+      "source": "https://www.nhs.uk/medicines/beclometasone-nasal-spray/"
+    },
+    {
+      "name": "Beclometasone skin cream",
+      "source": "https://www.nhs.uk/medicines/beclometasone-skin-creams/"
+    },
+    {
+      "name": "Bendroflumethiazide",
+      "source": "https://www.nhs.uk/medicines/bendroflumethiazide/"
+    },
+    {
+      "name": "Benzoyl peroxide",
+      "source": "https://www.nhs.uk/medicines/benzoyl-peroxide/"
+    },
+    {
+      "name": "Benzydamine",
+      "source": "https://www.nhs.uk/medicines/benzydamine/"
+    },
+    {
+      "name": "Betahistine",
+      "source": "https://www.nhs.uk/medicines/betahistine/"
+    },
+    {
+      "name": "Betamethasone for eyes, ears and nose",
+      "source": "https://www.nhs.uk/medicines/betamethasone-eyes-ears-and-nose/"
+    },
+    {
+      "name": "Betamethasone for skin",
+      "source": "https://www.nhs.uk/medicines/betamethasone-skin/"
+    },
+    {
+      "name": "Bimatoprost (Lumigan)",
+      "source": "https://www.nhs.uk/medicines/bimatoprost/"
+    },
+    {
+      "name": "Bisacodyl",
+      "source": "https://www.nhs.uk/medicines/bisacodyl/"
+    },
+    {
+      "name": "Bismuth subsalicylate",
+      "source": "https://www.nhs.uk/medicines/pepto-bismol/"
+    },
+    {
+      "name": "Bisoprolol",
+      "source": "https://www.nhs.uk/medicines/bisoprolol/"
+    },
+    {
+      "name": "Brinzolamide",
+      "source": "https://www.nhs.uk/medicines/brinzolamide/"
+    },
+    {
+      "name": "Budesonide inhalers",
+      "source": "https://www.nhs.uk/medicines/budesonide-inhalers/"
+    },
+    {
+      "name": "Budesonide nasal spray",
+      "source": "https://www.nhs.uk/medicines/budesonide-nasal-spray/"
+    },
+    {
+      "name": "Budesonide rectal foam and enemas",
+      "source": "https://www.nhs.uk/medicines/budesonide-rectal-foam-and-enemas/"
+    },
+    {
+      "name": "Bumetanide",
+      "source": "https://www.nhs.uk/medicines/bumetanide/"
+    },
+    {
+      "name": "Buprenorphine",
+      "source": "https://www.nhs.uk/medicines/buprenorphine-for-pain/"
+    },
+    {
+      "name": "Buscopan (hyoscine butylbromide)",
+      "source": "https://www.nhs.uk/medicines/buscopan-hyoscine-butylbromide/"
+    },
+    {
+      "name": "Calcipotriol",
+      "source": "https://www.nhs.uk/medicines/calcipotriol/"
+    },
+    {
+      "name": "Calpol",
+      "source": "https://www.nhs.uk/medicines/paracetamol-for-children/"
+    },
+    {
+      "name": "Candesartan",
+      "source": "https://www.nhs.uk/medicines/candesartan/"
+    },
+    {
+      "name": "Carbamazepine (Tegretol)",
+      "source": "https://www.nhs.uk/medicines/carbamazepine/"
+    },
+    {
+      "name": "Carbimazole",
+      "source": "https://www.nhs.uk/medicines/carbimazole/"
+    },
+    {
+      "name": "Carbocisteine",
+      "source": "https://www.nhs.uk/medicines/carbocisteine/"
+    },
+    {
+      "name": "Carmellose sodium eye drops",
+      "source": "https://www.nhs.uk/medicines/carmellose-sodium/"
+    },
+    {
+      "name": "Carvedilol",
+      "source": "https://www.nhs.uk/medicines/carvedilol/"
+    },
+    {
+      "name": "Cefalexin",
+      "source": "https://www.nhs.uk/medicines/cefalexin/"
+    },
+    {
+      "name": "Cetirizine",
+      "source": "https://www.nhs.uk/medicines/cetirizine/"
+    },
+    {
+      "name": "Chloramphenicol",
+      "source": "https://www.nhs.uk/medicines/chloramphenicol/"
+    },
+    {
+      "name": "Chlorhexidine",
+      "source": "https://www.nhs.uk/medicines/chlorhexidine/"
+    },
+    {
+      "name": "Chlorphenamine (Piriton)",
+      "source": "https://www.nhs.uk/medicines/chlorphenamine-including-piriton/"
+    },
+    {
+      "name": "Cinnarizine",
+      "source": "https://www.nhs.uk/medicines/cinnarizine/"
+    },
+    {
+      "name": "Ciprofloxacin",
+      "source": "https://www.nhs.uk/medicines/ciprofloxacin/"
+    },
+    {
+      "name": "Citalopram",
+      "source": "https://www.nhs.uk/medicines/citalopram/"
+    },
+    {
+      "name": "Clarithromycin",
+      "source": "https://www.nhs.uk/medicines/clarithromycin/"
+    },
+    {
+      "name": "Clarityn",
+      "source": "https://www.nhs.uk/medicines/loratadine/"
+    },
+    {
+      "name": "Clobetasol (Dermovate)",
+      "source": "https://www.nhs.uk/medicines/clobetasol/"
+    },
+    {
+      "name": "Clobetasone (Eumovate)",
+      "source": "https://www.nhs.uk/medicines/clobetasone/"
+    },
+    {
+      "name": "Clonazepam",
+      "source": "https://www.nhs.uk/medicines/clonazepam/"
+    },
+    {
+      "name": "Clonidine",
+      "source": "https://www.nhs.uk/medicines/clonidine/"
+    },
+    {
+      "name": "Clopidogrel",
+      "source": "https://www.nhs.uk/medicines/clopidogrel/"
+    },
+    {
+      "name": "Clotrimazole",
+      "source": "https://www.nhs.uk/medicines/clotrimazole/"
+    },
+    {
+      "name": "Co-amoxiclav",
+      "source": "https://www.nhs.uk/medicines/co-amoxiclav/"
+    },
+    {
+      "name": "Co-beneldopa",
+      "source": "https://www.nhs.uk/medicines/co-beneldopa/"
+    },
+    {
+      "name": "Co-codamol",
+      "source": "https://www.nhs.uk/medicines/co-codamol-for-adults/"
+    },
+    {
+      "name": "Co-codaprin (aspirin and codeine)",
+      "source": "https://www.nhs.uk/medicines/co-codaprin/"
+    },
+    {
+      "name": "Co-dydramol",
+      "source": "https://www.nhs.uk/medicines/co-dydramol/"
+    },
+    {
+      "name": "Codeine",
+      "source": "https://www.nhs.uk/medicines/codeine/"
+    },
+    {
+      "name": "Colchicine",
+      "source": "https://www.nhs.uk/medicines/colchicine/"
+    },
+    {
+      "name": "Colecalciferol",
+      "source": "https://www.nhs.uk/medicines/colecalciferol/"
+    },
+    {
+      "name": "Contraceptive injections (medroxyprogesterone)",
+      "source": "https://www.nhs.uk/medicines/contraceptive-injections-medroxyprogesterone/"
+    },
+    {
+      "name": "Cyanocobalamin",
+      "source": "https://www.nhs.uk/medicines/cyanocobalamin/"
+    },
+    {
+      "name": "Cyclizine",
+      "source": "https://www.nhs.uk/medicines/cyclizine/"
+    },
+    {
+      "name": "Dapagliflozin",
+      "source": "https://www.nhs.uk/medicines/dapagliflozin/"
+    },
+    {
+      "name": "Dermovate",
+      "source": "https://www.nhs.uk/medicines/clobetasol/"
+    },
+    {
+      "name": "Dexamethasone eye drops",
+      "source": "https://www.nhs.uk/medicines/dexamethasone-eye-drops/"
+    },
+    {
+      "name": "Dexamethasone tablets and liquid",
+      "source": "https://www.nhs.uk/medicines/dexamethasone-tablets-and-liquid/"
+    },
+    {
+      "name": "Diazepam",
+      "source": "https://www.nhs.uk/medicines/diazepam/"
+    },
+    {
+      "name": "Diclofenac",
+      "source": "https://www.nhs.uk/medicines/diclofenac/"
+    },
+    {
+      "name": "Digoxin",
+      "source": "https://www.nhs.uk/medicines/digoxin/"
+    },
+    {
+      "name": "Dihydrocodeine",
+      "source": "https://www.nhs.uk/medicines/dihydrocodeine/"
+    },
+    {
+      "name": "Diltiazem",
+      "source": "https://www.nhs.uk/medicines/diltiazem/"
+    },
+    {
+      "name": "Diphenhydramine",
+      "source": "https://www.nhs.uk/medicines/diphenhydramine/"
+    },
+    {
+      "name": "Dipyridamole",
+      "source": "https://www.nhs.uk/medicines/dipyridamole/"
+    },
+    {
+      "name": "Docusate",
+      "source": "https://www.nhs.uk/medicines/docusate/"
+    },
+    {
+      "name": "Domperidone",
+      "source": "https://www.nhs.uk/medicines/domperidone/"
+    },
+    {
+      "name": "Donepezil",
+      "source": "https://www.nhs.uk/medicines/donepezil/"
+    },
+    {
+      "name": "Doxazosin",
+      "source": "https://www.nhs.uk/medicines/doxazosin/"
+    },
+    {
+      "name": "Doxycycline",
+      "source": "https://www.nhs.uk/medicines/doxycycline/"
+    },
+    {
+      "name": "Duloxetine",
+      "source": "https://www.nhs.uk/medicines/duloxetine/"
+    },
+    {
+      "name": "Edoxaban",
+      "source": "https://www.nhs.uk/medicines/edoxaban/"
+    },
+    {
+      "name": "Empagliflozin",
+      "source": "https://www.nhs.uk/medicines/empagliflozin/"
+    },
+    {
+      "name": "Enalapril",
+      "source": "https://www.nhs.uk/medicines/enalapril/"
+    },
+    {
+      "name": "Eplerenone",
+      "source": "https://www.nhs.uk/medicines/eplerenone/"
+    },
+    {
+      "name": "Erythromycin",
+      "source": "https://www.nhs.uk/medicines/erythromycin/"
+    },
+    {
+      "name": "Escitalopram",
+      "source": "https://www.nhs.uk/medicines/escitalopram/"
+    },
+    {
+      "name": "Esomeprazole",
+      "source": "https://www.nhs.uk/medicines/esomeprazole/"
+    },
+    {
+      "name": "Eumovate",
+      "source": "https://www.nhs.uk/medicines/clobetasone/"
+    },
+    {
+      "name": "Ezetimibe",
+      "source": "https://www.nhs.uk/medicines/ezetimibe/"
+    },
+    {
+      "name": "Felodipine",
+      "source": "https://www.nhs.uk/medicines/felodipine/"
+    },
+    {
+      "name": "Fentanyl",
+      "source": "https://www.nhs.uk/medicines/fentanyl/"
+    },
+    {
+      "name": "Ferrous fumarate",
+      "source": "https://www.nhs.uk/medicines/ferrous-fumarate/"
+    },
+    {
+      "name": "Ferrous sulfate",
+      "source": "https://www.nhs.uk/medicines/ferrous-sulfate/"
+    },
+    {
+      "name": "Fexofenadine",
+      "source": "https://www.nhs.uk/medicines/fexofenadine/"
+    },
+    {
+      "name": "Finasteride",
+      "source": "https://www.nhs.uk/medicines/finasteride/"
+    },
+    {
+      "name": "Flucloxacillin",
+      "source": "https://www.nhs.uk/medicines/flucloxacillin/"
+    },
+    {
+      "name": "Fluconazole",
+      "source": "https://www.nhs.uk/medicines/fluconazole/"
+    },
+    {
+      "name": "Fluoxetine",
+      "source": "https://www.nhs.uk/medicines/fluoxetine/"
+    },
+    {
+      "name": "Fluticasone inhalers",
+      "source": "https://www.nhs.uk/medicines/fluticasone-inhalers/"
+    },
+    {
+      "name": "Fluticasone nasal spray and drops",
+      "source": "https://www.nhs.uk/medicines/fluticasone-nasal-spray-and-drops/"
+    },
+    {
+      "name": "Folic acid",
+      "source": "https://www.nhs.uk/medicines/folic-acid/"
+    },
+    {
+      "name": "Furosemide",
+      "source": "https://www.nhs.uk/medicines/furosemide/"
+    },
+    {
+      "name": "Fusidic acid (Fucidin)",
+      "source": "https://www.nhs.uk/medicines/fusidic-acid/"
+    },
+    {
+      "name": "Fybogel (ispaghula husk)",
+      "source": "https://www.nhs.uk/medicines/fybogel-ispaghula-husk/"
+    },
+    {
+      "name": "Gabapentin",
+      "source": "https://www.nhs.uk/medicines/gabapentin/"
+    },
+    {
+      "name": "Gaviscon",
+      "source": "https://www.nhs.uk/medicines/gaviscon/"
+    },
+    {
+      "name": "Gliclazide",
+      "source": "https://www.nhs.uk/medicines/gliclazide/"
+    },
+    {
+      "name": "Glyceryl trinitrate (GTN)",
+      "source": "https://www.nhs.uk/medicines/glyceryl-trinitrate-gtn/"
+    },
+    {
+      "name": "Hydrocortisone",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone/"
+    },
+    {
+      "name": "Hydrocortisone buccal tablets",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone-buccal-tablets/"
+    },
+    {
+      "name": "Hydrocortisone for piles and itchy bottom",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone-for-piles-and-itchy-bottom/"
+    },
+    {
+      "name": "Hydrocortisone for skin",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone-for-skin/"
+    },
+    {
+      "name": "Hydrocortisone injections",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone-injections/"
+    },
+    {
+      "name": "Hydrocortisone rectal foam",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone-rectal-foam/"
+    },
+    {
+      "name": "Hydrocortisone tablets",
+      "source": "https://www.nhs.uk/medicines/hydrocortisone-tablets/"
+    },
+    {
+      "name": "Hydroxocobalamin",
+      "source": "https://www.nhs.uk/medicines/hydroxocobalamin/"
+    },
+    {
+      "name": "Hydroxychloroquine",
+      "source": "https://www.nhs.uk/medicines/hydroxychloroquine/"
+    },
+    {
+      "name": "Hyoscine butylbromide",
+      "source": "https://www.nhs.uk/medicines/buscopan-hyoscine-butylbromide/"
+    },
+    {
+      "name": "Hyoscine hydrobromide",
+      "source": "https://www.nhs.uk/medicines/hyoscine-hydrobromide/"
+    },
+    {
+      "name": "Ibuprofen",
+      "source": "https://www.nhs.uk/medicines/ibuprofen-for-children/"
+    },
+    {
+      "name": "Ibuprofen (Nurofen)",
+      "source": "https://www.nhs.uk/medicines/ibuprofen-for-adults/"
+    },
+    {
+      "name": "Ibuprofen and codeine",
+      "source": "https://www.nhs.uk/medicines/ibuprofen-and-codeine-nurofen-plus/"
+    },
+    {
+      "name": "Imodium",
+      "source": "https://www.nhs.uk/medicines/loperamide/"
+    },
+    {
+      "name": "Indapamide",
+      "source": "https://www.nhs.uk/medicines/indapamide/"
+    },
+    {
+      "name": "Insulin",
+      "source": "https://www.nhs.uk/medicines/insulin/"
+    },
+    {
+      "name": "Irbesartan",
+      "source": "https://www.nhs.uk/medicines/irbesartan/"
+    },
+    {
+      "name": "Isosorbide mononitrate and isosorbide dinitrate",
+      "source": "https://www.nhs.uk/medicines/isosorbide-mononitrate-dinitrate/"
+    },
+    {
+      "name": "Isotretinoin (Roaccutane)",
+      "source": "https://www.nhs.uk/medicines/isotretinoin-roaccutane/"
+    },
+    {
+      "name": "Ispaghula husk",
+      "source": "https://www.nhs.uk/medicines/fybogel-ispaghula-husk/"
+    },
+    {
+      "name": "Ketoconazole",
+      "source": "https://www.nhs.uk/medicines/ketoconazole/"
+    },
+    {
+      "name": "Lactulose",
+      "source": "https://www.nhs.uk/medicines/lactulose/"
+    },
+    {
+      "name": "Lamotrigine",
+      "source": "https://www.nhs.uk/medicines/lamotrigine/"
+    },
+    {
+      "name": "Lansoprazole",
+      "source": "https://www.nhs.uk/medicines/lansoprazole/"
+    },
+    {
+      "name": "Latanoprost",
+      "source": "https://www.nhs.uk/medicines/latanoprost/"
+    },
+    {
+      "name": "Lercanidipine",
+      "source": "https://www.nhs.uk/medicines/lercanidipine/"
+    },
+    {
+      "name": "Letrozole",
+      "source": "https://www.nhs.uk/medicines/letrozole/"
+    },
+    {
+      "name": "Levetiracetam",
+      "source": "https://www.nhs.uk/medicines/levetiracetam/"
+    },
+    {
+      "name": "Levothyroxine",
+      "source": "https://www.nhs.uk/medicines/levothyroxine/"
+    },
+    {
+      "name": "Linagliptin",
+      "source": "https://www.nhs.uk/medicines/linagliptin/"
+    },
+    {
+      "name": "Liraglutide",
+      "source": "https://www.nhs.uk/medicines/liraglutide/"
+    },
+    {
+      "name": "Lisinopril",
+      "source": "https://www.nhs.uk/medicines/lisinopril/"
+    },
+    {
+      "name": "Lithium",
+      "source": "https://www.nhs.uk/medicines/lithium/"
+    },
+    {
+      "name": "Loperamide (Imodium)",
+      "source": "https://www.nhs.uk/medicines/loperamide/"
+    },
+    {
+      "name": "Loratadine (Clarityn)",
+      "source": "https://www.nhs.uk/medicines/loratadine/"
+    },
+    {
+      "name": "Lorazepam",
+      "source": "https://www.nhs.uk/medicines/lorazepam/"
+    },
+    {
+      "name": "Losartan",
+      "source": "https://www.nhs.uk/medicines/losartan/"
+    },
+    {
+      "name": "Lumigan",
+      "source": "https://www.nhs.uk/medicines/bimatoprost/"
+    },
+    {
+      "name": "Lymecycline",
+      "source": "https://www.nhs.uk/medicines/lymecycline/"
+    },
+    {
+      "name": "Macrogol",
+      "source": "https://www.nhs.uk/medicines/macrogol/"
+    },
+    {
+      "name": "Mebendazole (Ovex)",
+      "source": "https://www.nhs.uk/medicines/mebendazole/"
+    },
+    {
+      "name": "Mebeverine",
+      "source": "https://www.nhs.uk/medicines/mebeverine/"
+    },
+    {
+      "name": "Medroxyprogesterone injections",
+      "source": "https://www.nhs.uk/medicines/contraceptive-injections-medroxyprogesterone/"
+    },
+    {
+      "name": "Medroxyprogesterone tablets",
+      "source": "https://www.nhs.uk/medicines/medroxyprogesterone-tablets/"
+    },
+    {
+      "name": "Melatonin",
+      "source": "https://www.nhs.uk/medicines/melatonin/"
+    },
+    {
+      "name": "Memantine",
+      "source": "https://www.nhs.uk/medicines/memantine/"
+    },
+    {
+      "name": "Mesalazine",
+      "source": "https://www.nhs.uk/medicines/mesalazine/"
+    },
+    {
+      "name": "Metformin",
+      "source": "https://www.nhs.uk/medicines/metformin/"
+    },
+    {
+      "name": "Methadone",
+      "source": "https://www.nhs.uk/medicines/methadone/"
+    },
+    {
+      "name": "Methotrexate",
+      "source": "https://www.nhs.uk/medicines/methotrexate/"
+    },
+    {
+      "name": "Methylphenidate",
+      "source": "https://www.nhs.uk/medicines/methylphenidate-adults/"
+    },
+    {
+      "name": "Metoclopramide",
+      "source": "https://www.nhs.uk/medicines/metoclopramide/"
+    },
+    {
+      "name": "Metoprolol",
+      "source": "https://www.nhs.uk/medicines/metoprolol/"
+    },
+    {
+      "name": "Metronidazole",
+      "source": "https://www.nhs.uk/medicines/metronidazole/"
+    },
+    {
+      "name": "Mirabegron",
+      "source": "https://www.nhs.uk/medicines/mirabegron/"
+    },
+    {
+      "name": "Mirtazapine",
+      "source": "https://www.nhs.uk/medicines/mirtazapine/"
+    },
+    {
+      "name": "Mometasone for skin",
+      "source": "https://www.nhs.uk/medicines/mometasone-for-skin/"
+    },
+    {
+      "name": "Mometasone inhalers",
+      "source": "https://www.nhs.uk/medicines/mometasone-inhaler/"
+    },
+    {
+      "name": "Mometasone nasal spray",
+      "source": "https://www.nhs.uk/medicines/mometasone-nasal-spray/"
+    },
+    {
+      "name": "Montelukast",
+      "source": "https://www.nhs.uk/medicines/montelukast/"
+    },
+    {
+      "name": "Morphine",
+      "source": "https://www.nhs.uk/medicines/morphine/"
+    },
+    {
+      "name": "Naproxen",
+      "source": "https://www.nhs.uk/medicines/naproxen/"
+    },
+    {
+      "name": "Nefopam",
+      "source": "https://www.nhs.uk/medicines/nefopam/"
+    },
+    {
+      "name": "Nicorandil",
+      "source": "https://www.nhs.uk/medicines/nicorandil/"
+    },
+    {
+      "name": "Nifedipine",
+      "source": "https://www.nhs.uk/medicines/nifedipine/"
+    },
+    {
+      "name": "Nitrofurantoin",
+      "source": "https://www.nhs.uk/medicines/nitrofurantoin/"
+    },
+    {
+      "name": "Nortriptyline",
+      "source": "https://www.nhs.uk/medicines/nortriptyline/"
+    },
+    {
+      "name": "Nurofen",
+      "source": "https://www.nhs.uk/medicines/ibuprofen-for-adults/"
+    },
+    {
+      "name": "Nystatin",
+      "source": "https://www.nhs.uk/medicines/nystatin/"
+    },
+    {
+      "name": "Olanzapine",
+      "source": "https://www.nhs.uk/medicines/olanzapine/"
+    },
+    {
+      "name": "Omeprazole",
+      "source": "https://www.nhs.uk/medicines/omeprazole/"
+    },
+    {
+      "name": "Orlistat",
+      "source": "https://www.nhs.uk/medicines/orlistat/"
+    },
+    {
+      "name": "Ovex",
+      "source": "https://www.nhs.uk/medicines/mebendazole/"
+    },
+    {
+      "name": "Oxybutynin",
+      "source": "https://www.nhs.uk/medicines/oxybutynin/"
+    },
+    {
+      "name": "Oxycodone",
+      "source": "https://www.nhs.uk/medicines/oxycodone/"
+    },
+    {
+      "name": "Pantoprazole",
+      "source": "https://www.nhs.uk/medicines/pantoprazole/"
+    },
+    {
+      "name": "Paracetamol",
+      "source": "https://www.nhs.uk/medicines/paracetamol-for-adults/"
+    },
+    {
+      "name": "Paracetamol (Calpol)",
+      "source": "https://www.nhs.uk/medicines/paracetamol-for-children/"
+    },
+    {
+      "name": "Paroxetine",
+      "source": "https://www.nhs.uk/medicines/paroxetine/"
+    },
+    {
+      "name": "Peppermint oil",
+      "source": "https://www.nhs.uk/medicines/peppermint-oil/"
+    },
+    {
+      "name": "Pepto-Bismol (bismuth subsalicylate)",
+      "source": "https://www.nhs.uk/medicines/pepto-bismol/"
+    },
+    {
+      "name": "Perindopril",
+      "source": "https://www.nhs.uk/medicines/perindopril/"
+    },
+    {
+      "name": "Phenergan",
+      "source": "https://www.nhs.uk/medicines/promethazine/"
+    },
+    {
+      "name": "Phenoxymethylpenicillin",
+      "source": "https://www.nhs.uk/medicines/phenoxymethylpenicillin/"
+    },
+    {
+      "name": "Piriton",
+      "source": "https://www.nhs.uk/medicines/chlorphenamine-including-piriton/"
+    },
+    {
+      "name": "Pravastatin",
+      "source": "https://www.nhs.uk/medicines/pravastatin/"
+    },
+    {
+      "name": "Prednisolone tablets and liquid",
+      "source": "https://www.nhs.uk/medicines/prednisolone/"
+    },
+    {
+      "name": "Pregabalin",
+      "source": "https://www.nhs.uk/medicines/pregabalin/"
+    },
+    {
+      "name": "Prochlorperazine",
+      "source": "https://www.nhs.uk/medicines/prochlorperazine/"
+    },
+    {
+      "name": "Promethazine (Phenergan)",
+      "source": "https://www.nhs.uk/medicines/promethazine/"
+    },
+    {
+      "name": "Propranolol",
+      "source": "https://www.nhs.uk/medicines/propranolol/"
+    },
+    {
+      "name": "Pseudoephedrine (Sudafed)",
+      "source": "https://www.nhs.uk/medicines/pseudoephedrine/"
+    },
+    {
+      "name": "Quetiapine",
+      "source": "https://www.nhs.uk/medicines/quetiapine/"
+    },
+    {
+      "name": "Ramipril",
+      "source": "https://www.nhs.uk/medicines/ramipril/"
+    },
+    {
+      "name": "Ranitidine",
+      "source": "https://www.nhs.uk/medicines/ranitidine/"
+    },
+    {
+      "name": "Risperidone",
+      "source": "https://www.nhs.uk/medicines/risperidone/"
+    },
+    {
+      "name": "Rivaroxaban",
+      "source": "https://www.nhs.uk/medicines/rivaroxaban/"
+    },
+    {
+      "name": "Ropinirole",
+      "source": "https://www.nhs.uk/medicines/ropinirole/"
+    },
+    {
+      "name": "Rosuvastatin",
+      "source": "https://www.nhs.uk/medicines/rosuvastatin/"
+    },
+    {
+      "name": "Salbutamol inhalers",
+      "source": "https://www.nhs.uk/medicines/salbutamol-inhaler/"
+    },
+    {
+      "name": "Semaglutide",
+      "source": "https://www.nhs.uk/medicines/semaglutide/"
+    },
+    {
+      "name": "Senna",
+      "source": "https://www.nhs.uk/medicines/senna/"
+    },
+    {
+      "name": "Sertraline",
+      "source": "https://www.nhs.uk/medicines/sertraline/"
+    },
+    {
+      "name": "Sildenafil (Viagra)",
+      "source": "https://www.nhs.uk/medicines/sildenafil-viagra/"
+    },
+    {
+      "name": "Simeticone",
+      "source": "https://www.nhs.uk/medicines/simeticone/"
+    },
+    {
+      "name": "Simvastatin",
+      "source": "https://www.nhs.uk/medicines/simvastatin/"
+    },
+    {
+      "name": "Sitagliptin",
+      "source": "https://www.nhs.uk/medicines/sitagliptin/"
+    },
+    {
+      "name": "Sodium valproate",
+      "source": "https://www.nhs.uk/medicines/sodium-valproate/"
+    },
+    {
+      "name": "Solifenacin",
+      "source": "https://www.nhs.uk/medicines/solifenacin/"
+    },
+    {
+      "name": "Sotalol",
+      "source": "https://www.nhs.uk/medicines/sotalol/"
+    },
+    {
+      "name": "Spironolactone",
+      "source": "https://www.nhs.uk/medicines/spironolactone/"
+    },
+    {
+      "name": "Sudafed",
+      "source": "https://www.nhs.uk/medicines/pseudoephedrine/"
+    },
+    {
+      "name": "Sulfasalazine",
+      "source": "https://www.nhs.uk/medicines/sulfasalazine/"
+    },
+    {
+      "name": "Sumatriptan",
+      "source": "https://www.nhs.uk/medicines/sumatriptan/"
+    },
+    {
+      "name": "Tadalafil",
+      "source": "https://www.nhs.uk/medicines/tadalafil/"
+    },
+    {
+      "name": "Tamsulosin",
+      "source": "https://www.nhs.uk/medicines/tamsulosin/"
+    },
+    {
+      "name": "Tegretol",
+      "source": "https://www.nhs.uk/medicines/carbamazepine/"
+    },
+    {
+      "name": "Terbinafine",
+      "source": "https://www.nhs.uk/medicines/terbinafine/"
+    },
+    {
+      "name": "Thiamine (vitamin B1)",
+      "source": "https://www.nhs.uk/medicines/thiamine-vitamin-b1/"
+    },
+    {
+      "name": "Timolol eye drops",
+      "source": "https://www.nhs.uk/medicines/timolol-eye-drops/"
+    },
+    {
+      "name": "Tiotropium inhalers",
+      "source": "https://www.nhs.uk/medicines/tiotropium-inhalers/"
+    },
+    {
+      "name": "Tirzepatide",
+      "source": "https://www.nhs.uk/medicines/tirzepatide/"
+    },
+    {
+      "name": "Tolterodine",
+      "source": "https://www.nhs.uk/medicines/tolterodine/"
+    },
+    {
+      "name": "Topiramate",
+      "source": "https://www.nhs.uk/medicines/topiramate/"
+    },
+    {
+      "name": "Tramadol",
+      "source": "https://www.nhs.uk/medicines/tramadol/"
+    },
+    {
+      "name": "Tranexamic acid",
+      "source": "https://www.nhs.uk/medicines/tranexamic-acid/"
+    },
+    {
+      "name": "Trazodone",
+      "source": "https://www.nhs.uk/medicines/trazodone/"
+    },
+    {
+      "name": "Trimethoprim",
+      "source": "https://www.nhs.uk/medicines/trimethoprim/"
+    },
+    {
+      "name": "Valproic acid",
+      "source": "https://www.nhs.uk/medicines/valproic-acid/"
+    },
+    {
+      "name": "Valsartan",
+      "source": "https://www.nhs.uk/medicines/valsartan/"
+    },
+    {
+      "name": "Varenicline",
+      "source": "https://www.nhs.uk/medicines/varenicline/"
+    },
+    {
+      "name": "Venlafaxine",
+      "source": "https://www.nhs.uk/medicines/venlafaxine/"
+    },
+    {
+      "name": "Verapamil",
+      "source": "https://www.nhs.uk/medicines/verapamil/"
+    },
+    {
+      "name": "Vitamin B1",
+      "source": "https://www.nhs.uk/medicines/thiamine-vitamin-b1/"
+    },
+    {
+      "name": "Warfarin",
+      "source": "https://www.nhs.uk/medicines/warfarin/"
+    },
+    {
+      "name": "Zolpidem",
+      "source": "https://www.nhs.uk/medicines/zolpidem/"
+    },
+    {
+      "name": "Zopiclone",
+      "source": "https://www.nhs.uk/medicines/zopiclone/"
+    }
+  ]
+}

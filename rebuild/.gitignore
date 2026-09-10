@@ -1,0 +1,4 @@
+generated/
+legacy/models/
+blender/__pycache__/
+*.blend1

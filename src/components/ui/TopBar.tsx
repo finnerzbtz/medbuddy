@@ -1,86 +1,41 @@
-import type { FC } from 'react';
+import SoundControls from '@/components/app/SoundControls';
+import { Link } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
-
-const TopBar: FC = () => {
-  const streak = useAppStore((state) => state.streak);
-
+import { checkInStreak, dateKey } from '@/domain/schedule';
+import { useNow } from '@/components/app/AppRuntime';
+export default function TopBar() {
+  const data = useAppStore((s) => s.data),
+    now = useNow();
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingTop: 52,
-        paddingLeft: 20,
-        paddingRight: 20,
-        paddingBottom: 8,
-      }}
-    >
-      {/* Wordmark */}
-      <span
-        style={{
-          fontFamily: "'Sora', sans-serif",
-          fontSize: 18,
-          fontWeight: 500,
-          color: 'var(--text-primary)',
-        }}
-      >
-        pill box
-      </span>
-
-      {/* Right side */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        {/* Streak badge */}
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 4,
-            background: 'rgba(212, 165, 116, 0.14)',
-            borderRadius: 9999,
-            padding: '4px 10px',
-          }}
-        >
-          <span style={{ fontSize: 13 }}>🔥</span>
+    <header className="app-topbar">
+      <Link className="brand" to="/">
+        <span className="brand-icon">
+          <span />
+          <span />
+        </span>
+        reminduh<span className="brand-dot">.</span>
+      </Link>
+      <div className="topbar-right">
+        <SoundControls />
+        <Link to="/help" className="help-link">
+          Help
+        </Link>
+        {!data.preferences.hideRewards && (
           <span
-            style={{
-              fontFamily: "'DM Mono', monospace",
-              fontSize: 13,
-              fontWeight: 600,
-              color: 'var(--accent-amber)',
-            }}
+            aria-label={checkInStreak(data, dateKey(now)) + ' day check-in streak'}
+            className="streak-badge"
+            title="Consecutive days with at least one recorded dose, including skips."
           >
-            {streak}
+            <Sparkles aria-hidden="true" focusable="false" size={15} />
+            <b>{checkInStreak(data, dateKey(now))}</b>
+            <span>day check-in streak</span>
           </span>
-        </div>
-
-        {/* Avatar */}
-        <div
-          style={{
-            width: 32,
-            height: 32,
-            borderRadius: '50%',
-            background: 'var(--glass-fill)',
-            border: '1px solid var(--glass-border)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <span
-            style={{
-              fontFamily: "'DM Sans', sans-serif",
-              fontSize: 12,
-              fontWeight: 600,
-              color: 'var(--text-muted)',
-            }}
-          >
-            JD
-          </span>
-        </div>
+        )}
+        <Link to="/profile" aria-label="Open profile" className="profile-avatar">
+          {data.profile.name.trim().slice(0, 1).toUpperCase() || 'B'}
+        </Link>
       </div>
-    </div>
+    </header>
   );
-};
-
-export default TopBar;
+}

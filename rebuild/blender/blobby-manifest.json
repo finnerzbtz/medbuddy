@@ -1,0 +1,30 @@
+{
+  "name": "Blobby \u00b7 original recreation",
+  "blender": "5.0.1",
+  "reference": "scripts/ref-images/base.png",
+  "imported_geometry": false,
+  "height_metres": 2.02,
+  "front_blender": "-Y",
+  "up_blender": "Z",
+  "front_gltf": "+Z",
+  "up_gltf": "Y",
+  "meshes": 8,
+  "base_vertices": 5870,
+  "bones": [
+    "Root",
+    "Body",
+    "Head",
+    "Eye.L",
+    "Eye.R",
+    "Arm.L",
+    "Arm.R",
+    "Foot.L",
+    "Foot.R"
+  ],
+  "clips_seconds": {
+    "idle": 4.0,
+    "wave": 3.0,
+    "happy": 3.0
+  },
+  "glb_bytes": 1441132
+}

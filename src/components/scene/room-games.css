@@ -1,0 +1,307 @@
+.room-game {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: max(24px, env(safe-area-inset-top)) max(20px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom)) max(20px, env(safe-area-inset-left));
+  border: 0;
+  color: #344b3d;
+  background: radial-gradient(ellipse at 30% 20%, #fbf3da, #e5eddf);
+  overflow-y: auto;
+}
+.room-game::backdrop {
+  background: #344b3dd9;
+}
+.room-game[data-game='melody'] {
+  background: radial-gradient(ellipse at 70% 20%, #ece4f2, #edf0e4 80%);
+}
+.room-game-shell {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.room-game-header {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.room-game-header h2 {
+  flex: 1;
+  margin: 0;
+  font-size: clamp(23px, 4vw, 32px);
+  letter-spacing: -0.045em;
+}
+.room-game-symbol {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #becbb1;
+  border-radius: 50%;
+  background: #faf9ed;
+}
+.room-game .icon-button {
+  flex: 0 0 44px;
+  min-height: 44px;
+  background: #ffffff75;
+  border: 1px solid #bac8b3;
+}
+.room-game-intro {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+.room-game-intro p {
+  margin: 0;
+  max-width: 420px;
+  line-height: 1.55;
+  color: #53604c;
+  font-size: 15px;
+}
+.game-count {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: #405b44;
+  font-size: 13px;
+  padding: 9px 12px;
+  background: #f9fbf3;
+  border: 1px solid #c2cbb3;
+  border-radius: 15px;
+}
+.melody-game {
+  text-align: center;
+}
+.room-game-intro {
+  text-align: left;
+}
+.room-game-status {
+  min-height: 24px;
+  margin: 20px auto 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #405b44;
+}
+.room-game .button {
+  min-height: 48px;
+  gap: 7px;
+}
+.room-game-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.game-complete-title {
+  margin: 12px 0 20px;
+  font-size: 32px;
+  letter-spacing: -0.04em;
+}
+.mixtape-art {
+  position: relative;
+  width: 300px;
+  height: 188px;
+  margin: 16px auto 0;
+}
+.mixtape-sleeve {
+  position: absolute;
+  left: 5px;
+  top: 8px;
+  width: 174px;
+  height: 174px;
+  z-index: 1;
+  background: #b7caad;
+  color: #334d3b;
+  border: 6px solid #f7f3e5;
+  border-radius: 6px;
+  box-shadow: 1px 5px 15px #4d605025;
+  padding: 20px;
+  text-align: left;
+  transform: rotate(-7deg);
+}
+.mixtape-sleeve span {
+  font-size: 28px;
+  line-height: 0.96;
+  letter-spacing: -0.05em;
+  font-weight: 650;
+  display: block;
+  margin-bottom: 12px;
+}
+.mixtape-record {
+  position: absolute;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  left: 122px;
+  top: 6px;
+  display: grid;
+  place-items: center;
+  background: repeating-radial-gradient(circle, #3c4849 0 2px, #2b3a3c 3px 5px);
+  box-shadow: 0 10px 16px #233a3c18;
+  animation: mixtape-turn 0.5s ease-out;
+}
+.mixtape-record > div {
+  width: 63px;
+  height: 63px;
+  border-radius: 50%;
+  background: #d3bad6;
+  display: grid;
+  place-items: center;
+  color: #4a4857;
+}
+.melody-sound {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.melody-pattern {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+  margin: 12px 0 20px;
+}
+.melody-pattern li {
+  min-width: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 10px;
+  border-radius: 13px;
+  background: #f8f8ef;
+  border: 1px solid #c5cbb9;
+  color: #4a5c46;
+  font-weight: 600;
+}
+.melody-pattern li > span {
+  font-size: 10px;
+  font-weight: 400;
+}
+.melody-pattern li.current {
+  border: 2px solid #57724f;
+  padding: 9px;
+  box-shadow: 0 0 0 3px #9cac8329;
+}
+.melody-pattern li.played {
+  background: #d5e5c8;
+}
+.melody-pads {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-width: 490px;
+  margin: auto;
+}
+.melody-pads button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 95px;
+  border-radius: 23px;
+  border: 2px solid #ffffffd9;
+  color: #34463d;
+  box-shadow: 0 5px 0 #4e654c21;
+  transition: transform 0.12s;
+}
+.melody-pads button:active {
+  transform: translateY(3px);
+}
+.melody-pads button:disabled {
+  opacity: 0.65;
+}
+@keyframes mixtape-turn {
+  from {
+    transform: rotate(-45deg);
+  }
+  to {
+    transform: rotate(0);
+  }
+}
+.room-game[data-reduced='true'] *,
+:root[data-reduced-motion='true'] .room-game * {
+  animation: none !important;
+  transition: none !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  .room-game * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+@media (max-width: 500px) {
+  .room-game {
+    padding: max(16px, env(safe-area-inset-top)) max(14px, env(safe-area-inset-right))
+      max(28px, env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left));
+  }
+  .room-game-header {
+    gap: 9px;
+    margin-bottom: 20px;
+  }
+  .room-game-intro {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .room-game-intro p {
+    font-size: 14px;
+  }
+  .game-count {
+    align-self: flex-end;
+  }
+  .melody-pads {
+    gap: 7px;
+  }
+  .melody-pads button {
+    min-height: 82px;
+    border-radius: 18px;
+  }
+  .melody-pattern {
+    gap: 5px;
+  }
+  .melody-pattern li {
+    min-width: 46px;
+    padding-inline: 7px;
+    font-size: 13px;
+  }
+  .melody-pattern li.current {
+    padding-inline: 6px;
+  }
+  .mixtape-art {
+    transform: scale(0.9);
+    margin-top: -4px;
+    margin-bottom: -10px;
+  }
+}
+@media (forced-colors: active) {
+  .room-game {
+    background: Canvas;
+    color: CanvasText;
+  }
+  .melody-pads button,
+  .game-count,
+  .melody-pattern li {
+    border: 2px solid ButtonText;
+  }
+  .melody-pattern li.current {
+    outline: 3px solid Highlight;
+  }
+}
+
+/* Full-screen activities own their safe-area padding, unlike centred dialogs. */
+html[data-native='true'] .room-game:modal {
+  max-height: none;
+}
+.room-game {
+  overscroll-behavior: contain;
+  scroll-padding-block: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-bottom));
+}
