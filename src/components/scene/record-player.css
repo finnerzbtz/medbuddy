@@ -1,7 +1,7 @@
 .record-player {
   width: min(480px, 100%);
   margin: 0 auto;
-  padding: 8px 22px 24px;
+  padding: 8px 20px 20px;
   color: #334b3c;
 }
 .record-player-page {
@@ -44,7 +44,7 @@
   position: relative;
   width: min(315px, 90%);
   aspect-ratio: 1.27;
-  margin: 26px auto 20px;
+  margin: 22px auto 18px;
   border: 1px solid #b5ac94;
   border-bottom: 8px solid #b9a98d;
   border-radius: 21px;
@@ -180,13 +180,13 @@
   place-items: center;
   cursor: pointer;
 }
-.record-radio-note {
-  max-width: 265px;
+.record-playback-status {
+  min-height: 1.5em;
   text-align: center;
-  margin: 17px auto 24px;
-  color: #596e53;
-  font-size: 14px;
-  line-height: 1.6;
+  margin: 12px auto 0;
+  color: #52664d;
+  font-size: 13px;
+  line-height: 1.5;
 }
 .record-volume {
   display: grid;

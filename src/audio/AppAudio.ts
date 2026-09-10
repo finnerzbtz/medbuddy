@@ -66,7 +66,7 @@ function readPreferences(): Preferences {
 }
 export const useSoundSettings = create<Preferences>(() => readPreferences());
 export const useAudioReady = create(() => ({ ready: false }));
-export const useRadioPlayback = create(() => ({ playing: false }));
+export const useRadioPlayback = create(() => ({ playing: false, loading: false, error: '' }));
 export function setSoundSettings(patch: Partial<Preferences>) {
   useSoundSettings.setState(patch);
   const state = useSoundSettings.getState();
@@ -79,6 +79,8 @@ export function setSoundSettings(patch: Partial<Preferences>) {
 }
 export async function enableSound(patch: Partial<Preferences> = {}) {
   await appAudio.unlock();
+  // A deliberate Play action can retry a failed bundled recording.
+  if (patch.music === true) useRadioPlayback.setState({ error: '' });
   setSoundSettings({ ...patch, enabled: true });
 }
 
@@ -368,6 +370,7 @@ class AppAudio {
     const url = AUDIO_ASSETS[id];
     if (!url || !this.ctx || this.loading.has(id) || this.buffers.has(id)) return;
     this.loading.add(id);
+    if (id === 'zen-music') useRadioPlayback.setState({ loading: true, error: '' });
     const ctx = this.ctx;
     void fetchAudioBytes(url)
       .then((b) => ctx.decodeAudioData(b))
@@ -377,7 +380,23 @@ class AppAudio {
         // Start only if music is still requested after the asynchronous decode.
         if (id === 'zen-music') this.configure(this.config);
       })
-      .catch(() => {})
+      .catch(() => {
+        if (
+          id === 'zen-music' &&
+          this.ctx === ctx &&
+          this.config.enabled &&
+          this.config.music &&
+          !this.hidden &&
+          !this.externalMusic &&
+          this.environment !== 'other' &&
+          this.environment !== 'melody'
+        )
+          useRadioPlayback.setState({
+            playing: false,
+            loading: false,
+            error: 'Music couldn’t load. Tap Retry to try again.',
+          });
+      })
       .finally(() => this.loading.delete(id));
   }
   private sample(id: string, pan: number) {
@@ -456,13 +475,20 @@ class AppAudio {
   }
   private startMusic() {
     if (this.musicSource) {
-      useRadioPlayback.setState({ playing: this.ctx?.state === 'running' });
+      useRadioPlayback.setState({
+        playing: this.ctx?.state === 'running',
+        loading: false,
+        error: '',
+      });
       return;
     }
     if (!this.ctx || this.ctx.state !== 'running') return;
     const buffer = this.buffers.get('zen-music');
     if (!buffer) {
-      // Wait quietly for the recording. There is no oscillator substitute.
+      // Preserve a failure until an explicit Play/Retry action; avoid retry loops
+      // when unrelated sound settings update the mixer.
+      if (useRadioPlayback.getState().error) return;
+      useRadioPlayback.setState({ playing: false, loading: true });
       this.load('zen-music');
       return;
     }
@@ -483,10 +509,12 @@ class AppAudio {
     source.start(ctx.currentTime, source.loopStart + this.musicOffset);
     this.musicSource = source;
     this.musicGain = gain;
-    useRadioPlayback.setState({ playing: true });
+    useRadioPlayback.setState({ playing: true, loading: false, error: '' });
   }
   private stopMusic() {
-    if (useRadioPlayback.getState().playing) useRadioPlayback.setState({ playing: false });
+    const radio = useRadioPlayback.getState();
+    if (radio.playing || radio.loading || radio.error)
+      useRadioPlayback.setState({ playing: false, loading: false, error: '' });
     const source = this.musicSource;
     const gain = this.musicGain;
     if (source && this.ctx) {

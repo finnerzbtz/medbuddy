@@ -1,4 +1,4 @@
-import { speakBlobby } from '@/audio/BlobbySpeech';
+import { speakBlobby, stopBlobbySpeech, useBlobbySpeech } from '@/audio/BlobbySpeech';
 import { Link } from 'react-router-dom';
 import { VoicePreferences } from './VoicePicker';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -38,6 +38,9 @@ export function MusicButton() {
 export function SoundPreferences() {
   const settings = useSoundSettings(),
     [error, setError] = useState('');
+  const playback = useBlobbySpeech();
+  const isTest = playback.clip === 'cloud/familiar' && !playback.automatic;
+  const testing = isTest && ['loading', 'playing'].includes(playback.status);
   return (
     <div className="sound-preferences">
       <label className="toggle-row">
@@ -111,6 +114,10 @@ export function SoundPreferences() {
         className="button secondary"
         onClick={async () => {
           setError('');
+          if (testing) {
+            stopBlobbySpeech();
+            return;
+          }
           try {
             await enableSound();
             await speakBlobby('cloud', 'familiar');
@@ -119,9 +126,12 @@ export function SoundPreferences() {
           }
         }}
       >
-        Test sound
+        {testing ? 'Stop sound test' : 'Test sound'}
       </button>
-      <span role="status">{error}</span>
+      <span role="status">
+        {error ||
+          (isTest ? playback.error || (playback.status === 'loading' ? 'Loading sound…' : '') : '')}
+      </span>
     </div>
   );
 }
