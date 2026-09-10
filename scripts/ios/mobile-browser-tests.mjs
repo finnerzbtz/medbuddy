@@ -104,16 +104,14 @@ for (const [name, engine] of Object.entries({ webkit, chromium })) {
     await expect(
       dialog.getByRole('checkbox', { name: 'Background music', exact: true }),
     ).not.toBeChecked();
-    const geometry = await dialog
-      .locator('.toggle-row input')
-      .evaluateAll((es) =>
-        es.map((e) => ({
-          w: e.getBoundingClientRect().width,
-          h: e.getBoundingClientRect().height,
-          target: e.closest('label').getBoundingClientRect().height,
-          pseudo: getComputedStyle(e, '::before').content,
-        })),
-      );
+    const geometry = await dialog.locator('.toggle-row input').evaluateAll((es) =>
+      es.map((e) => ({
+        w: e.getBoundingClientRect().width,
+        h: e.getBoundingClientRect().height,
+        target: e.closest('label').getBoundingClientRect().height,
+        pseudo: getComputedStyle(e, '::before').content,
+      })),
+    );
     assert.ok(
       geometry.every(
         (g) =>
@@ -260,12 +258,25 @@ for (const [name, engine] of Object.entries({ webkit, chromium })) {
       before,
     );
     await expect(trigger).toBeFocused();
+    // A later dialog cleanup must not move focus away from the activity opener.
+    await page.waitForTimeout(150);
+    await expect(trigger).toBeFocused();
     assert.deepEqual(errors, []);
     results.push(
       name +
         ': safe-area sand layout, rotation, drawing/undo, audio, accessible controls, exit without records/rewards',
     );
   } catch (e) {
+    console.error(
+      'Mobile failure context',
+      name,
+      await page.evaluate(() => ({
+        activeElement: document.activeElement?.outerHTML.slice(0, 500),
+        openDialogs: [...document.querySelectorAll('dialog[open]')].map(
+          (dialog) => dialog.className,
+        ),
+      })),
+    );
     await page.screenshot({ path: out + '/' + name + '-failure.png' });
     throw e;
   } finally {
