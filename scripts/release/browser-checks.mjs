@@ -43,6 +43,11 @@ try {
     'scripts/ios/notification-onboarding-browser-tests.mjs',
     'scripts/ios/mobile-browser-tests.mjs',
     'scripts/ios/bundled-audio-browser-tests.mjs',
+    'scripts/ios/radio-playback-browser-tests.mjs',
+    'scripts/ios/sound-test-control-browser-tests.mjs',
+    'scripts/refinement/companion-browser-test.mjs',
+    'scripts/refinement/history-routines-browser-test.mjs',
+    'scripts/mvp/shop-details-browser-test.mjs',
   ]) {
     console.log(`\nChecking ${script}`);
     const child = spawn(process.execPath, [script], { env, stdio: 'inherit' });

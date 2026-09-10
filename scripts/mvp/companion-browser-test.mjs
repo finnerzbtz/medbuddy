@@ -123,7 +123,10 @@ try {
     await page.waitForTimeout(120);
     if (state === 'tend') {
       await expect(page.locator('.garden-cutscene')).toBeVisible({ timeout: 12000 });
-      await page.getByRole('button', { name: 'Skip', exact: true }).click();
+      await expect(
+        page.getByRole('button', { name: 'Shower the tree', exact: true }),
+      ).toBeEnabled();
+      await page.getByRole('button', { name: 'Back to room', exact: true }).click();
       continue;
     }
     const played = await page.evaluate(
@@ -192,6 +195,7 @@ try {
   checks.push(
     'Feeding consumes treats and persists; free interactions cannot farm the daily bonus',
   );
+  await page.getByRole('button', { name: 'Room options', exact: true }).click();
   await page.getByRole('button', { name: 'Get closer to Blobby', exact: true }).click();
   await page.waitForTimeout(1100);
   const zoom = await page.evaluate(() => window.__assetScene.camera.zoom);
