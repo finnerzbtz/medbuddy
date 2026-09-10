@@ -89,11 +89,13 @@ for (const [name, engine] of Object.entries({ webkit, chromium })) {
     );
   };
   try {
-    await go('/');
+    // Settings is available before onboarding. Seed here so the fixture does not
+    // navigate away mid-load from the welcome redirect's lazy 3D room (WebKit
+    // reports those aborted fetches as access-control errors on Linux).
+    await go('/profile');
     await page.evaluate(() =>
       window.__appStore.getState().completeWelcome('Mobile test', 'Blobby'),
     );
-    await go('/profile');
     await page.getByRole('button', { name: 'Sound settings', exact: true }).click();
     const dialog = page.locator('.sound-dialog');
     await expect(
