@@ -73,8 +73,40 @@ try {
       );
 
       await page.getByRole('link', { name: 'Medications', exact: true }).click();
-      await page.getByRole('link', { name: 'Add medication', exact: true }).click();
-      await page.getByRole('combobox', { name: 'Medication name' }).fill('QA toast medication');
+      await expect(page.locator('#main-content')).toBeFocused();
+      await page.getByRole('link', { name: 'Add medication', exact: true }).focus();
+      // A busy renderer may run navigation's frame after the user starts typing.
+      // Hold page animation frames through keyboard navigation and initial entry.
+      await page.evaluate(() => {
+        const request = window.requestAnimationFrame.bind(window);
+        const cancel = window.cancelAnimationFrame.bind(window);
+        const pending = new Map();
+        let id = -1;
+        window.requestAnimationFrame = (callback) => {
+          const token = id--;
+          pending.set(token, callback);
+          return token;
+        };
+        window.cancelAnimationFrame = (token) => {
+          if (pending.has(token)) pending.delete(token);
+          else cancel(token);
+        };
+        window.__releaseNavigationFrames = () => {
+          window.requestAnimationFrame = request;
+          window.cancelAnimationFrame = cancel;
+          const count = pending.size;
+          for (const callback of pending.values()) callback(performance.now());
+          pending.clear();
+          return count;
+        };
+      });
+      await page.keyboard.press('Enter');
+      const medicationName = page.getByRole('combobox', { name: 'Medication name' });
+      await medicationName.fill('QA toast medication');
+      await expect(medicationName).toHaveValue('QA toast medication');
+      expect(await page.evaluate(() => window.__releaseNavigationFrames())).toBeGreaterThan(0);
+      await expect(medicationName).toBeFocused();
+      await expect(medicationName).toHaveValue('QA toast medication');
       await page.getByLabel('Strength per tablet (mg)').fill('10');
       await page.getByLabel('Number of tablets per dose').fill('1');
       await page.getByRole('button', { name: 'Add medication', exact: true }).click();
@@ -84,7 +116,7 @@ try {
       await page.getByRole('link', { name: 'History', exact: true }).click();
       await expect(page.locator('.app-toast')).toHaveCount(0);
       results.push(
-        `${engine}: a save-and-navigate confirmation survives arrival and clears only on a later navigation`,
+        `${engine}: delayed route focus preserves field entry; save confirmation survives arrival and clears on later navigation`,
       );
 
       await page.getByRole('link', { name: 'Today', exact: true }).click();
@@ -171,6 +203,7 @@ try {
       const state = await page
         ?.evaluate(() => ({
           path: location.pathname,
+          activeId: document.activeElement?.id,
           active: document.activeElement?.outerHTML,
           messages: [...document.querySelectorAll('[role=alert],.app-toast')].map(
             (e) => e.textContent,
@@ -184,6 +217,20 @@ try {
           })),
         }))
         .catch(() => null);
+      console.error(
+        JSON.stringify(
+          {
+            engine,
+            completed: results,
+            path: state?.path,
+            activeId: state?.activeId,
+            messages: state?.messages,
+            invalidInputs: state?.inputs.filter((input) => !input.valid),
+          },
+          null,
+          2,
+        ),
+      );
       await writeFile(
         `${output}/${engine}-failure.json`,
         JSON.stringify({ error: error.stack, completed: results, state }, null, 2),

@@ -160,3 +160,14 @@ The local 40-case typography suite passed in Chromium and WebKit at 320px and 39
 
 
 The fifth CI run ([34531894711](https://github.com/finnerzbtz/medbuddy/actions/runs/34531894711)) passed all other suites and 39 of the 40 typography cases. The remaining add-medication case had 336px of page width with no oversized element box. A local reproduction using DejaVu Sans regular and bold faces identified the actual text: the enlarged “The essentials” heading painted to x335.94 while its block stayed inside the form. Allowing that section heading to wrap brought page width back to 320px in both engines, without clipping or shrinking the text. System, DejaVu and Liberation font probes all fit after this targeted correction.
+
+
+## Preserve entry during delayed navigation
+
+The sixth CI run ([34533051168](https://github.com/finnerzbtz/medbuddy/actions/runs/34533051168)) passed all 40 typography cases and the other layout/activity checks, but encountered an intermittent medication-save navigation failure. An unchanged local WebKit run reproduced an empty medication name with the other fields valid; native form validation correctly prevented the save. A controlled delayed-frame regression then demonstrated that AppShell's navigation callback could move focus away from a field after entry had begun.
+
+The default navigation callback now preserves an active editable control inside the new page before scrolling or moving focus. The pathname-keyed main prevents an old page's field from suppressing navigation. Explicit section/feed targets keep their prior behavior, and medication validation is unchanged. The regression fails before this correction and passes afterwards in both engines, followed by the real save, arrival confirmation, later navigation, Undo and backup-restore checks. It holds and releases animation frames instead of adding a delay or retrying text entry. Concise synthetic-fixture validation details are now logged if this suite fails.
+
+All 12 local confirmation/navigation cases and the full release check passed after the correction, including the 98 domain checks and a fresh offline build.
+
+The related isolated checks also passed: 21 medication-autocomplete cases and eight Sound-dialog cases, including keyboard/touch entry, editing, validation focus, composition, close/escape focus and retained settings.
