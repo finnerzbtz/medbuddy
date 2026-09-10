@@ -1,6 +1,6 @@
 # Calm, focused app refinement
 
-Branch: `refine/calm-premium-experience`, based on TestFlight build 3 plus its release notes. The user has now requested a TestFlight release of this refinement and a reusable TestFlight skill. Build 4 is being prepared; signing, upload, Apple processing and beta-group assignment are separate release gates and are not claimed complete by this document. No backend deployment is included.
+Branch: `refine/calm-premium-experience`, based on TestFlight build 3 plus its release notes. The user has now requested a TestFlight release of this refinement and a reusable TestFlight skill. Build 4 passed signing/archive verification, uploaded successfully, completed Apple processing and is verified Testing in the existing Reminduh Beta group. See [release notes](../ios/releases/0.1.0-4.md) for exact source and distribution evidence. No backend deployment is included.
 
 The goal remains a high-quality, engaging but calming app whose core functions work in the iOS simulator. A focused visual pass alone does not prove completion. Existing medication behaviour, default sadness thresholds, native data protection, optional self-care separation, owned assets and disabled purchase/cloud gates stay intact.
 
@@ -15,7 +15,7 @@ The goal remains a high-quality, engaging but calming app whose core functions w
 
 ## Completed verification
 
-Local Release A contracts passed, including the 97 existing domain checks and native planner/storage contracts. The isolated release browser runner passed the medication, reminder, routine, compact room, history, mobile shop, bundled-media and radio failure/retry suites. WebKit and Chromium checks include 320px layouts, 200% text, keyboard/focus, accessibility scans, decoded audio output and medication/self-care isolation.
+The build 4 preparation gate `npm run check:release` passed, including repository hygiene, Release A contracts, the 97 existing domain checks, native planner/storage contracts, asset validation and a production web build. The isolated release browser runner passed the medication, reminder, routine, compact room, history, mobile shop, bundled-media and radio failure/retry suites. WebKit and Chromium checks include 320px layouts, 200% text, keyboard/focus, accessibility scans, decoded audio output and medication/self-care isolation.
 
 The broad medication browser suite reports 17 passing scenarios in `rebuild/generated/qa-mvp/browser-results.json`, including schedule edits, record snapshots, supply, undo, restore, local-midnight rollover, cross-tab refresh and the production offline package. Its offline check covers reload, recording, feeding, shop inventory, friendship and History, with no unexpected remote requests or page errors. Companion verification reports six passing scenarios in `rebuild/generated/qa-companion/companion-results.json`, including all 19 cheat states, walking/pause, feeding persistence, camera/pantry sizing and reduced-motion behaviour. Celebration checks cover actual check-ins, Undo, focus, automatic dismissal and calm feedback alternatives.
 
@@ -40,6 +40,7 @@ Local evidence:
 - `/tmp/reminduh-native-final.xcresult` and `/tmp/reminduh-native-final.log` contain the final successful native run.
 - `/tmp/reminduh-native-final-sync.log` records the offline build and Capacitor sync.
 - `/tmp/reminduh-refinement-release-browser.log` records the integrated browser checks.
+- `/tmp/reminduh-build4-release-check.log` records the passed local release-preparation gate.
 - `/tmp/reminduh-refinement-native-shots/manifest.json` maps 11 exported native screenshots to their tests.
 
 The first expanded native run exposed two test-driver assumptions: iOS exposes the pressed garden control as a Switch, and WKWebView can report a control as hittable while fixed navigation covers it. The tests now use the observed accessibility role, scroll the entire target above navigation, and assert/capture the export button's geometry before opening the share sheet. The original failed run remains in `/tmp/reminduh-native-refinement.xcresult`; the assertions were retained and the final rerun passed.
@@ -50,4 +51,4 @@ Native screenshots were reviewed for the room, sound controls, record player, bo
 
 These results establish the listed simulator flows, not every possible function or device condition. Physical iPhone speaker/headphone output, Silent mode, calls/audio interruptions, Focus behaviour and an actual TestFlight update remain device validation. The new native suite opens export but does not perform a native Files-picker restore round trip or verify local-file music interruption behaviour. Native VoiceOver navigation and larger Dynamic Type settings also remain separate device/accessibility checks.
 
-Cloud sync, Apple Music and real-money purchases remain intentionally disabled; they are not verified release functions. The TestFlight release must separately verify the signed build, upload, Apple processing and assignment to the existing beta group. The broader quality goal is not proven solely by this focused pass.
+Cloud sync, Apple Music and real-money purchases remain intentionally disabled; they are not verified release functions. The TestFlight release separately verified the signed archive, upload, Apple processing and assignment to the existing beta group. The broader quality goal is not proven solely by this focused pass.

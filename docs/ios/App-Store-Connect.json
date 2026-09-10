@@ -18,7 +18,7 @@
   "listingCopySaved": true,
   "releaseMode": "manual",
   "storeVersionDraft": "1.0",
-  "currentBetaVersion": "0.1.0 (2)",
+  "currentBetaVersion": "0.1.0 (4)",
   "testFlightReviewNotesSaved": true,
   "testFlightReviewNotesStatus": "Saved with owner-approved private review contact details; no sign-in required.",
   "developerAgreement": "Updated Apple Developer Program License Agreement accepted on 2026-09-08 with explicit owner approval.",
@@ -26,7 +26,7 @@
   "liveAppleMusicEnabled": false,
   "liveLeafPurchasesEnabled": false,
   "remaining": [
-    "Physical iPhone build-1-to-build-2 upgrade, notifications, audio and accessibility validation",
+    "Physical iPhone update to build 4, speaker/headphone audio, interruptions, notification/Focus and accessibility validation",
     "Before cloud rollout: production protocol migration, real email delivery and native authentication/sync validation",
     "Before public App Store submission: screenshots, support/privacy URLs, age rating and regulatory declarations, privacy/accessibility disclosures and pricing/availability",
     "Before paid leaves: Paid Applications Agreement, banking/tax details, product pricing and StoreKit device testing"
@@ -50,22 +50,24 @@
     "testers": 1,
     "builds": [
       "0.1.0 (1)",
-      "0.1.0 (2)"
+      "0.1.0 (2)",
+      "0.1.0 (3)",
+      "0.1.0 (4)"
     ]
   },
   "signingStatus": "Signed archive passed strict recursive codesign verification. All 165 bundled web resources match the offline release build.",
   "signedArchive": "/Users/finnerz/reminduh/ios/App/build/Reminduh.xcarchive",
   "signedArchiveVerified": true,
-  "uploadStatus": "Xcode Organizer confirmed upload of 0.1.0 (2) on 2026-09-10 at 15:56 Europe/London using TestFlight Internal Only. Apple processing completed; build assigned to Reminduh Beta and verified Testing.",
-  "testFlightBuildId": "e66d290c-2c3c-4b14-bbff-35f63c309578",
+  "uploadStatus": "Xcode Organizer confirmed upload of 0.1.0 (4) on 2026-09-10 at 17:44 Europe/London using TestFlight Internal Only. Apple processing completed; testing notes saved and build assigned to Reminduh Beta, verified Testing.",
+  "testFlightBuildId": "500efba7-7806-4df5-82ad-1e36beee16e3",
   "testFlightProcessingComplete": true,
   "testFlightWhatToTestSaved": true,
   "privateBetaReady": true,
-  "testFlightTesterStatus": "Existing internal tester retained. Build 2 is available; physical update validation remains pending.",
+  "testFlightTesterStatus": "Existing internal tester retained. Build 4 is available. Apple reports build 3 installed; physical build 4 update and validation remain pending.",
   "testFlightGroupBuildStatus": "Testing",
   "physicalIPhoneInstallVerified": false,
-  "sourceCommit": "215f629f90b3cfc48464a648444a51f0ff9a8f8a",
-  "sourceTag": "ios/0.1.0-2",
+  "sourceCommit": "a025bf970544602de7aec9ab2b7cf937a0e7ae45",
+  "sourceTag": "ios/0.1.0-4",
   "betaCloudSyncEnabled": false,
-  "ciVerificationUrl": "https://github.com/finnerzbtz/medbuddy/actions/runs/34492426401"
+  "verification": "Local release/browser/offline checks and five native simulator tests passed. This refinement branch has no remote CI run; no remote green status is claimed."
 }
