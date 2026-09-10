@@ -34,6 +34,7 @@ try {
     await delay(100);
   }
   if (!ready) throw new Error('Isolated preview did not start');
+  const failures = [];
   for (const script of [
     'scripts/mvp/medication-name-tests.mjs',
     'scripts/mvp/reminder-browser-test.mjs',
@@ -61,8 +62,12 @@ try {
     console.log(`\nChecking ${script}`);
     const child = spawn(process.execPath, [script], { env, stdio: 'inherit' });
     const [code, signal] = await once(child, 'exit');
-    if (code !== 0) throw new Error(`${script} failed (${signal ?? code})`);
+    if (code !== 0) {
+      failures.push(`${script} (${signal ?? code})`);
+      console.error(`FAILED ${failures.at(-1)}`);
+    }
   }
+  if (failures.length) throw new Error(`Browser checks failed:\n${failures.join('\n')}`);
 } finally {
   server.kill('SIGTERM');
   await serverClosed;

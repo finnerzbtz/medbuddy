@@ -284,11 +284,20 @@ try {
         expect(
           await page.locator('dialog.room-game').evaluate((e) => e.scrollWidth <= e.clientWidth),
         ).toBe(true);
-        const artwork = await page.locator('.mixtape-sleeve span').evaluate((e) => ({
-          width: e.clientWidth,
-          content: e.scrollWidth,
+        const artwork = await page.locator('.mixtape-title').evaluate((e) => ({
+          width: e.viewBox.baseVal.width,
+          height: e.viewBox.baseVal.height,
+          lines: [...e.querySelectorAll('text')].map((line) => {
+            const box = line.getBBox();
+            return { x: box.x, y: box.y, right: box.x + box.width, bottom: box.y + box.height };
+          }),
         }));
-        expect(artwork.content).toBeLessThanOrEqual(artwork.width);
+        for (const line of artwork.lines) {
+          expect(line.x).toBeGreaterThanOrEqual(0);
+          expect(line.y).toBeGreaterThanOrEqual(0);
+          expect(line.right).toBeLessThanOrEqual(artwork.width);
+          expect(line.bottom).toBeLessThanOrEqual(artwork.height);
+        }
         const instructionsSize = await page
           .locator('.room-game-intro p')
           .evaluate((e) => parseFloat(getComputedStyle(e).fontSize));
