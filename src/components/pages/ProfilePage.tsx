@@ -344,7 +344,7 @@ export default function ProfilePage() {
             together.
           </p>
           <p className="small muted">
-            Browser reminders will be switched off until you enable them again.
+            Medication reminders will be switched off until you enable them again in Reminders.
           </p>
           {error && (
             <p className="form-error" role="alert">

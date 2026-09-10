@@ -25,7 +25,7 @@ const options: { key: keyof AppData['preferences']; label: string; hint: string 
   {
     key: 'showWisdom',
     label: 'Little thoughts from Blobby',
-    hint: 'Optional self-care ideas and quotes. Read or skip them at your own pace.',
+    hint: 'Optional self-care ideas and quotes in Blobby’s speech bubble.',
   },
   {
     key: 'staticScene',
