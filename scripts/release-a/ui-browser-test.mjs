@@ -110,6 +110,7 @@ try {
   await page.getByText('Archived routines (1)', { exact: true }).click();
   await page.getByRole('button', { name: 'Restore routine', exact: true }).click();
   passed('Edit schedule tomorrow; pause, resume, archive/cancel and restore');
+  await page.locator('.routine-add-options > summary').click();
   await page.getByRole('button', { name: 'Create your own routine' }).click();
   await page.getByLabel('Routine name').fill('Custom stretch');
   await page.getByLabel('Category', { exact: true }).selectOption('enjoyment');

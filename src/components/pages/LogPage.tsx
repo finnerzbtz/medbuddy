@@ -1,6 +1,6 @@
 import { RoutineCard } from '@/components/app/RoutinesToday';
 import { routinesForDay } from '@/domain/routines';
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { ChevronLeft, ChevronRight, Download, CalendarDays } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import {
@@ -14,6 +14,7 @@ import {
 import { csvText, download } from '@/domain/exports';
 import { useNow } from '@/components/app/AppRuntime';
 import DoseCard from '@/components/app/DoseCard';
+import './calm-pages.css';
 export default function LogPage() {
   const data = useAppStore((s) => s.data),
     now = useNow(),
@@ -21,7 +22,18 @@ export default function LogPage() {
   const [selected, setSelected] = useState(today),
     [month, setMonth] = useState(today.slice(0, 7)),
     [filter, setFilter] = useState(''),
-    [focusedDay, setFocusedDay] = useState(today);
+    [focusedDay, setFocusedDay] = useState(today),
+    [calendarOpen, setCalendarOpen] = useState(false);
+  const dateButton = useRef<HTMLButtonElement>(null);
+  const selectDay = (day: string, closeCalendar = false) => {
+    setSelected(day);
+    setFocusedDay(day);
+    setMonth(day.slice(0, 7));
+    if (closeCalendar) {
+      setCalendarOpen(false);
+      dateButton.current?.focus();
+    }
+  };
   const visibleDoses = (day: string) =>
     dosesForDay(data, day).filter((d) => !filter || d.medicationId === filter);
   const days = useMemo(() => {
@@ -39,8 +51,17 @@ export default function LogPage() {
     setFocusedDay(dateKey(value));
   };
   const daily = visibleDoses(selected);
+  const selectedDate = new Intl.DateTimeFormat(undefined, {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    ...(selected.slice(0, 4) !== today.slice(0, 4) ? { year: 'numeric' as const } : {}),
+  }).format(parseDay(selected));
+  const selectedDateLabel = new Intl.DateTimeFormat(undefined, { dateStyle: 'full' }).format(
+    parseDay(selected),
+  );
   return (
-    <>
+    <div className="history-page calm-page">
       <div className="page-heading">
         <div>
           <h1>History</h1>
@@ -58,42 +79,43 @@ export default function LogPage() {
           <Download aria-hidden="true" focusable="false" size={17} /> Export CSV
         </button>
       </div>
-      <div className="history-stats">
-        <div>
-          <span>Last 7 days</span>
-          <strong>{recent.filter((r) => r.status === 'taken').length}</strong>
-          <small>Doses recorded as taken</small>
-        </div>
-        <div>
-          <span>Last 7 days</span>
-          <strong>{recent.filter((r) => r.status === 'skipped').length}</strong>
-          <small>Doses recorded as skipped</small>
-        </div>
-        {!data.preferences.hideRewards && (
-          <div>
-            <span>Showing up</span>
-            <strong>
-              {checkInStreak(data, today)}
-              <em> days</em>
-            </strong>
-            <small>Current check-in streak</small>
-          </div>
-        )}
+      <div className="history-day-navigation" role="group" aria-label="History date">
+        <button
+          className="icon-button"
+          aria-label="Previous day"
+          disabled={selected <= '2000-01-01'}
+          onClick={() => selectDay(addDays(selected, -1))}
+        >
+          <ChevronLeft aria-hidden="true" size={20} />
+        </button>
+        <button
+          ref={dateButton}
+          className="history-date-button"
+          aria-label={'Choose date, ' + selectedDateLabel}
+          aria-expanded={calendarOpen}
+          aria-controls="history-calendar"
+          onClick={() => {
+            if (!calendarOpen) {
+              setMonth(selected.slice(0, 7));
+              setFocusedDay(selected);
+            }
+            setCalendarOpen(!calendarOpen);
+          }}
+        >
+          <span aria-live="polite">{selected === today ? 'Today' : selectedDate}</span>
+          <CalendarDays aria-hidden="true" size={17} />
+        </button>
+        <button
+          className="icon-button"
+          aria-label="Next day"
+          disabled={selected >= today}
+          onClick={() => selectDay(addDays(selected, 1))}
+        >
+          <ChevronRight aria-hidden="true" size={20} />
+        </button>
       </div>
-      <label className="field history-filter">
-        Filter medication
-        <select value={filter} onChange={(e) => setFilter(e.target.value)}>
-          <option value="">All medications</option>
-          {data.medications.map((m) => (
-            <option value={m.id} key={m.id}>
-              {m.name}
-              {m.archived ? ' (archived)' : ''}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div className="history-grid">
-        <section className="panel calendar-panel">
+      <div className="history-content">
+        <section className="panel calendar-panel" id="history-calendar" hidden={!calendarOpen}>
           <div className="calendar-heading">
             <h2 id="calendar-month" aria-live="polite">
               {new Intl.DateTimeFormat(undefined, { month: 'long', year: 'numeric' }).format(
@@ -176,7 +198,7 @@ export default function LogPage() {
                       (day === today ? 'today ' : '') +
                       (day === selected ? 'selected' : '')
                     }
-                    disabled={day > today}
+                    disabled={day > today || day < '2000-01-01'}
                     aria-pressed={day === selected}
                     aria-label={
                       formatDay(day) +
@@ -189,11 +211,7 @@ export default function LogPage() {
                       (skipped ? 'Skipped. ' : '') +
                       (unrecorded ? 'Not recorded. ' : '')
                     }
-                    onClick={() => {
-                      setSelected(day);
-                      setFocusedDay(day);
-                      if (day.slice(0, 7) !== month) setMonth(day.slice(0, 7));
-                    }}
+                    onClick={() => selectDay(day, true)}
                   >
                     <span>{parseDay(day).getDate()}</span>
                     <span className="calendar-dots">
@@ -217,26 +235,36 @@ export default function LogPage() {
               <i className="unrecorded-dot" /> Not recorded
             </span>
           </div>
-          <button
-            className="text-link"
-            onClick={() => {
-              setSelected(today);
-              setFocusedDay(today);
-              setMonth(today.slice(0, 7));
-            }}
-          >
+          <button className="text-link" onClick={() => selectDay(today, true)}>
             Back to today
           </button>
         </section>
-        <section className="panel day-detail">
+        <section className="panel day-detail" aria-label="Medication history">
           <div className="section-heading">
-            <div>
-              <h2>{formatDay(selected)}</h2>
-            </div>
+            <h2>Medication</h2>
             <span className="count-badge">
               {daily.filter((d) => d.record).length}/{daily.length}
             </span>
           </div>
+          <details className="history-filter-options">
+            <summary>
+              {filter
+                ? (data.medications.find((m) => m.id === filter)?.name ?? 'Filtered medication')
+                : 'All medications'}
+            </summary>
+            <label className="field history-filter">
+              Filter medication
+              <select value={filter} onChange={(e) => setFilter(e.target.value)}>
+                <option value="">All medications</option>
+                {data.medications.map((m) => (
+                  <option value={m.id} key={m.id}>
+                    {m.name}
+                    {m.archived ? ' (archived)' : ''}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </details>
           {daily.length ? (
             <div className="dose-list">
               {daily.map((d) => (
@@ -268,7 +296,7 @@ export default function LogPage() {
       </div>
       {routinesForDay(data, selected).length > 0 && (
         <section className="panel routines-today" aria-label="Optional routine history">
-          <h2>For you · {formatDay(selected)}</h2>
+          <h2>Self-care</h2>
           {routinesForDay(data, selected).length ? (
             routinesForDay(data, selected).map((o) => (
               <RoutineCard key={o.id} occurrence={o} historical />
@@ -278,10 +306,35 @@ export default function LogPage() {
           )}
         </section>
       )}
+      <details className="panel history-summary">
+        <summary>Last 7 days</summary>
+        <div className="history-stats">
+          <div>
+            <span>Last 7 days</span>
+            <strong>{recent.filter((r) => r.status === 'taken').length}</strong>
+            <small>Doses recorded as taken</small>
+          </div>
+          <div>
+            <span>Last 7 days</span>
+            <strong>{recent.filter((r) => r.status === 'skipped').length}</strong>
+            <small>Doses recorded as skipped</small>
+          </div>
+          {!data.preferences.hideRewards && (
+            <div>
+              <span>Showing up</span>
+              <strong>
+                {checkInStreak(data, today)}
+                <em> days</em>
+              </strong>
+              <small>Current check-in streak</small>
+            </div>
+          )}
+        </div>
+      </details>
       <p className="page-footnote">
         “Not recorded” means there is no check-in; it does not assume you missed a dose. Select a
         dose to add a record or correct it.
       </p>
-    </>
+    </div>
   );
 }

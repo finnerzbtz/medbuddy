@@ -1,15 +1,30 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/stores/appStore';
 import { ROUTINE_TEMPLATES, CATEGORY_NAMES } from '@/domain/routineTemplates';
 import type { Routine, RoutineInput } from '@/types';
 import RoutineForm from '@/components/forms/RoutineForm';
 import RoutineDialog from '@/components/app/RoutineDialog';
+import './calm-pages.css';
 export default function RoutinesPage() {
   const data = useAppStore((s) => s.data),
     [params] = useSearchParams(),
     navigate = useNavigate();
   const welcome = params.has('welcome');
+  const heading = useRef<HTMLHeadingElement>(null);
+  const restorePageFocus = () => {
+    requestAnimationFrame(() => {
+      if (document.activeElement === document.body) heading.current?.focus({ preventScroll: true });
+    });
+  };
+  const closeForm = () => {
+    setForm(null);
+    restorePageFocus();
+  };
+  const closeArchive = () => {
+    setArchive(null);
+    restorePageFocus();
+  };
   const [form, setForm] = useState<{ routine?: Routine; template?: Partial<RoutineInput> } | null>(
       null,
     ),
@@ -24,10 +39,32 @@ export default function RoutinesPage() {
   const finish = () => {
     if (report(useAppStore.getState().dismissRoutineIntroduction())) navigate('/');
   };
-  return (
+  const ideas = (
     <>
+      <div className="routine-templates">
+        {ROUTINE_TEMPLATES.map((template) => (
+          <button
+            key={template.title}
+            className="routine-template"
+            onClick={() => setForm({ template })}
+          >
+            <span>{CATEGORY_NAMES[template.category]}</span>
+            <strong>{template.title}</strong>
+            <span aria-hidden="true">＋</span>
+          </button>
+        ))}
+      </div>
+      <button className="button secondary" onClick={() => setForm({})}>
+        Create your own routine
+      </button>
+    </>
+  );
+  return (
+    <div className="routines-page calm-page">
       <div className="page-heading">
-        <h1>{welcome ? 'A little time for you' : 'Your routines'}</h1>
+        <h1 ref={heading} tabIndex={-1}>
+          {welcome ? 'A little time for you' : 'Your routines'}
+        </h1>
         <Link className="text-link" to="/">
           Back to Today
         </Link>
@@ -48,7 +85,6 @@ export default function RoutinesPage() {
             </Link>
           </div>
         )}
-        <h2>{active.length ? 'Your plan' : 'Add a routine'}</h2>
         <div className="routine-management">
           {active.map((r) => (
             <article key={r.id} aria-label={r.title} className="routine-card">
@@ -79,27 +115,18 @@ export default function RoutinesPage() {
             </article>
           ))}
         </div>
-        {(!welcome || active.length < 2) && (
-          <>
-            <h2>Start with an idea</h2>
-            <div className="routine-templates">
-              {ROUTINE_TEMPLATES.map((template) => (
-                <button
-                  key={template.title}
-                  className="routine-template"
-                  onClick={() => setForm({ template })}
-                >
-                  <span>{CATEGORY_NAMES[template.category]}</span>
-                  <strong>{template.title}</strong>
-                  <span aria-hidden="true">＋</span>
-                </button>
-              ))}
+        {(!welcome || active.length < 2) &&
+          (active.length && !welcome ? (
+            <details className="routine-add-options">
+              <summary>Add routine</summary>
+              {ideas}
+            </details>
+          ) : (
+            <div className="routine-starter-ideas">
+              <h2>Start with an idea</h2>
+              {ideas}
             </div>
-            <button className="button secondary" onClick={() => setForm({})}>
-              Create your own routine
-            </button>
-          </>
-        )}
+          ))}
         {archived.length > 0 && (
           <details className="routine-archive">
             <summary>Archived routines ({archived.length})</summary>
@@ -122,9 +149,9 @@ export default function RoutinesPage() {
           </p>
         )}
       </section>
-      {form && <RoutineForm {...form} close={() => setForm(null)} />}
+      {form && <RoutineForm {...form} close={closeForm} />}
       {archive && (
-        <RoutineDialog title="Archive this routine?" close={() => setArchive(null)}>
+        <RoutineDialog title="Archive this routine?" close={closeArchive}>
           <p>
             {archive.title} will leave your optional plan. Past records are kept, and you can
             restore it later.
@@ -134,18 +161,18 @@ export default function RoutinesPage() {
               className="button primary"
               onClick={() => {
                 if (report(useAppStore.getState().setRoutineStatus(archive.id, 'archived')))
-                  setArchive(null);
+                  closeArchive();
               }}
             >
               Archive routine
             </button>
-            <button className="button secondary" onClick={() => setArchive(null)}>
+            <button className="button secondary" onClick={closeArchive}>
               Cancel
             </button>
           </div>
           {error && <p role="alert">{error}</p>}
         </RoutineDialog>
       )}
-    </>
+    </div>
   );
 }
