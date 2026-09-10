@@ -464,6 +464,200 @@ final class ReminduhUITests: XCTestCase {
         app.buttons["Close sound settings"].tap()
     }
 
+    func testNativeSoundDismissalAndToastNavigation() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        let opener = app.buttons["Sound settings"]
+        reveal(opener, in: app); opener.tap()
+        let close = app.buttons["Close sound settings"]
+        XCTAssertTrue(close.waitForExistence(timeout: 10), app.debugDescription)
+        let before = close.frame
+        let enabled = checkbox("Enable audio", in: app).value as? String
+        let music = checkbox("Background music", in: app).value as? String
+        let lastAction = app.buttons["Test sound"]
+        reveal(lastAction, in: app)
+        XCTAssertTrue(lastAction.isHittable)
+        XCTAssertTrue(close.isHittable, "Sound dismissal must remain reachable after scrolling preferences")
+        XCTAssertEqual(close.frame.minY, before.minY, accuracy: 1, "Only the preferences body should scroll")
+        XCTAssertGreaterThanOrEqual(close.frame.minY, 60, "Sound dismissal must clear the native status bar")
+        attachScreenshot("Native Sound close remains visible after scrolling", from: app)
+        close.tap()
+        XCTAssertTrue(close.waitForNonExistence(timeout: 5))
+        XCTAssertTrue(opener.isHittable, "Closing Sound should return to its visible opener")
+        opener.tap()
+        XCTAssertEqual(checkbox("Enable audio", in: app).value as? String, enabled)
+        XCTAssertEqual(checkbox("Background music", in: app).value as? String, music)
+        close.tap()
+        app.links["My Blobby"].tap()
+        let names = app.buttons["Names"]
+        reveal(names, in: app); names.tap()
+        let originalName = app.textFields["Your name"].value as? String
+        let originalPetName = app.textFields["Companion name"].value as? String
+        let save = app.buttons["Save names"]
+        reveal(save, in: app); save.tap()
+        XCTAssertTrue(app.staticTexts["Names updated."].waitForExistence(timeout: 5), app.debugDescription)
+        app.links["Today"].tap()
+        XCTAssertTrue(app.staticTexts["Names updated."].waitForNonExistence(timeout: 5), "An ordinary confirmation must clear on later navigation")
+        XCTAssertFalse(app.buttons["Dismiss message"].exists, "A stale confirmation must not cover the next page's actions")
+        let action = app.buttons["Room options"]
+        reveal(action, in: app)
+        XCTAssertTrue(action.isHittable)
+        attachScreenshot("Native home actions after confirmation clears on navigation", from: app)
+        app.links["My Blobby"].tap()
+        reveal(names, in: app); names.tap()
+        XCTAssertEqual(app.textFields["Your name"].value as? String, originalName)
+        XCTAssertEqual(app.textFields["Companion name"].value as? String, originalPetName)
+        try assertMedicationSnapshot(baseline, in: app)
+    }
+
+    private func chooseQAMusicFiles(_ names: [String], in app: XCUIApplication) {
+        // Fixture setup is intentionally host-side and limited to the dedicated
+        // simulator: scripts/ios/native-music-fixtures.py --simulator <QA UDID>.
+        let add = app.buttons["Add music"]
+        reveal(add, in: app); add.tap()
+        for label in ["Choose Files", "Choose File"] {
+            if app.buttons[label].exists { app.buttons[label].tap(); break }
+        }
+        let firstFile = app.cells.matching(NSPredicate(format: "label BEGINSWITH %@", names[0])).firstMatch
+        if !firstFile.waitForExistence(timeout: 3) {
+            let folder = app.cells.matching(NSPredicate(format: "label BEGINSWITH %@", "Reminduh Audio QA")).firstMatch
+            if !folder.exists {
+                // A new music picker starts in Recents, even after a backup
+                // picker previously browsed On My iPhone.
+                let browse = app.tabBars.buttons["Browse"]
+                XCTAssertTrue(browse.waitForExistence(timeout: 5), app.debugDescription)
+                browse.tap()
+                if !folder.waitForExistence(timeout: 2) {
+                    let local = app.descendants(matching: .any).matching(NSPredicate(format: "label == %@", "On My iPhone")).firstMatch
+                    XCTAssertTrue(local.waitForExistence(timeout: 5), app.debugDescription)
+                    local.tap()
+                }
+            }
+            XCTAssertTrue(folder.waitForExistence(timeout: 10), "The dedicated synthetic Files fixture folder is required: " + app.debugDescription)
+            folder.tap()
+        }
+        attachScreenshot("Native audio Files selection", from: app)
+        for name in names {
+            let file = app.cells.matching(NSPredicate(format: "label BEGINSWITH %@", name)).firstMatch
+            XCTAssertTrue(file.waitForExistence(timeout: 10), app.debugDescription)
+            file.tap()
+        }
+        let open = app.buttons["Open"]
+        XCTAssertTrue(open.waitForExistence(timeout: 5) && open.isEnabled, app.debugDescription)
+        open.tap()
+        XCTAssertTrue(add.waitForExistence(timeout: 10), app.debugDescription)
+    }
+
+    private func nativeTrackTime(in app: XCUIApplication) -> (elapsed: Int, duration: Int)? {
+        // Native WK exposes the elapsed time, slash and duration as separate
+        // text nodes. Read the two values in the slider's nearest container.
+        guard let group = app.otherElements.containing(.slider, identifier: "Track position")
+            .allElementsBoundByIndex.min(by: { $0.frame.height < $1.frame.height }) else { return nil }
+        let parts = group.staticTexts.matching(NSPredicate(format: "label MATCHES %@", "[0-9]+:[0-9]{2}"))
+            .allElementsBoundByIndex.sorted(by: { $0.frame.minX < $1.frame.minX }).map(\.label)
+        func seconds(_ text: String) -> Int? {
+            let values = text.split(separator: ":").compactMap { Int($0) }
+            return values.count == 2 ? values[0] * 60 + values[1] : nil
+        }
+        guard parts.count == 2, let elapsed = seconds(parts[0]), let duration = seconds(parts[1]) else { return nil }
+        return (elapsed, duration)
+    }
+
+    private func waitForTrackProgress(duration: Int, minimum: Int = 1, maximum: Int? = nil, in app: XCUIApplication) {
+        let predicate = NSPredicate { _, _ in
+            guard let time = self.nativeTrackTime(in: app) else { return false }
+            return time.duration == duration && time.elapsed >= minimum && (maximum == nil || time.elapsed <= maximum!)
+        }
+        expectation(for: predicate, evaluatedWith: app)
+        waitForExpectations(timeout: 20)
+    }
+
+    func testNativeLocalMusicFilesLifecycle() throws {
+        continueAfterFailure = false
+        let app = XCUIApplication()
+        app.launch()
+        XCTAssertTrue(app.links["My Blobby"].waitForExistence(timeout: 25), app.debugDescription)
+        let baseline = try medicationSnapshot(in: app)
+        app.buttons["Sound settings"].tap()
+        let originalEnabled = checkbox("Enable audio", in: app).value as? String == "1"
+        let originalMusic = checkbox("Background music", in: app).value as? String == "1"
+        setCheckbox("Background music", enabled: false, in: app)
+        let player = app.links["Open record player"]
+        reveal(player, in: app); player.tap()
+        let library = app.switches["Your music"]
+        XCTAssertTrue(library.waitForExistence(timeout: 10), app.debugDescription)
+        library.tap()
+        // Native multi-selection can reorder FileList. Append one at a time
+        // so this test's expected queue order is explicit.
+        chooseQAMusicFiles(["QA Calm One"], in: app)
+        chooseQAMusicFiles(["QA Calm Two"], in: app)
+        let first = app.buttons["Play QA Calm One"]
+        let second = app.buttons["Play QA Calm Two"]
+        XCTAssertTrue(first.waitForExistence(timeout: 10) && second.exists, app.debugDescription)
+        reveal(first, in: app); first.tap()
+        XCTAssertTrue(app.sliders["Track position"].waitForExistence(timeout: 5), app.debugDescription)
+        waitForTrackProgress(duration: 8, in: app)
+        XCTAssertTrue(app.buttons["Pause record"].exists)
+        attachScreenshot("Native local WAV advances its playhead", from: app)
+        // No seek or Next action: the first real ended event must advance the queue.
+        waitForTrackProgress(duration: 14, in: app)
+        attachScreenshot("Native local queue advances after track ends", from: app)
+        let play = app.buttons["Play record"]
+        XCTAssertTrue(play.waitForExistence(timeout: 20), "The final ended event must return the transport to Play: " + app.debugDescription)
+        XCTAssertEqual(nativeTrackTime(in: app)?.elapsed, 14)
+        reveal(play, in: app); play.tap()
+        waitForTrackProgress(duration: 14, minimum: 1, maximum: 5, in: app)
+        let pause = app.buttons["Pause record"]
+        reveal(pause, in: app); pause.tap()
+        XCTAssertTrue(play.waitForExistence(timeout: 5))
+        let pausedAt = try XCTUnwrap(nativeTrackTime(in: app)?.elapsed)
+        Thread.sleep(forTimeInterval: 1)
+        XCTAssertEqual(nativeTrackTime(in: app)?.elapsed, pausedAt, "Paused native file progress must not keep advancing")
+        XCUIDevice.shared.press(.home)
+        app.activate()
+        XCTAssertTrue(play.waitForExistence(timeout: 10), "Backgrounding must preserve an explicit pause")
+        reveal(play, in: app); play.tap()
+        waitForTrackProgress(duration: 14, minimum: pausedAt + 1, in: app)
+        attachScreenshot("Native local file resumes after pause and foreground", from: app)
+        let radio = app.switches["Blobby radio"]
+        reveal(radio, in: app); radio.tap()
+        let playRadio = app.buttons["Play Blobby radio"]
+        reveal(playRadio, in: app); playRadio.tap()
+        XCTAssertTrue(app.staticTexts["Playing"].waitForExistence(timeout: 20), app.debugDescription)
+        library.tap()
+        XCTAssertTrue(play.waitForExistence(timeout: 5), "Starting radio must stop the file transport")
+        reveal(first, in: app); first.tap()
+        waitForTrackProgress(duration: 8, in: app)
+        reveal(radio, in: app); radio.tap()
+        XCTAssertTrue(app.staticTexts["Paused"].waitForExistence(timeout: 5), "Starting a local file must stop Blobby radio")
+        library.tap()
+        let clear = app.buttons["Clear listening queue"]
+        reveal(clear, in: app); clear.tap()
+        XCTAssertFalse(first.exists)
+        chooseQAMusicFiles(["QA Invalid Audio"], in: app)
+        let invalid = app.buttons["Play QA Invalid Audio"]
+        reveal(invalid, in: app); invalid.tap()
+        let error = app.staticTexts.matching(NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@", "couldn’t play", "not supported")).firstMatch
+        XCTAssertTrue(error.waitForExistence(timeout: 15), "A genuinely invalid audio file must show a visible playback error: " + app.debugDescription)
+        reveal(error, in: app)
+        XCTAssertTrue(error.isHittable)
+        attachScreenshot("Native invalid audio shows a recoverable error", from: app)
+        reveal(clear, in: app); clear.tap()
+        chooseQAMusicFiles(["QA Calm One"], in: app)
+        reveal(first, in: app); first.tap()
+        waitForTrackProgress(duration: 8, in: app)
+        XCTAssertFalse(error.exists, "A valid file must recover from the earlier decode error")
+        reveal(clear, in: app); clear.tap()
+        app.buttons["Sound settings"].tap()
+        setCheckbox("Background music", enabled: originalMusic, in: app)
+        setCheckbox("Enable audio", enabled: originalEnabled, in: app)
+        app.buttons["Close sound settings"].tap()
+        try assertMedicationSnapshot(baseline, in: app)
+    }
+
     func testRadioPlaybackAndForegroundRecovery() throws {
         let app = XCUIApplication()
         app.launch()

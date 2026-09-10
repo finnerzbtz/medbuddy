@@ -75,6 +75,14 @@ The optional purchase test uses the separate **Reminduh StoreKit** scheme. Its c
 
 Use a separate simulator with no personal medication data. `AppUITests/ReminduhUITests.swift` contains eight core flows: medication/supply/relaunch; local reminders/persistence; Files export/restore; radio; recorded voice; bonsai; optional-routine activity/isolation; and clothing/feeding/Zen. Run these through scheme Reminduh and inspect individual results and skips. The separate StoreKit scheme is not part of the offline beta gate. Fresh onboarding is only for a dedicated QA installation; never erase a personal installation.
 
+The focused `testNativeSoundDismissalAndToastNavigation` checks reachable Sound dismissal and contextual confirmation cleanup. `testNativeLocalMusicFilesLifecycle` uses real Files selection, automatic queue progression, end/restart, pause/foreground, radio/file exclusion and invalid-file recovery. Prepare its synthetic files only on the existing dedicated QA simulator, already booted:
+
+```sh
+python3 scripts/ios/native-music-fixtures.py --simulator 4482F80F-E6EF-499B-BE0D-07C1F6ACACB2
+```
+
+The helper is intentionally restricted to **Reminduh Notification Onboarding QA** and preserves existing differing files. It does not bootstrap or erase a device. Inspect native playhead progression and individual assertions; a visible Play/Pause label alone does not prove audio playback or physical speaker output.
+
 Use `testNativeRoutineDateTimeFormLayout` to verify native date/time field bounds, picker opening and cancellation. Desktop WebKit does not reproduce all iOS control sizing.
 
 Run `testNativeTextScaleAndCoreLayout` at normal and accessibility-large iOS text categories when typography changes. Compare actual native text frames and screenshots, check fields, count badges and controls above fixed navigation, and restore the QA category afterward. A browser root-font setting alone does not prove Dynamic Type support. Current local refinement evidence and remaining investigations are in [the quality pass](../refinement/quality-pass.md); local branch changes after build 4 are not automatically included in that distributed build.
