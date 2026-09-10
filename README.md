@@ -94,8 +94,10 @@ The canonical remote is [finnerzbtz/medbuddy](https://github.com/finnerzbtz/medb
 It retains the original project history. Keep changes in small, coherent commits;
 use a feature branch and pull request for future work, run the release checks before
 merging, and tag each uploaded iOS build (`ios/0.1.0-2`, for example).
-The main branch requires the `verify` check and pull requests, with force-pushes
-and deletion disabled; the repository owner retains emergency administrator bypass.
+CI runs on pushes and pull requests. Proposed main-branch protection would require
+the `verify` check and pull requests, block force-pushes/deletion, and retain the
+owner’s emergency administrator bypass. Applying those settings is awaiting explicit
+owner approval; main is not protected yet.
 
 Optimised runtime models/audio and the editable base Blender file are tracked;
 generated builds, QA logs, personal editor settings, signing material and `.env`
