@@ -1,3 +1,4 @@
+import { isNative } from '@/native/platform';
 import { stopBlobbySpeech } from '@/audio/BlobbySpeech';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -13,7 +14,9 @@ export default function AudioRuntime() {
   useEffect(() => {
     appAudio.setHidden(document.hidden);
     const visibility = () => appAudio.setHidden(document.hidden);
-    const blur = () => appAudio.setHidden(true);
+    const blur = () => {
+      if (!isNative) appAudio.setHidden(true);
+    };
     const focus = () => appAudio.setHidden(false);
     document.addEventListener('visibilitychange', visibility);
     window.addEventListener('blur', blur);

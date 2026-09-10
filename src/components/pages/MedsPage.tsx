@@ -55,7 +55,7 @@ export default function MedsPage() {
               <Pill aria-hidden="true" focusable="false" size={30} />
             )}
           </span>
-          <h2>{showArchived ? 'Nothing archived.' : 'A routine starts with one step.'}</h2>
+          <h2>{showArchived ? 'Nothing archived.' : 'No medications yet.'}</h2>
           <p>
             {showArchived
               ? 'Archived medications keep their history and can be restored here.'

@@ -42,6 +42,7 @@ try {
     'scripts/release-a/activity-browser-test.mjs',
     'scripts/ios/notification-onboarding-browser-tests.mjs',
     'scripts/ios/mobile-browser-tests.mjs',
+    'scripts/ios/bundled-audio-browser-tests.mjs',
   ]) {
     console.log(`\nChecking ${script}`);
     const child = spawn(process.execPath, [script], { env, stdio: 'inherit' });

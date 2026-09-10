@@ -1,5 +1,6 @@
 import Capacitor
 import UserNotifications
+import AVFAudio
 
 class ReminduhBridgeViewController: CAPBridgeViewController {
     override func capacitorDidLoad() {
@@ -124,8 +125,20 @@ public class ReminduhDevicePlugin: CAPPlugin, CAPBridgedPlugin {
     public let jsName = "ReminduhDevice"
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "notificationSettings", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "openNotificationSettings", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "openNotificationSettings", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "prepareAudioPlayback", returnType: CAPPluginReturnPromise)
     ]
+    private func activatePlayback() throws {
+        let session = AVAudioSession.sharedInstance()
+        try session.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+        try session.setActive(true)
+    }
+    @objc func prepareAudioPlayback(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            do { try self.activatePlayback(); call.resolve() }
+            catch { call.reject("iPhone audio could not start. Try again after the current call or audio interruption.") }
+        }
+    }
     @objc func notificationSettings(_ call: CAPPluginCall) {
         UNUserNotificationCenter.current().getNotificationSettings { settings in
             call.resolve([

@@ -2691,3 +2691,38 @@ html[data-native='true'] body::before {
   z-index: 90;
   pointer-events: none;
 }
+
+/* Progressive disclosure keeps everyday settings short without losing options. */
+.profile-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 800px;
+}
+.settings-section {
+  padding: 0;
+}
+.settings-section > summary {
+  cursor: pointer;
+  padding: 19px 22px;
+  min-height: 58px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.settings-section[open] > summary {
+  border-bottom: 1px solid var(--border, #dce2d7);
+}
+.settings-content {
+  padding: 20px 22px;
+}
+.settings-content > .panel {
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+}
+.settings-content > .panel > .section-heading h2 {
+  font-size: 17px;
+}
+.profile-footer {
+  max-width: 800px;
+}

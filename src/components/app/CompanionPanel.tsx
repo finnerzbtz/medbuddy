@@ -372,13 +372,12 @@ export default function CompanionPanel() {
             </button>
           </div>
         )}
-        {speech && (
-          <div className="blobby-speech" key={clip} role="status">
-            {state.message}
-          </div>
-        )}
+        <BlobbyWisdom
+          message={speech ? state.message : undefined}
+          fallback={state.message}
+          suspended={pantry || !!customGame || ['tend', 'tea', 'feeding'].includes(clip)}
+        />
       </div>
-      <BlobbyWisdom suspended={speech || pantry} />
       {pantry && (
         <FeedingTray
           scene={scene}

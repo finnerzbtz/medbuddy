@@ -1,3 +1,4 @@
+import { prepareAudioPlayback } from '@/native/audio';
 /** Local granular noise: no downloaded loops, microphone or autoplay. */
 export class SandAudio {
   private context: AudioContext;
@@ -48,7 +49,7 @@ export class SandAudio {
     this.source.start();
   }
   async enable() {
-    await this.context.resume();
+    await Promise.all([this.context.resume(), prepareAudioPlayback()]);
     if (this.context.state !== 'running') throw new Error('Sand audio could not start.');
   }
   setVolume(volume: number) {

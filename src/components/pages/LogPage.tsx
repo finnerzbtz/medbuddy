@@ -231,7 +231,6 @@ export default function LogPage() {
         <section className="panel day-detail">
           <div className="section-heading">
             <div>
-              <span className="eyebrow">{selected === today ? 'Today' : 'Your record'}</span>
               <h2>{formatDay(selected)}</h2>
             </div>
             <span className="count-badge">
@@ -267,19 +266,18 @@ export default function LogPage() {
           )}
         </section>
       </div>
-      <section className="panel routines-today" aria-label="Optional routine history">
-        <h2>For you · {formatDay(selected)}</h2>
-        {routinesForDay(data, selected).length ? (
-          routinesForDay(data, selected).map((o) => (
-            <RoutineCard key={o.id} occurrence={o} historical />
-          ))
-        ) : (
-          <p>No optional routines on this day.</p>
-        )}
-        <p className="small muted">
-          Separate from medication records. Past entries don’t earn leaves.
-        </p>
-      </section>
+      {routinesForDay(data, selected).length > 0 && (
+        <section className="panel routines-today" aria-label="Optional routine history">
+          <h2>For you · {formatDay(selected)}</h2>
+          {routinesForDay(data, selected).length ? (
+            routinesForDay(data, selected).map((o) => (
+              <RoutineCard key={o.id} occurrence={o} historical />
+            ))
+          ) : (
+            <p>No optional routines on this day.</p>
+          )}
+        </section>
+      )}
       <p className="page-footnote">
         “Not recorded” means there is no check-in; it does not assume you missed a dose. Select a
         dose to add a record or correct it.

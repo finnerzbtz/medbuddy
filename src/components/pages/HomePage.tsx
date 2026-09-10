@@ -19,10 +19,6 @@ export default function HomePage() {
     upcoming = nextDose(data, now);
   const openCheckIn = useCheckIn();
   const due = pending.find((d) => +scheduledAt(d) <= +now);
-  const previousRecord = Object.values(data.records).sort((a, b) =>
-    b.recordedAt.localeCompare(a.recordedAt),
-  )[0];
-  const returning = previousRecord && previousRecord.date < today;
   const active = data.medications.filter((m) => !m.archived);
   return (
     <>
@@ -41,9 +37,6 @@ export default function HomePage() {
           <Plus aria-hidden="true" focusable="false" size={17} /> Add medication
         </Link>
       </div>
-      {returning && (
-        <p className="return-welcome">Welcome back. We can take today one thing at a time.</p>
-      )}
       {due && (
         <div className="medication-shortcut">
           <span>
@@ -99,8 +92,8 @@ export default function HomePage() {
                 <h3>{active.length ? 'Nothing scheduled today' : 'Add your first medication'}</h3>
                 <p>
                   {active.length
-                    ? 'Nothing is scheduled for today. Your next check-in will appear here.'
-                    : 'Add your first medication and choose the times that match your instructions.'}
+                    ? 'Your next dose will appear here.'
+                    : 'Use the schedule from your medication instructions.'}
                 </p>
                 <Link to={active.length ? '/meds' : '/meds/new'} className="button primary">
                   {active.length ? 'View medications' : 'Add a medication'}

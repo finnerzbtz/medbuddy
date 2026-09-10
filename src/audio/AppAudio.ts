@@ -1,3 +1,5 @@
+import { fetchAudioBytes } from './bundledAudio';
+import { prepareAudioPlayback } from '@/native/audio';
 import { create } from 'zustand';
 import { AUDIO_ASSETS } from '@/generated/audio';
 import { MUSIC_LOOP } from '@/generated/music-loop';
@@ -44,6 +46,7 @@ function readPreferences(): Preferences {
     const raw = JSON.parse(localStorage.getItem(KEY) || '{}');
     return {
       ...defaults,
+      enabled: raw.enabled === true,
       music: raw.music === true,
       effects: raw.effects !== false,
       readThoughts: raw.readThoughts !== false,
@@ -62,12 +65,13 @@ function readPreferences(): Preferences {
   }
 }
 export const useSoundSettings = create<Preferences>(() => readPreferences());
+export const useAudioReady = create(() => ({ ready: false }));
 export const useRadioPlayback = create(() => ({ playing: false }));
 export function setSoundSettings(patch: Partial<Preferences>) {
   useSoundSettings.setState(patch);
   const state = useSoundSettings.getState();
   try {
-    localStorage.setItem(KEY, JSON.stringify({ ...state, enabled: false }));
+    localStorage.setItem(KEY, JSON.stringify(state));
   } catch {
     /* Audio still works for this visit. */
   }
@@ -101,7 +105,7 @@ class AppAudio {
   private environment: 'room' | 'sand' | 'melody' | 'other' = 'other';
   private hidden = false;
   private externalMusic = false;
-  private config = defaults;
+  private config = useSoundSettings.getState();
   async unlock() {
     // Web Audio otherwise uses the iPhone ringer channel. Opted-in playback
     // should use media volume even when the phone's Silent switch is on.
@@ -116,6 +120,7 @@ class AppAudio {
     if (!this.ctx || this.ctx.state === 'closed') {
       this.ctx = new AudioContext();
       this.ctx.onstatechange = () => {
+        useAudioReady.setState({ ready: this.ctx?.state === 'running' });
         if (this.ctx?.state === 'running') this.configure(this.config);
         else if (useRadioPlayback.getState().playing) useRadioPlayback.setState({ playing: false });
       };
@@ -145,7 +150,7 @@ class AppAudio {
     // Call resume synchronously in the tap handler, before any network await.
     // An iOS permission sheet can steal focus without emitting a matching focus.
     if (!document.hidden) this.hidden = false;
-    await this.ctx.resume();
+    await Promise.all([this.ctx.resume(), prepareAudioPlayback()]);
     if (this.ctx.state !== 'running') throw new Error('Audio could not start. Try again.');
   }
   configure(state: Preferences) {
@@ -213,9 +218,9 @@ class AppAudio {
       if (!automatic) setSoundSettings({ enabled: true });
       let buffer = this.speechBuffers.get(url);
       if (!buffer) {
-        const response = await fetch(url, { signal: request.controller.signal });
-        if (!response.ok) throw new Error('Recording unavailable');
-        buffer = await this.ctx!.decodeAudioData(await response.arrayBuffer());
+        buffer = await this.ctx!.decodeAudioData(
+          await fetchAudioBytes(url, request.controller.signal),
+        );
         if (this.speech !== request) return false;
         this.speechBuffers.set(url, buffer);
         // Bound decoded voice memory; the service worker keeps compressed files offline.
@@ -364,11 +369,7 @@ class AppAudio {
     if (!url || !this.ctx || this.loading.has(id) || this.buffers.has(id)) return;
     this.loading.add(id);
     const ctx = this.ctx;
-    void fetch(url)
-      .then((r) => {
-        if (!r.ok) throw new Error('Unavailable audio');
-        return r.arrayBuffer();
-      })
+    void fetchAudioBytes(url)
       .then((b) => ctx.decodeAudioData(b))
       .then((buffer) => {
         if (this.ctx !== ctx || ctx.state === 'closed') return;

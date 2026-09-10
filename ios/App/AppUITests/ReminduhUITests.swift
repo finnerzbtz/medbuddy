@@ -30,6 +30,8 @@ final class ReminduhUITests: XCTestCase {
         let profile = app.links["My Blobby"]
         XCTAssertTrue(profile.waitForExistence(timeout: 20), app.debugDescription)
         profile.tap()
+        let reminderSection = app.buttons["Reminders"]
+        if reminderSection.waitForExistence(timeout: 10) { reminderSection.tap() }
         let enable = app.buttons["Enable reminders"]
         if enable.waitForExistence(timeout: 3) {
             reveal(enable, in: app)
@@ -62,7 +64,11 @@ final class ReminduhUITests: XCTestCase {
         roomShot.lifetime = .keepAlways
         add(roomShot)
         profile.tap()
+        if reminderSection.waitForExistence(timeout: 10) { reminderSection.tap() }
         XCTAssertTrue(test.waitForExistence(timeout: 20), "Notification opt-in should survive relaunch")
+        let dataSection = app.buttons["Backups & data"]
+        reveal(dataSection, in: app)
+        dataSection.tap()
         let backup = app.buttons["Export backup"]
         reveal(backup, in: app)
         backup.tap()
@@ -110,6 +116,8 @@ final class ReminduhUITests: XCTestCase {
         let profile = app.links["My Blobby"]
         XCTAssertTrue(profile.waitForExistence(timeout: 20), app.debugDescription)
         profile.tap()
+        let reminderSection = app.buttons["Reminders"]
+        if reminderSection.waitForExistence(timeout: 10) { reminderSection.tap() }
         XCTAssertTrue(app.buttons["Turn off reminders"].waitForExistence(timeout: 15), "Reminder choice should survive native relaunch")
     }
 

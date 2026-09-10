@@ -1,3 +1,4 @@
+import SettingsSection from '@/components/app/SettingsSection';
 import { AccountCard } from './AccountPage';
 import { displayBinding } from '@/cloud/local';
 import { isNative } from '@/native/platform';
@@ -5,7 +6,7 @@ import { SoundPreferences } from '@/components/app/SoundControls';
 import DisplaySettings from '@/components/app/DisplaySettings';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Check, Download, Leaf, RotateCcw, ShieldCheck, Upload, X } from 'lucide-react';
+import { Check, Download, Leaf, RotateCcw, Upload, X } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
 import { dateKey, OUTFITS, ROOM_ITEMS } from '@/domain/schedule';
 import { DEFAULT_ROOM, ROOM_SLOTS, roomItem } from '@/domain/room';
@@ -82,21 +83,18 @@ export default function ProfilePage() {
         <div>
           <h1>You & {data.profile.petName}</h1>
         </div>
-        <span className="device-badge">
-          <ShieldCheck aria-hidden="true" focusable="false" size={16} /> Saved on this device
-        </span>
       </div>
       <div className="profile-grid">
         <AccountCard />
-        <ReminderSettings />
-        <section className="panel">
-          <h2>For you</h2>
-          <p>Optional routines, at your own pace.</p>
+        <SettingsSection title="Reminders" id="reminders">
+          <ReminderSettings />
+        </SettingsSection>
+        <SettingsSection title="Routines" id="routines-settings">
           <Link className="button secondary" to="/routines">
             Manage routines
           </Link>
-        </section>
-        <section className="panel profile-details">
+        </SettingsSection>
+        <SettingsSection title="Names" id="names">
           <div className="profile-pet">
             <img src={'/assets-v2/' + data.outfit + '-preview.webp'} alt={data.profile.petName} />
             <div>
@@ -135,10 +133,9 @@ export default function ProfilePage() {
               Save names
             </button>
           </form>
-        </section>
-        <section className="panel" id="wardrobe">
+        </SettingsSection>
+        <SettingsSection title="Wardrobe" id="wardrobe">
           <div className="section-heading">
-            <h2>Wardrobe</h2>
             <Link className="text-link" to="/shop?tab=outfits">
               Visit the shop →
             </Link>
@@ -168,10 +165,9 @@ export default function ProfilePage() {
               ),
             )}
           </div>
-        </section>
-        <section className="panel">
+        </SettingsSection>
+        <SettingsSection title="Room" id="room">
           <div className="section-heading">
-            <h2>Your room</h2>
             <Link className="text-link" to="/shop?tab=room">
               Decorate →
             </Link>
@@ -198,25 +194,17 @@ export default function ProfilePage() {
           <Link className="text-link" to="/">
             See your room →
           </Link>
-        </section>
-        <section className="panel" id="sound">
-          <h2>Sound</h2>
+        </SettingsSection>
+        <SettingsSection title="Sound" id="sound">
           <SoundPreferences />
-        </section>
-        <section className="panel" id="accessibility" tabIndex={-1}>
-          <h2>Accessibility & comfort</h2>
+        </SettingsSection>
+        <SettingsSection title="Accessibility & comfort" id="accessibility">
           <DisplaySettings />
           <Link className="text-link" to="/help">
             Help, privacy & accessibility
           </Link>
-        </section>
-        <section className="panel wide-panel" id="your-data">
-          <div className="section-heading">
-            <div>
-              <h2>Your data</h2>
-            </div>
-            <ShieldCheck aria-hidden="true" focusable="false" size={23} strokeWidth={1.5} />
-          </div>
+        </SettingsSection>
+        <SettingsSection title="Backups & data" id="your-data">
           <p>
             {isNative
               ? 'Your medications and check-ins stay on this device. There is no account or cloud sync. Deleting the app removes its data, so save a backup somewhere private.'
@@ -333,7 +321,7 @@ export default function ProfilePage() {
             <RotateCcw aria-hidden="true" focusable="false" size={15} /> Reset this device’s app
             data
           </button>
-        </section>
+        </SettingsSection>
       </div>
       {displayBinding() && (
         <p className="small muted">

@@ -1,146 +1,38 @@
-/* A voice from the room, with optional controls outside the speech bubble. */
-.blobby-wisdom {
-  width: min(410px, calc(100% - 40px));
-  margin: 6px auto 14px;
+/* Thoughts and reactions share the room's single, compact speech bubble. */
+.blobby-speech.blobby-wisdom {
+  width: max-content;
+  max-width: min(320px, calc(100% - 32px));
+  margin: 0;
+  padding: 10px 14px;
+  pointer-events: auto;
   color: #344b3c;
+  background: #fffef5f5;
 }
-.blobby-wisdom[hidden],
-.blobby-wisdom [hidden] {
+.blobby-wisdom[hidden] {
   display: none !important;
-}
-.wisdom-bubble {
-  display: flow-root;
-  position: relative;
-  padding: 16px 18px;
-  background: #fffef9;
-  border: 1px solid #ffffff;
-  border-radius: 24px 24px 24px 9px;
-  box-shadow: 0 6px 20px -12px #31463740;
-}
-.wisdom-bubble::before {
-  content: '';
-  position: absolute;
-  left: 58%;
-  top: -8px;
-  width: 17px;
-  height: 17px;
-  border-radius: 4px 0 0;
-  background: #fffef9;
-  border-left: 1px solid #ffffff;
-  border-top: 1px solid #ffffff;
-  transform: rotate(45deg);
-}
-.blobby-wisdom button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
-  min-height: 44px;
-  min-width: 44px;
-  border: 1px solid transparent;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 1.4;
-  color: #405e48;
-  background: transparent;
-}
-.blobby-wisdom button:hover {
-  background: #ffffffa8;
-}
-.blobby-wisdom .wisdom-toggle {
-  float: right;
-  position: relative;
-  z-index: 1;
-  margin: -12px -14px -3px 4px;
-  padding: 10px;
 }
 .wisdom-message {
   overflow-wrap: anywhere;
 }
 .wisdom-message p {
   margin: 0;
-  font-size: 16px;
-  line-height: 1.6;
-  color: #344b3c;
+  font-size: 14px;
+  line-height: 1.45;
+  color: inherit;
 }
 .wisdom-message :is(figure, blockquote) {
   margin: 0;
 }
 .wisdom-message figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0 12px;
-  margin: 2px 0 -8px;
-  color: #556b59;
+  margin-top: 4px;
   font-size: 12px;
-  line-height: 1.5;
-}
-.wisdom-message figcaption strong {
-  font-weight: 500;
-}
-.wisdom-source {
-  display: inline-flex;
-  gap: 4px;
-  align-items: center;
-  min-height: 44px;
-  color: #405e48;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-.wisdom-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: fit-content;
-  max-width: 100%;
-  gap: 2px;
-  margin: 8px auto 0;
-  padding: 2px;
-  border: 1px solid #c4d2c2;
-  border-radius: 16px;
-  background: #f5f9f1b8;
-}
-.wisdom-controls > button {
-  padding: 8px 12px;
-}
-.wisdom-controls .wisdom-mute {
-  border-left-color: #c4d2c2;
-  border-radius: 0 12px 12px 0;
-}
-.blobby-wisdom.is-collapsed {
-  margin-block: 0 8px;
-  text-align: center;
-}
-.is-collapsed .wisdom-bubble {
-  padding: 0;
-  background: none;
-  border: 0;
-  box-shadow: none;
-}
-.is-collapsed .wisdom-bubble::before {
-  content: none;
-}
-.blobby-wisdom.is-collapsed .wisdom-toggle {
-  float: none;
-  margin: 0;
-  padding-inline: 12px;
-}
-@media (max-width: 760px) {
-  .blobby-wisdom {
-    width: calc(100% - 40px);
-    max-width: 410px;
-  }
+  line-height: 1.4;
+  color: #4e6251;
 }
 @media (forced-colors: active) {
-  .wisdom-bubble,
-  .wisdom-bubble::before {
-    border-color: CanvasText;
+  .blobby-speech.blobby-wisdom {
+    border: 1px solid CanvasText;
     background: Canvas;
-  }
-  .wisdom-controls,
-  .wisdom-controls .wisdom-mute {
-    border-color: CanvasText;
+    color: CanvasText;
   }
 }

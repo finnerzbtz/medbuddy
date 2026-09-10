@@ -1,3 +1,4 @@
+import { speakBlobby } from '@/audio/BlobbySpeech';
 import { Link } from 'react-router-dom';
 import { VoicePreferences } from './VoicePicker';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -106,9 +107,20 @@ export function SoundPreferences() {
         Open record player
       </Link>
       <VoicePreferences />
-      <p className="sound-note">
-        Start audio when you’re ready. Your volume choices are remembered.
-      </p>
+      <button
+        className="button secondary"
+        onClick={async () => {
+          setError('');
+          try {
+            await enableSound();
+            await speakBlobby('cloud', 'familiar');
+          } catch {
+            setError('Sound could not start. Check your connected headphones and try again.');
+          }
+        }}
+      >
+        Test sound
+      </button>
       <span role="status">{error}</span>
     </div>
   );

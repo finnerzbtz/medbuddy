@@ -36,7 +36,7 @@ export default function RoutinesPage() {
         <p>
           {welcome
             ? 'Choose up to two to start, or skip. You can change them any time.'
-            : 'Optional moments for yourself, separate from medication check-ins.'}
+            : 'Self-care, separate from your medication.'}
         </p>
         {welcome && (
           <div className="routine-actions">
@@ -48,8 +48,7 @@ export default function RoutinesPage() {
             </Link>
           </div>
         )}
-        <h2>{active.length ? 'Your plan' : 'An empty plan is okay'}</h2>
-        {!active.length && <p>Add something that suits you, whenever you’re ready.</p>}
+        <h2>{active.length ? 'Your plan' : 'Add a routine'}</h2>
         <div className="routine-management">
           {active.map((r) => (
             <article key={r.id} aria-label={r.title} className="routine-card">

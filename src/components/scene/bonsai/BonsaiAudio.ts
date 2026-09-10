@@ -1,3 +1,4 @@
+import { prepareAudioPlayback } from '@/native/audio';
 /** Quiet, continuous rain/leaf textures, shaped by live input. No autoplay or remote calls. */
 export class BonsaiAudio {
   private context = new AudioContext();
@@ -42,7 +43,7 @@ export class BonsaiAudio {
     this.source.start();
   }
   async enable() {
-    await this.context.resume();
+    await Promise.all([this.context.resume(), prepareAudioPlayback()]);
   }
   setVolume(value: number) {
     this.volume = Math.max(0, Math.min(1, value));
