@@ -361,8 +361,10 @@ export class RoomJourney {
     this.sample(0);
   }
   update(dt: number) {
-    if (!this.segments.length) return;
-    this.elapsed += Math.max(0, Math.min(dt, 0.05));
+    if (!this.segments.length || !Number.isFinite(dt) || dt <= 0) return;
+    // Routes are sampled analytically; truncating time makes slow renderers walk
+    // in slow motion. The caller excludes paused/background time.
+    this.elapsed += dt;
     if (this.elapsed >= this.duration) {
       if (this.loop && this.activity !== 'rest') this.setActivity(this.activity);
       else this.elapsed = this.duration;

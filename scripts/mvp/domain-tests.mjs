@@ -563,6 +563,34 @@ test('Room routes stay on the floor, avoid the table and arrive at each interact
     );
   }
 });
+test('Room journeys keep the same active-time route at low frame rates', () => {
+  for (const activity of ['tend', 'tea', 'feeding', 'rest']) {
+    const reference = new choreography.RoomJourney();
+    reference.setActivity(activity);
+    for (let i = 0; i < 240; i++) reference.update(1 / 60);
+    for (const fps of [1, 2, 15, 60]) {
+      const journey = new choreography.RoomJourney();
+      journey.setActivity(activity);
+      for (let i = 0; i < 4 * fps; i++) journey.update(1 / fps);
+      assert.ok(
+        Math.abs(journey.elapsed - reference.elapsed) < 1e-8,
+        activity + ' active time at ' + fps + ' FPS',
+      );
+      assert.equal(journey.phase, reference.phase);
+      assert.equal(journey.animation, reference.animation);
+      journey.position.forEach((value, index) =>
+        assert.ok(Math.abs(value - reference.position[index]) < 1e-8),
+      );
+      const before = JSON.stringify(journey);
+      for (const invalid of [0, -1, NaN, Infinity]) journey.update(invalid);
+      assert.equal(
+        JSON.stringify(journey),
+        before,
+        'Invalid or paused time cannot advance a journey',
+      );
+    }
+  }
+});
 test('Gardening stays at the bonsai until the film finishes, then walks home continuously', () => {
   const journey = new choreography.RoomJourney();
   journey.setActivity('tend');

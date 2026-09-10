@@ -37,6 +37,42 @@ try {
         'reminduh-sound-v1',
         JSON.stringify({ enabled: false, music: false, effects: false, readThoughts: false }),
       );
+      // Exercise real low-frequency rendering, without advancing the journey
+      // directly or replacing the arrival callback.
+      window.__sensoryFrameDelay = 0;
+      window.__sensoryJourneyFrames = [];
+      const requestFrame = window.requestAnimationFrame.bind(window);
+      const cancelFrame = window.cancelAnimationFrame.bind(window);
+      const pending = new Map();
+      let nextFrame = 0;
+      window.requestAnimationFrame = (callback) => {
+        if (!window.__sensoryFrameDelay) return requestFrame(callback);
+        const id = --nextFrame;
+        const entry = { timer: 0, frame: 0 };
+        entry.timer = setTimeout(() => {
+          entry.frame = requestFrame((time) => {
+            pending.delete(id);
+            callback(time);
+            const journey = window.__assetCharacter?.journey;
+            if (journey)
+              window.__sensoryJourneyFrames.push({
+                activity: journey.activity,
+                phase: journey.phase,
+                position: [...journey.position],
+                elapsed: journey.elapsed,
+              });
+          });
+        }, window.__sensoryFrameDelay);
+        pending.set(id, entry);
+        return id;
+      };
+      window.cancelAnimationFrame = (id) => {
+        const entry = pending.get(id);
+        if (!entry) return cancelFrame(id);
+        clearTimeout(entry.timer);
+        if (entry.frame) cancelFrame(entry.frame);
+        pending.delete(id);
+      };
       window.__sensoryAudio = [];
       const Base = window.AudioContext;
       window.AudioContext = class extends Base {
@@ -88,10 +124,35 @@ try {
       const before = await health();
       await page.getByRole('button', { name: 'Activities', exact: true }).click();
       const garden = page.getByRole('button', { name: 'Garden: Tend the bonsai', exact: true });
+      await expect(page.locator('.live-scene')).toHaveAttribute('data-scene-ready', 'true', {
+        timeout: 20000,
+      });
+      await page.evaluate(() => {
+        window.__sensoryFrameDelay = 750;
+      });
       await garden.click();
       const dialog = page.locator('.bonsai-garden'),
         canvas = page.locator('.bonsai-canvas');
       await expect(dialog).toHaveAttribute('data-ready', 'true', { timeout: 18000 });
+      const arrival = await page.evaluate(async () => {
+        window.__sensoryFrameDelay = 0;
+        const journey = window.__assetCharacter.journey;
+        const { PLACES } = await import('/src/domain/choreography.ts');
+        return {
+          phase: journey.phase,
+          activity: journey.animation,
+          position: journey.position,
+          destination: PLACES.garden,
+          travelled: window.__sensoryJourneyFrames.some(
+            (frame) => frame.activity === 'tend' && frame.phase === 'travel',
+          ),
+        };
+      });
+      expect(arrival.travelled).toBe(true);
+      expect(arrival.phase).toBe('act');
+      expect(arrival.activity).toBe('tend');
+      expect(arrival.position).toEqual(arrival.destination);
+      check('A slow-rendered approach reaches the actual bonsai before opening its activity');
       const metric = async (name) => Number(await canvas.getAttribute('data-' + name));
       await page.getByRole('button', { name: 'Clear droplets', exact: true }).click();
       await page.getByRole('button', { name: 'Shower the tree', exact: true }).click();
@@ -266,6 +327,8 @@ try {
         await page.evaluate(() => ({
           preferences: window.__appStore?.getState().data.preferences,
           animation: window.__appStore?.getState().currentAnimation,
+          journey: window.__assetCharacter?.journey,
+          frames: window.__sensoryJourneyFrames?.slice(-8),
           scene: document.querySelector('.live-scene')?.outerHTML.slice(0, 800),
         })),
         errors,
