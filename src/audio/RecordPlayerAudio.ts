@@ -61,6 +61,7 @@ export const useRecordPlayer = create<{
 }));
 let fileAudio: HTMLAudioElement | null = null;
 let revision = 0;
+let pendingFileRequest: number | null = null;
 let musicListener: Promise<PluginListenerHandle> | null = null;
 function acceptApple(status: MusicStatus) {
   useRecordPlayer.setState({
@@ -130,13 +131,6 @@ function localPlayer() {
       error: 'This file couldn’t play. Try an MP3, M4A or WAV file.',
     });
   };
-  const pause = () => {
-    if (useRecordPlayer.getState().source === 'files') audio.pause();
-  };
-  window.addEventListener('blur', pause);
-  document.addEventListener('visibilitychange', () => {
-    if (document.hidden) pause();
-  });
   useSoundSettings.subscribe((settings) => {
     audio.volume = settings.musicVolume;
     if (!settings.enabled) audio.pause();
@@ -144,6 +138,19 @@ function localPlayer() {
   fileAudio = audio;
   return audio;
 }
+function pauseFilePlayback() {
+  if (pendingFileRequest !== null || useRecordPlayer.getState().source === 'files') {
+    // Invalidate preparation as well as any audio that has already started.
+    revision++;
+    fileAudio?.pause();
+  }
+}
+// A native control can blur WKWebView without backgrounding the app.
+if (!isNative) window.addEventListener('blur', pauseFilePlayback);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) pauseFilePlayback();
+});
+
 export function addMusicFiles(files: FileList | File[]) {
   const selected = Array.from(files).filter(
     (file) =>
@@ -154,18 +161,17 @@ export function addMusicFiles(files: FileList | File[]) {
   const tracks = useRecordPlayer.getState().tracks;
   if (!selected.length)
     throw new Error('Choose an MP3, M4A, WAV or other audio file under 100 MB.');
-  const added = selected
-    .slice(0, Math.max(0, 50 - tracks.length))
-    .map((file) => ({
-      id: crypto.randomUUID(),
-      title: file.name.replace(/\.[^.]+$/, ''),
-      url: URL.createObjectURL(file),
-    }));
+  const added = selected.slice(0, Math.max(0, 50 - tracks.length)).map((file) => ({
+    id: crypto.randomUUID(),
+    title: file.name.replace(/\.[^.]+$/, ''),
+    url: URL.createObjectURL(file),
+  }));
   if (!added.length) throw new Error('Your listening queue is full. Clear it to add more music.');
   useRecordPlayer.setState({ tracks: [...tracks, ...added], error: '' });
 }
 export async function clearMusicFiles() {
-  if (useRecordPlayer.getState().source === 'files') await stopOwnedPlayback();
+  if (useRecordPlayer.getState().source === 'files' || pendingFileRequest !== null)
+    await stopOwnedPlayback();
   if (fileAudio) {
     fileAudio.removeAttribute('src');
     fileAudio.load();
@@ -174,17 +180,30 @@ export async function clearMusicFiles() {
   useRecordPlayer.setState({ tracks: [], index: 0, progress: 0, duration: 0 });
 }
 export async function playLocal(index: number) {
-  const request = await stopOwnedPlayback();
-  const track = useRecordPlayer.getState().tracks[index];
-  if (!track) return;
-  setSoundSettings({ music: false });
-  await enableSound();
-  if (revision !== request) return;
-  const audio = localPlayer();
-  useRecordPlayer.setState({ source: 'files', index, progress: 0 });
-  audio.src = track.url;
-  audio.volume = useSoundSettings.getState().musicVolume;
-  await audio.play();
+  const stopped = stopOwnedPlayback();
+  const request = revision;
+  pendingFileRequest = request;
+  try {
+    await stopped;
+    if (revision !== request) return;
+    const track = useRecordPlayer.getState().tracks[index];
+    if (!track) return;
+    setSoundSettings({ music: false });
+    await appAudio.unlock();
+    // A background/pause/mute action during native session preparation wins.
+    if (revision !== request || document.hidden) return;
+    setSoundSettings({ enabled: true });
+    const audio = localPlayer();
+    useRecordPlayer.setState({ source: 'files', index, progress: 0 });
+    audio.src = track.url;
+    audio.volume = useSoundSettings.getState().musicVolume;
+    await audio.play();
+  } catch (error) {
+    // Aborting a superseded play is expected; genuine decode/start errors remain visible.
+    if (revision === request) throw error;
+  } finally {
+    if (pendingFileRequest === request) pendingFileRequest = null;
+  }
 }
 export async function playAppleMusic(item: MusicItem) {
   const request = await stopOwnedPlayback();
@@ -205,6 +224,8 @@ export async function playAppleMusic(item: MusicItem) {
   }
 }
 export async function controlRecord(action: 'play' | 'pause' | 'next' | 'previous') {
+  // A first file may still be preparing while the selected source is radio.
+  if (action === 'pause' && pendingFileRequest !== null) pauseFilePlayback();
   const s = useRecordPlayer.getState();
   if (s.source === 'apple') {
     const request = ++revision;
@@ -235,10 +256,20 @@ export async function controlRecord(action: 'play' | 'pause' | 'next' | 'previou
     return;
   }
   const audio = localPlayer();
-  if (action === 'pause') audio.pause();
+  if (action === 'pause') pauseFilePlayback();
   else {
-    await enableSound({ music: false });
-    await audio.play();
+    const request = ++revision;
+    pendingFileRequest = request;
+    try {
+      await appAudio.unlock();
+      if (revision !== request || document.hidden) return;
+      setSoundSettings({ music: false, enabled: true });
+      await audio.play();
+    } catch (error) {
+      if (revision === request) throw error;
+    } finally {
+      if (pendingFileRequest === request) pendingFileRequest = null;
+    }
   }
 }
 export function seekRecord(time: number) {
