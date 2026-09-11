@@ -1,3 +1,4 @@
+import { cloudConfig } from '@/cloud/config';
 import { SELF_CARE_RESOURCES } from '@/domain/wisdom';
 import { isNative } from '@/native/platform';
 import { Link } from 'react-router-dom';
@@ -42,16 +43,19 @@ export default function HelpPage() {
         <h2>Little thoughts</h2>
         <p>
           Blobby shares optional self-care ideas and quotes in a speech bubble. They change about
-          once a minute. Choose a voice and use Unmute to hear each thought as it appears, or Mute
-          for just the words. The timer pauses while Blobby speaks, the bubble is out of view or a
-          dialog is open. Hide little thoughts with the × on the bubble, or switch them off in
-          Comfort settings below.
+          once a minute while the bubble is in view. The timer pauses while Blobby speaks or a
+          dialog is open. In My Blobby → Sound, turn sound on, choose a voice and enable “Read
+          thoughts aloud” to hear them. Choose Quiet or turn off “Read thoughts aloud” for just the
+          words. You can switch little thoughts off in Make it comfortable at the top of this page.
         </p>
         <p>
           These are general reflections, not personalised mental health advice. They are chosen
-          independently of your medication and check-ins. Quotes include their author, edition and a
-          link to the original source. The thoughts work offline; source links need internet.
+          independently of your medication and check-ins. Quotes include their author. The thoughts
+          work offline; the wellbeing links below need internet.
         </p>
+        <Link className="text-link" to="/profile#sound">
+          Voice and sound settings
+        </Link>
         <p>For more on everyday wellbeing and sensory comfort:</p>
         <ul>
           {SELF_CARE_RESOURCES.map((resource) => (
@@ -82,12 +86,20 @@ export default function HelpPage() {
       <section className="panel">
         <h2>Your privacy</h2>
         <p>
-          Medication details and check-ins are saved on this device. Optional accounts use your
-          email for sign-in. If you turn on cloud sync, your medication records, profile,
-          preferences and earned Blobby progress are also stored with Neon in London, using
-          encrypted connections and account access controls. There are no advertising trackers.
-          Anyone with access to your unlocked device may be able to read them. Use your device lock.
+          Medication details, check-ins and optional self-care routines are saved on this device.
+          There are no advertising trackers. Anyone with access to your unlocked device may be able
+          to read your records. Use your device lock.
         </p>
+        {cloudConfig.enabled ? (
+          <p>
+            Optional accounts use your email for sign-in. If you turn on cloud sync, your medication
+            records, self-care routines and reviews, profile, preferences and earned Blobby progress
+            are also stored with Neon in London, using encrypted connections and account access
+            controls.
+          </p>
+        ) : (
+          <p>Accounts and cloud sync are not enabled in this version.</p>
+        )}
         <p>
           Backups, history exports and calendar files contain personal medication information and
           are not encrypted by Reminduh. Store them privately.{' '}
@@ -97,15 +109,20 @@ export default function HelpPage() {
         </p>
         <p>
           Audio files you choose for the record player stay on your device and are not uploaded.
-          Apple Music, when connected in the iPhone app, accesses your music library with
-          permission. Disconnect it in the record player. It does not receive your medication
-          records.
         </p>
         {isNative && (
-          <p>
-            Optional leaf purchases are handled by Apple. Purchased leaves stay in this iPhone’s
-            separate wallet and are not included in health backups or synced between devices.
-          </p>
+          <>
+            <p>
+              If an Apple Music connection is available in the record player, you can choose to give
+              it permission to access your music library and disconnect it there. It does not
+              receive your medication records.
+            </p>
+            <p>
+              Leaf packs, when available in the shop, are optional purchases handled by Apple.
+              Purchased leaves stay in this iPhone’s separate wallet and are not included in health
+              backups or synced between devices.
+            </p>
+          </>
         )}
         {isNative && (
           <p>
@@ -114,11 +131,13 @@ export default function HelpPage() {
             feedback.
           </p>
         )}
-        <p>
-          You can sign out to remove this account’s copy from the current device, or delete your
-          account and cloud records in Account. Database recovery backups may retain deleted records
-          for up to 24 hours. Exports you saved yourself remain until you remove them.
-        </p>
+        {cloudConfig.enabled && (
+          <p>
+            You can sign out to remove this account’s copy from the current device, or delete your
+            account and cloud records in Account. Database recovery backups may retain deleted
+            records for up to 24 hours. Exports you saved yourself remain until you remove them.
+          </p>
+        )}
         <Link className="text-link" to="/profile#your-data">
           Export, restore or delete your data
         </Link>

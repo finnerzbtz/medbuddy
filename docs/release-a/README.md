@@ -1,6 +1,8 @@
 # Release A — optional routines
 
-Implemented locally on 10 September 2026 against the product plan, developer handoff and competitor research in `/Users/finnerz/Documents/Codex/2026-09-09/i-n/outputs/`. Research was treated as evidence. R0–R4 only: no reflections, wind-down session tracking, chapters, paid purchases or production deployment.
+Initial local implementation on 10 September 2026 against the product plan, developer handoff and competitor research in `/Users/finnerz/Documents/Codex/2026-09-09/i-n/outputs/`. Research was treated as evidence. R0–R4 only: no reflections, wind-down session tracking, chapters, paid purchases or production deployment.
+
+The initial evidence below predates the subsequently authorized iOS release. [TestFlight build 4](../ios/releases/0.1.0-4.md) was signed, uploaded and made available to the existing internal beta group. Cloud deployment and purchase activation remain excluded. Further local refinement is tracked in [the quality pass](../refinement/quality-pass.md).
 
 ## What is available
 
@@ -18,17 +20,17 @@ Implemented locally on 10 September 2026 against the product plan, developer han
 | R0 baseline            | Source snapshot; original 97 domain checks, 15 native checks and web build                                                                                            | Passed before changes |
 | R1 persistence/domain  | 22 routine/migration/mood contracts; 19 native planner/persistence checks; 5 server-handshake checks                                                                  | Passed                |
 | R1 cloud compatibility | 11 SQL compatibility checks; 18 live authentication/RPC checks; 16 live two-browser sync/account checks on a disposable development branch                            | Passed                |
-| R2 editor/Today        | 9 UI walkthrough checks, including keyboard save, day validation, pause/archive, future start, 320px at 200% text and separate history                                | Passed                |
+| R2 editor/Today        | 9 UI walkthrough checks, including keyboard save, day validation, pause/archive, future start, 320px with a 200% root-font setting and separate history               | Passed                |
 | R3 activity boundary   | Quiet-break walkthrough (6 checks); all five reused activities, replay/cancel and failed-save retry (6 checks)                                                        | Passed                |
 | R4 return/mood         | Baseline 2/24/72-hour boundaries; latest taken/skipped reset; archived/paused meds; Gentle moods; pure capped preview; hide/restore recurrence and reminder isolation | Passed                |
 | Existing regressions   | Original 97 domain checks and automated accessibility audit across 13 existing screens/states                                                                         | Passed                |
 | Packaging              | TypeScript, Vite/offline build, four packaged offline-flow checks, Capacitor sync and unsigned iOS simulator build                                                    | Passed                |
 
-Evidence is in `rebuild/generated/release-a/`, with final command output copied to `docs/release-a/verification/`. The walkthrough uses synthetic data; it is a developer acceptance check, not participant research or a claim of legal/clinical accessibility compliance.
+Evidence is in `rebuild/generated/release-a/`, with final command output copied to `docs/release-a/verification/`. The original root-font check did not prove that every fixed-pixel label enlarged. The later refinement explicitly converts text sizing and measures the rendered fonts; see the quality pass for its separate results. The walkthrough uses synthetic data; it is a developer acceptance check, not participant research or a claim of legal/clinical accessibility compliance.
 
 No baseline check failed. The build retains the existing large 3D chunk warning and the existing mixed static/dynamic cloud-payload import warning. Neither is a new Release A test failure.
 
-The R0 source preservation archive is `/Users/finnerz/Documents/Codex/2026-09-10/reminduh-release-a/before-release-a-source.tar.gz`, with original status and hashes alongside it. It contains source/configuration, not credential files or the large existing asset library. Existing uncommitted work was neither reset nor committed. `changes-from-baseline.patch` in that folder isolates this task from the already dirty Git baseline.
+The R0 source preservation archive is `/Users/finnerz/Documents/Codex/2026-09-10/reminduh-release-a/before-release-a-source.tar.gz`, with original status and hashes alongside it. It contains source/configuration, not credential files or the large existing asset library. At the initial preservation stage, existing uncommitted work was neither reset nor committed; later authorized repository/release commits are recorded separately. `changes-from-baseline.patch` in that folder isolates this task from the already dirty Git baseline.
 
 ## Data contract and recovery
 
@@ -65,13 +67,13 @@ Before any future production rollout: back up production, apply/recheck the migr
 ## External validation pending
 
 - Real neurodivergent participants must distinguish their real-world routine from the optional Blobby activity; test the first quiet-break slice and empty/small-day choices before expanding scope.
-- VoiceOver/TalkBack or another actual screen reader, switch/assistive input, iOS Dynamic Type and physical touchscreen evaluation. Automated WCAG checks are supporting evidence, not complete conformance certification.
+- VoiceOver/TalkBack or another actual screen reader, switch/assistive input, the full iOS Dynamic Type/device range and physical touchscreen evaluation. A later simulator comparison at normal and accessibility-large text is recorded in the quality pass. Automated WCAG checks are supporting evidence, not complete conformance certification.
 - Physical iPhone upgrade from the currently installed build, durable storage purge/relaunch/low-storage recovery, background/foreground, actual local-notification delivery and DST/device-time changes.
 - Real email delivery and native authentication/sync to the eventual production backend. Synthetic browser tests verify OTP/session logic and data transport, not inbox delivery.
-- Production migration, old installed-client update UX, signing, TestFlight upload and distribution. None were performed.
+- Production migration and old installed-client cloud-update UX remain pending. Signing, upload, Apple processing and internal TestFlight distribution were subsequently completed for build 4; those completed release steps are not outstanding.
 
 ## Re-running locally
 
 Use Node 22+ and the existing installed dependencies. `npm run test:release-a` runs local contracts, native checks and the original domain suite. Start an isolated preview with both `VITE_NEON_AUTH_URL` and `VITE_NEON_DATA_URL` empty on port 5188, then run `npm run test:release-a-ui`. The three cloud test scripts are deliberately pinned to the disposable branch and use `/tmp/reminduh-release-a-validation.env`; they must not be repointed at production. Run SQL compatibility, API and then browser tests with a separate development preview on 5189 configured for that branch. Production migration remains a separately controlled rollout step.
 
-The existing iOS Swift sources, paid ledger, medication scheduler, native reminder planner, medication form/autocomplete and asset definitions match their pre-task source hashes. No original source file is missing.
+The initial Release A source comparison preserved the iOS Swift sources, paid ledger, medication scheduler, native reminder planner, medication form/autocomplete and asset definitions. That is a baseline preservation result, not a claim that those files must retain identical hashes after later authorized refinements.

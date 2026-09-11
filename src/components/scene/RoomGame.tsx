@@ -224,11 +224,14 @@ function MelodyGame({
       </div>
       <div className="mixtape-art" aria-hidden="true">
         <div className="mixtape-sleeve">
-          <span>
-            little
-            <br />
-            moments
-          </span>
+          <svg className="mixtape-title" viewBox="0 0 122 74" focusable="false">
+            <text x="2" y="32" textLength="54" lengthAdjust="spacingAndGlyphs">
+              little
+            </text>
+            <text x="2" y="62" textLength="118" lengthAdjust="spacingAndGlyphs">
+              moments
+            </text>
+          </svg>
           <Music2 size={34} />
         </div>
         <div className="mixtape-record" key={round + '-' + step}>

@@ -1,5 +1,6 @@
+import { isNative } from '@/native/platform';
 import { useEffect, useRef, useState } from 'react';
-import { appAudio, useSoundSettings } from '@/audio/AppAudio';
+import { appAudio, useSoundSettings, useAudioReady } from '@/audio/AppAudio';
 import { speakBlobby, stopBlobbySpeech, useBlobbySpeech } from '@/audio/BlobbySpeech';
 import type { BlobbyVoice } from '@/domain/voices';
 
@@ -12,10 +13,13 @@ export function useThoughtNarration(
 ) {
   const ref = useRef<HTMLDivElement>(null);
   const handled = useRef<string | null>(null);
+  const audioReady = useAudioReady((s) => s.ready);
   const readThoughts = useSoundSettings((s) => s.readThoughts);
   const audible = useSoundSettings((s) => s.enabled && s.voiceVolume > 0);
   const [inView, setInView] = useState(false);
-  const [foreground, setForeground] = useState(() => !document.hidden && document.hasFocus());
+  const [foreground, setForeground] = useState(
+    () => !document.hidden && (isNative || document.hasFocus()),
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [request, setRequest] = useState(0);
   const key = voice + '/' + id;
@@ -35,9 +39,11 @@ export function useThoughtNarration(
       attributeFilter: ['open'],
     });
     updateDialogs();
-    const blur = () => setForeground(false);
+    const blur = () => {
+      if (!isNative) setForeground(false);
+    };
     const focus = () => setForeground(!document.hidden);
-    const visibility = () => setForeground(!document.hidden && document.hasFocus());
+    const visibility = () => setForeground(!document.hidden && (isNative || document.hasFocus()));
     window.addEventListener('blur', blur);
     window.addEventListener('focus', focus);
     document.addEventListener('visibilitychange', visibility);
@@ -68,6 +74,7 @@ export function useThoughtNarration(
       if (speech.automatic && speech.clip === key) stopBlobbySpeech();
     };
     if (
+      !audioReady ||
       !readThoughts ||
       !audible ||
       voice === 'quiet' ||
@@ -101,6 +108,7 @@ export function useThoughtNarration(
     id,
     voice,
     readThoughts,
+    audioReady,
     audible,
     visible,
     suspended,

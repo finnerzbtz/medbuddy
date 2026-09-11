@@ -1,10 +1,29 @@
-.sound-dialog {
+body .sound-dialog {
   position: fixed;
   inset: 0;
   margin: auto;
   width: min(420px, calc(100vw - 28px));
-  max-height: calc(100dvh - 28px);
-  overflow: auto;
+  max-width: calc(100vw - 28px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  overflow: hidden;
+}
+.sound-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+/* Only preferences scroll; dismissal stays in the dialog's compact header. */
+.sound-dialog > .dialog-heading {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 16px 22px;
+  border-bottom: 1px solid #dce5db;
+}
+.sound-dialog-body {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 18px 22px 24px;
 }
 .sound-preferences .toggle-row {
   margin: 0;
@@ -18,7 +37,7 @@
   flex-wrap: wrap;
   align-items: center;
   gap: 12px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #465d49;
 }
 .sound-volume input {
@@ -33,7 +52,7 @@
   min-width: 35px;
 }
 .sound-note {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: #53634f;
   margin: 10px 0 0;
@@ -50,7 +69,7 @@
   border: 1px solid #c7d0bd;
   padding: 10px 14px;
   min-height: 44px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   border-radius: 16px;
 }
 .music-toggle[aria-pressed='true'] {

@@ -6,6 +6,7 @@ import { spawn } from 'node:child_process';
 import sharp from 'sharp';
 const origin = process.env.MVP_TEST_URL ?? 'http://127.0.0.1:5177';
 const production = process.env.MVP_PRODUCTION_URL ?? 'http://127.0.0.1:4177';
+const skipOffline = process.env.MVP_SKIP_OFFLINE === '1';
 const out = path.resolve(process.env.MVP_TEST_OUT ?? 'rebuild/generated/qa-mvp');
 await mkdir(out, { recursive: true });
 const servers = [],
@@ -37,7 +38,7 @@ async function ensureServer(url, command) {
   throw new Error('Could not start test server: ' + url);
 }
 await ensureServer(origin, []);
-await ensureServer(production, ['preview']);
+if (!skipOffline) await ensureServer(production, ['preview']);
 const browser = await chromium.launch({ args: ['--ignore-gpu-blocklist', '--enable-gpu'] });
 const context = await browser.newContext({
   viewport: { width: 1440, height: 1080 },
@@ -77,6 +78,11 @@ const nav = (name) =>
     .getByRole('navigation', { name: 'Main navigation' })
     .getByRole('link', { name, exact: true })
     .click();
+const expandSettings = async (id, target = page) => {
+  const section = target.locator('#' + id);
+  if (!(await section.evaluate((element) => element.open)))
+    await section.locator(':scope > summary').click();
+};
 const snapshot = (name) => page.screenshot({ path: path.join(out, name + '.png'), fullPage: true });
 const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('reminduh-mvp-v1')));
 const saveDownload = async (button, fileName) => {
@@ -107,6 +113,8 @@ try {
   await page.getByLabel('Track remaining supply').check();
   await page.getByLabel('Scheduled doses remaining').fill('12');
   await page.getByRole('button', { name: 'Add medication', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Turn on medication reminders?' })).toBeVisible();
+  await page.getByRole('link', { name: 'Not now', exact: true }).click();
   await page.waitForFunction(() => window.__assetCharacter && window.__assetScene);
   assert.equal((await stored()).medications[0].strengthMg, 10);
   assert.equal((await stored()).medications[0].tabletsPerDose, 2);
@@ -152,9 +160,13 @@ try {
   checks.push('Explicit skip, future-today notice and one streak count per day');
 
   await nav('My Blobby');
+  await expandSettings('wardrobe');
   await page.getByRole('button', { name: /Rain or shine/ }).click();
+  await expandSettings('room');
   await page.getByLabel('Bonsai', { exact: true }).uncheck();
+  await expandSettings('accessibility');
   await page.getByLabel('Reduce motion').check();
+  await expandSettings('reminders');
   await page.getByRole('button', { name: 'Enable browser reminders' }).click();
   await expect(page.getByText('Browser reminders on')).toBeVisible();
   assert.equal(await page.evaluate(() => window.__testNotifications.length), 0);
@@ -228,6 +240,7 @@ try {
 
   await nav('History');
   await expect(page.locator('.day-detail .dose-card')).toHaveCount(2);
+  await page.locator('.history-filter-options > summary').click();
   await page.getByLabel('Filter medication').selectOption({ label: 'Morning supplement' });
   await expect(page.locator('.day-detail .dose-card')).toHaveCount(2);
   await snapshot('history-desktop');
@@ -237,11 +250,13 @@ try {
   );
   assert.match(await readFile(csvPath, 'utf8'), /Morning supplement/);
   await nav('My Blobby');
+  await expandSettings('reminders');
   const calendarPath = await saveDownload(
     page.getByRole('button', { name: 'Export calendar reminders' }),
     'reminders.ics',
   );
   assert.match(await readFile(calendarPath, 'utf8'), /BEGIN:VALARM/);
+  await expandSettings('your-data');
   const backupPath = await saveDownload(
     page.getByRole('button', { name: 'Export backup', exact: true }),
     'backup.json',
@@ -253,7 +268,8 @@ try {
     mimeType: 'application/json',
     buffer: Buffer.from('{"schemaVersion":999}'),
   });
-  await expect(page.getByRole('alert')).toContainText('supported Reminduh backup');
+  await expect(page.getByRole('alert')).toContainText('needs a newer version of Reminduh');
+  await expect(page.getByRole('alert')).toContainText('Your saved copy has been kept.');
   assert.equal(Object.keys((await stored()).records).length, 2);
   checks.push('Calendar history, filter, CSV, calendar export and invalid-restore rejection');
 
@@ -286,6 +302,7 @@ try {
 
   const second = await context.newPage();
   await second.goto(origin + '/profile');
+  await expandSettings('names', second);
   await second.getByLabel('Companion name', { exact: true }).fill('Pebble');
   await second.getByRole('button', { name: 'Save names' }).click();
   await expect(page.getByRole('heading', { name: 'Pebble', exact: true })).toBeVisible();
@@ -320,82 +337,112 @@ try {
   }
   checks.push('All product screens fit mobile, tablet and desktop widths');
   await page.goto(origin + '/profile');
+  await expandSettings('accessibility');
   await page.getByLabel('Use a still image').check();
   await nav('Today');
   await expect(page.locator('.home-scene canvas')).toHaveCount(0);
   await expect(page.locator('.home-scene img')).toBeVisible();
   checks.push('Still-image mode works without a WebGL scene');
 
-  const offlineContext = await browser.newContext({
-    viewport: { width: 390, height: 844 },
-    timezoneId: 'Europe/London',
-  });
-  const offline = await offlineContext.newPage();
-  const offlineErrors = [];
-  offline.on('pageerror', (e) => offlineErrors.push(String(e)));
-  await offline.goto(production + '/welcome');
-  await offline.waitForFunction(() => navigator.serviceWorker.controller, { timeout: 45000 });
-  await offline.getByRole('button', { name: 'Make yourself at home' }).click();
-  await offline.getByLabel('Medication name', { exact: true }).fill('Offline test medication');
-  await offline.getByLabel('Strength per tablet (mg)', { exact: true }).fill('10');
-  await offline.getByLabel('Number of tablets per dose', { exact: true }).fill('1');
-  await offline.getByRole('button', { name: 'Add medication', exact: true }).click();
-  await offline.waitForSelector('[data-scene-ready="true"]');
-  await offlineContext.setOffline(true);
-  await offline.reload();
-  await expect(offline.locator('.dose-card')).toHaveCount(1);
-  await offline.locator('.dose-card').click();
-  await offline.getByRole('button', { name: 'I’ve taken this dose' }).click();
-  await offline.reload();
-  await expect(offline.locator('.dose-card.taken')).toHaveCount(1);
-  await offline.getByRole('button', { name: /^Feed \d/ }).click();
-  await offline.getByRole('button', { name: 'Select Apple, 3 available', exact: true }).click();
-  await offline.getByRole('button', { name: 'Feed Apple', exact: true }).click();
-  await expect(offline.getByRole('region', { name: 'Your companion' })).toHaveAttribute(
-    'data-state',
-    'feeding',
-  );
-  await offline.reload();
-  await expect(offline.locator('.treat-count')).toHaveText('4');
-  assert.equal(
-    await offline.evaluate(() => JSON.parse(localStorage.getItem('reminduh-mvp-v1')).care.xp),
-    10,
-  );
-  await offline.getByRole('link', { name: 'Shop', exact: true }).click();
-  await offline.getByRole('button', { name: /Preview Cookie/ }).click();
-  await offline.getByRole('button', { name: 'Buy for 21 leaves', exact: true }).click();
-  await offline
-    .getByRole('dialog')
-    .getByRole('button', { name: 'Buy for 21 leaves', exact: true })
-    .click();
-  await offline.reload();
-  await expect(
-    offline.getByRole('button', { name: 'Preview Cookie, 3 in pantry', exact: true }),
-  ).toBeVisible();
-  assert.equal(
-    await offline.evaluate(() => JSON.parse(localStorage.getItem('reminduh-mvp-v1')).market.coins),
-    99,
-  );
-  await offline.getByRole('navigation').getByRole('link', { name: 'History', exact: true }).click();
-  await expect(offline.locator('.day-detail .dose-card.taken')).toHaveCount(1);
-  await offline.screenshot({ path: path.join(out, 'offline-mobile.png'), fullPage: true });
-  assert.deepEqual(offlineErrors, []);
-  await offlineContext.close();
-  checks.push(
-    'Production service worker caches app/assets; offline reload, recording, feeding, shop purchases, inventory, friendship and history work',
-  );
+  if (!skipOffline) {
+    const offlineContext = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      timezoneId: 'Europe/London',
+    });
+    const offline = await offlineContext.newPage();
+    const offlineErrors = [];
+    offline.on('pageerror', (e) => offlineErrors.push(String(e)));
+    await offline.goto(production + '/welcome');
+    await offline.waitForFunction(() => navigator.serviceWorker.controller, { timeout: 45000 });
+    await offline.getByRole('button', { name: 'Make yourself at home' }).click();
+    await offline.getByLabel('Medication name', { exact: true }).fill('Offline test medication');
+    await offline.getByLabel('Strength per tablet (mg)', { exact: true }).fill('10');
+    await offline.getByLabel('Number of tablets per dose', { exact: true }).fill('1');
+    await offline.getByRole('button', { name: 'Add medication', exact: true }).click();
+    await offline.getByRole('link', { name: /^(Not now|Continue to Blobby)$/ }).click();
+    await offline.waitForSelector('[data-scene-ready="true"]');
+    const initialOfflineCoins = await offline.evaluate(
+      () => JSON.parse(localStorage.getItem('reminduh-mvp-v1')).market.coins,
+    );
+    await offlineContext.setOffline(true);
+    await offline.reload();
+    await expect(offline.locator('.dose-card')).toHaveCount(1);
+    await offline.locator('.dose-card').click();
+    await offline.getByRole('button', { name: 'I’ve taken this dose' }).click();
+    await offline.reload();
+    await expect(offline.locator('.dose-card.taken')).toHaveCount(1);
+    const recordedOfflineMarket = await offline.evaluate(
+      () => JSON.parse(localStorage.getItem('reminduh-mvp-v1')).market,
+    );
+    assert.equal(recordedOfflineMarket.coins, initialOfflineCoins + 10);
+    assert.deepEqual(Object.values(recordedOfflineMarket.checkInRewards), [10]);
+    await offline.getByRole('button', { name: /^Feed \d/ }).click();
+    await offline.getByRole('button', { name: 'Select Apple, 3 available', exact: true }).click();
+    await offline.getByRole('button', { name: 'Feed Apple', exact: true }).click();
+    await expect(offline.getByRole('region', { name: 'Your companion' })).toHaveAttribute(
+      'data-state',
+      'feeding',
+    );
+    await offline.reload();
+    await expect(offline.locator('.treat-count')).toHaveText('4');
+    assert.equal(
+      await offline.evaluate(() => JSON.parse(localStorage.getItem('reminduh-mvp-v1')).care.xp),
+      10,
+    );
+    await offline.getByRole('link', { name: 'Shop', exact: true }).click();
+    await offline.getByRole('button', { name: /Preview Cookie/ }).click();
+    await offline.getByRole('button', { name: 'Buy for 21 leaves', exact: true }).click();
+    await offline
+      .getByRole('dialog', { name: '3 × Cookie', exact: true })
+      .getByRole('button', { name: 'Buy for 21 leaves', exact: true })
+      .click();
+    await offline.reload();
+    await expect(
+      offline.getByRole('button', { name: 'Preview Cookie, 3 in pantry', exact: true }),
+    ).toBeVisible();
+    assert.equal(
+      await offline.evaluate(
+        () => JSON.parse(localStorage.getItem('reminduh-mvp-v1')).market.coins,
+      ),
+      initialOfflineCoins + 10 - 21,
+    );
+    await offline
+      .getByRole('navigation')
+      .getByRole('link', { name: 'History', exact: true })
+      .click();
+    await expect(offline.locator('.day-detail .dose-card.taken')).toHaveCount(1);
+    await offline.screenshot({ path: path.join(out, 'offline-mobile.png'), fullPage: true });
+    assert.deepEqual(offlineErrors, []);
+    await offlineContext.close();
+    checks.push(
+      'Production service worker caches app/assets; offline reload, recording, feeding, shop purchases, inventory, friendship and history work',
+    );
+  } else console.log('PENDING: offline production flow explicitly deferred until dist is rebuilt.');
 
   assert.deepEqual(remote, [], 'No remote network dependencies');
   assert.deepEqual(errors, [], 'No browser errors');
   await writeFile(
     path.join(out, 'browser-results.json'),
     JSON.stringify(
-      { status: 'passed', count: checks.length, checks, remoteRequests: remote, errors },
+      {
+        status: 'passed',
+        count: checks.length,
+        checks,
+        offline: skipOffline ? 'pending: production build not tested' : 'passed',
+        remoteRequests: remote,
+        errors,
+      },
       null,
       2,
     ),
   );
-  console.log(checks.length + ' browser scenarios passed, including offline production flow.');
+  console.log(
+    checks.length +
+      ' browser scenarios passed.' +
+      (skipOffline
+        ? ' Offline production remains pending.'
+        : ' Including offline production flow.'),
+  );
 } catch (error) {
   await snapshot('failure').catch(() => {});
   console.error('Completed scenarios:', checks);

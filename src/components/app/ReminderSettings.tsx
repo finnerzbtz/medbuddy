@@ -142,11 +142,7 @@ export default function ReminderSettings() {
     }
   };
   return (
-    <section
-      className="panel wide-panel reminder-settings"
-      id="reminders"
-      aria-labelledby="reminder-title"
-    >
+    <section className="panel wide-panel reminder-settings" aria-labelledby="reminder-title">
       <div className="section-heading">
         <h2 id="reminder-title">Reminders</h2>
         <span className={'reminder-status ' + (enabled && !error ? 'on' : '')}>{status}</span>

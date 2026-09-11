@@ -37,13 +37,13 @@
   gap: 12px;
 }
 .bonsai-header h2 {
-  font-size: clamp(24px, 4vw, 32px);
+  font-size: clamp(1.5rem, 4vw, 2rem);
   letter-spacing: -0.045em;
   font-weight: 620;
   margin: 0;
 }
 .bonsai-mark {
-  font-size: 30px;
+  font-size: 1.875rem;
   color: #708c64;
 }
 .bonsai-header-actions {
@@ -60,7 +60,7 @@
 #bonsai-intro {
   color: #5f6e59;
   margin: 10px 0 22px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .bonsai-playfield {
   position: relative;
@@ -104,7 +104,7 @@
   border-radius: 14px;
   color: #405638;
   background: #fffdf4eb;
-  font-size: 14px;
+  font-size: 0.875rem;
   pointer-events: none;
 }
 .bonsai-unavailable {
@@ -142,7 +142,7 @@
   border: 1px solid transparent;
   background: transparent;
   color: #465c42;
-  font-size: 15px;
+  font-size: 0.9375rem;
   padding: 10px 17px;
 }
 .bonsai-tool-switch button[aria-pressed='true'] {
@@ -170,13 +170,13 @@
   background: transparent;
   text-decoration: underline;
   text-underline-offset: 4px;
-  font-size: 14px !important;
+  font-size: 0.875rem !important;
 }
 .bonsai-help {
   text-align: center;
   margin: 13px 0 21px;
   color: #5f6e59;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .bonsai-footer {
   justify-content: space-between;
@@ -192,7 +192,7 @@
 .bonsai-audio button,
 .bonsai-footer summary {
   min-height: 44px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .bonsai-audio button {
   display: inline-flex;
@@ -208,7 +208,7 @@
 .bonsai-footer details {
   max-width: 440px;
   color: #526746;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .bonsai-footer summary {
   padding: 12px 2px;
@@ -249,7 +249,7 @@ html[data-native='true'] .bonsai-garden:modal {
     padding: 8px 10px;
   }
   .bonsai-auto {
-    font-size: 13px !important;
+    font-size: 0.8125rem !important;
     padding: 10px 12px;
   }
   .bonsai-clear {
@@ -259,11 +259,11 @@ html[data-native='true'] .bonsai-garden:modal {
   }
   #bonsai-intro {
     margin-bottom: 16px;
-    font-size: 14px;
+    font-size: 0.875rem;
   }
   .bonsai-help {
     margin: 7px 0 15px;
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -289,7 +289,7 @@ html[data-native='true'] .bonsai-garden:modal {
   border-radius: 18px;
   color: #465c3d;
   background: #fffdf2ed;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.5;
   text-align: center;
 }

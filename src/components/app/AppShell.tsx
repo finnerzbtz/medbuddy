@@ -22,8 +22,17 @@ export default function AppShell() {
         target.setAttribute('tabindex', '-1');
         target.focus({ preventScroll: true });
       } else {
+        const main = document.getElementById('main-content');
+        const active = document.activeElement;
+        // A delayed navigation frame must not interrupt entry on the new page.
+        if (
+          active instanceof HTMLElement &&
+          main?.contains(active) &&
+          (active.matches('input, textarea, select') || active.isContentEditable)
+        )
+          return;
         window.scrollTo({ top: 0, behavior: 'instant' });
-        document.getElementById('main-content')?.focus({ preventScroll: true });
+        main?.focus({ preventScroll: true });
       }
     });
     return () => cancelAnimationFrame(frame);

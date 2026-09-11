@@ -34,6 +34,7 @@ try {
   expect(saved.medications).toEqual(fixture.medications);
   expect(saved.records).toEqual(fixture.records);
   await page.goto(origin + '/profile');
+  await page.getByText('Backups & data', { exact: true }).click();
   await expect(page.getByRole('button', { name: 'Export pre-update backup' })).toBeVisible();
   await writeFile(
     'rebuild/generated/release-a/offline-results.json',

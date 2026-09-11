@@ -68,7 +68,7 @@ export function activityAvailable(clip: AnimationName, hidden: string[]): boolea
 }
 export function activityDuration(clip: AnimationName): number {
   if (clip === 'walk_to_cushion') return 14000;
-  // Static-image mode uses a timeout; the animated scene completes on arrival + film end.
+  // Tea in still-image mode uses a timeout; interactive gardens own their completion.
   if (clip === 'tend') return 16000;
   if (clip === 'tea') return 14000;
   if (clip === 'feeding') return FEED.duration * 1000;
@@ -361,8 +361,10 @@ export class RoomJourney {
     this.sample(0);
   }
   update(dt: number) {
-    if (!this.segments.length) return;
-    this.elapsed += Math.max(0, Math.min(dt, 0.05));
+    if (!this.segments.length || !Number.isFinite(dt) || dt <= 0) return;
+    // Routes are sampled analytically; truncating time makes slow renderers walk
+    // in slow motion. The caller excludes paused/background time.
+    this.elapsed += dt;
     if (this.elapsed >= this.duration) {
       if (this.loop && this.activity !== 'rest') this.setActivity(this.activity);
       else this.elapsed = this.duration;

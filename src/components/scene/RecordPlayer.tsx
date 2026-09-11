@@ -10,12 +10,13 @@ import {
   Pause,
   Play,
   Plus,
+  RotateCcw,
   Search,
   SkipBack,
   SkipForward,
   Upload,
 } from 'lucide-react';
-import { useSoundSettings, setSoundSettings } from '@/audio/AppAudio';
+import { useSoundSettings, setSoundSettings, useRadioPlayback } from '@/audio/AppAudio';
 import {
   addMusicFiles,
   clearMusicFiles,
@@ -44,6 +45,7 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
   const s = useRecordPlayer();
   const sound = useSoundSettings();
   const musicPlaying = useMusicPlaying();
+  const radioPlayback = useRadioPlayback();
   const osReduced = useReducedMotion();
   const calmMotion = useAppStore(
     (s) => s.data.preferences.reducedMotion || s.data.preferences.pauseScene,
@@ -67,7 +69,7 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
       ? s.apple.title || 'Your Apple Music'
       : s.tracks[s.index]?.title || 'Your listening corner';
   const artist = radio
-    ? 'Blobby radio · gentle keys & guitar'
+    ? 'Gentle keys & guitar · no drums'
     : s.source === 'apple'
       ? s.apple.artist || 'Apple Music'
       : 'Music from your device';
@@ -109,7 +111,7 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
   return (
     <div
       className="record-player"
-      data-playing={playing}
+      data-playing={playing && musicPlaying}
       data-notes-playing={playing && musicPlaying}
       data-reduced={reduced || osReduced || calmMotion}
     >
@@ -170,11 +172,19 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
         <button
           className="record-play"
           disabled={busy || (!radio && s.source !== 'apple' && !s.tracks.length)}
-          aria-label={playing ? 'Pause record' : radio ? 'Play Blobby radio' : 'Play record'}
+          aria-label={
+            radio && radioPlayback.error
+              ? 'Retry music'
+              : playing
+                ? 'Pause record'
+                : radio
+                  ? 'Play Blobby radio'
+                  : 'Play record'
+          }
           onClick={() =>
             void run(() =>
               radio
-                ? playing
+                ? playing && !radioPlayback.error
                   ? controlRecord('pause')
                   : playRadio()
                 : s.source === 'radio'
@@ -183,7 +193,9 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
             )
           }
         >
-          {playing ? (
+          {radio && radioPlayback.error ? (
+            <RotateCcw size={23} />
+          ) : playing ? (
             <Pause size={24} fill="currentColor" />
           ) : (
             <Play size={24} fill="currentColor" />
@@ -220,8 +232,15 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
         </label>
       )}
       {radio ? (
-        <p className="record-radio-note">
-          A quiet place to press play. Included, and available offline.
+        <p className="record-playback-status" role="status">
+          {radioPlayback.error ||
+            (playing && radioPlayback.loading
+              ? 'Loading music…'
+              : playing && sound.musicVolume === 0
+                ? 'Music volume is zero'
+                : playing && musicPlaying
+                  ? 'Playing'
+                  : 'Paused')}
         </p>
       ) : (
         <>
@@ -281,25 +300,29 @@ export default function RecordPlayer({ reduced = false }: { reduced?: boolean })
               </p>
             </>
           )}
-          <section className="record-connect" aria-labelledby="apple-library-heading">
-            <div>
-              <h3 id="apple-library-heading">Apple Music</h3>
-              <p>
-                {s.apple.connected
-                  ? 'Choose from your library.'
-                  : s.apple.available
-                    ? 'Listen to your songs and playlists.'
-                    : 'Library connection is coming to the iPhone app.'}
-              </p>
-            </div>
-            <button
-              className="button secondary"
-              disabled={!s.apple.available || busy}
-              onClick={() => void run(s.apple.connected ? disconnectAppleMusic : connectAppleMusic)}
-            >
-              {s.apple.connected ? 'Disconnect' : 'Connect'}
-            </button>
-          </section>
+          {(s.apple.available || s.apple.connected) && (
+            <section className="record-connect" aria-labelledby="apple-library-heading">
+              <div>
+                <h3 id="apple-library-heading">Apple Music</h3>
+                <p>
+                  {s.apple.connected
+                    ? 'Choose from your library.'
+                    : s.apple.available
+                      ? 'Listen to your songs and playlists.'
+                      : 'Library connection is coming to the iPhone app.'}
+                </p>
+              </div>
+              <button
+                className="button secondary"
+                disabled={!s.apple.available || busy}
+                onClick={() =>
+                  void run(s.apple.connected ? disconnectAppleMusic : connectAppleMusic)
+                }
+              >
+                {s.apple.connected ? 'Disconnect' : 'Connect'}
+              </button>
+            </section>
+          )}
           {s.apple.connected && (
             <div className="apple-library">
               <div

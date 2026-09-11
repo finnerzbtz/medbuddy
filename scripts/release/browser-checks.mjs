@@ -34,6 +34,7 @@ try {
     await delay(100);
   }
   if (!ready) throw new Error('Isolated preview did not start');
+  const failures = [];
   for (const script of [
     'scripts/mvp/medication-name-tests.mjs',
     'scripts/mvp/reminder-browser-test.mjs',
@@ -42,12 +43,31 @@ try {
     'scripts/release-a/activity-browser-test.mjs',
     'scripts/ios/notification-onboarding-browser-tests.mjs',
     'scripts/ios/mobile-browser-tests.mjs',
+    'scripts/ios/bundled-audio-browser-tests.mjs',
+    'scripts/ios/radio-playback-browser-tests.mjs',
+    'scripts/ios/file-player-browser-tests.mjs',
+    'scripts/ios/sound-test-control-browser-tests.mjs',
+    'scripts/mvp/wisdom-browser-test.mjs',
+    'scripts/mvp/voice-browser-test.mjs',
+    'scripts/mvp/voice-auto-browser-test.mjs',
+    'scripts/refinement/sound-dialog-browser-test.mjs',
+    'scripts/refinement/sensory-games-browser-test.mjs',
+    'scripts/refinement/toast-navigation-browser-test.mjs',
+    'scripts/refinement/companion-browser-test.mjs',
+    'scripts/refinement/home-priority-browser-test.mjs',
+    'scripts/refinement/typography-browser-test.mjs',
+    'scripts/refinement/history-routines-browser-test.mjs',
+    'scripts/mvp/shop-details-browser-test.mjs',
   ]) {
     console.log(`\nChecking ${script}`);
     const child = spawn(process.execPath, [script], { env, stdio: 'inherit' });
     const [code, signal] = await once(child, 'exit');
-    if (code !== 0) throw new Error(`${script} failed (${signal ?? code})`);
+    if (code !== 0) {
+      failures.push(`${script} (${signal ?? code})`);
+      console.error(`FAILED ${failures.at(-1)}`);
+    }
   }
+  if (failures.length) throw new Error(`Browser checks failed:\n${failures.join('\n')}`);
 } finally {
   server.kill('SIGTERM');
   await serverClosed;

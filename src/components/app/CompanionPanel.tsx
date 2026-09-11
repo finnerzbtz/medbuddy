@@ -1,3 +1,4 @@
+import './companion-controls.css';
 import LeafWalletButton from '@/components/shop/LeafWallet';
 import BlobbyWisdom from './BlobbyWisdom';
 import { DEFAULT_ROOM, roomGameFor } from '@/domain/room';
@@ -8,6 +9,8 @@ import FeedingTray from '@/components/shop/FeedingTray';
 import type { FeedTarget } from '@/domain/feeding';
 import type { FoodId } from '@/types';
 import {
+  SlidersHorizontal,
+  Grid2X2,
   ShoppingBag,
   Armchair,
   Music2,
@@ -17,7 +20,6 @@ import {
   Sun,
   Apple,
   ArrowRight,
-  Pill,
   Check,
   ChevronDown,
   Code2,
@@ -59,6 +61,7 @@ import { useNow } from './AppRuntime';
 import { useCheckIn } from './CheckIn';
 const SceneCanvas = lazy(() => import('@/components/scene/SceneCanvas'));
 const RoomGame = lazy(() => import('@/components/scene/RoomGame'));
+const GardenCutscene = lazy(() => import('@/components/scene/GardenCutscene'));
 const idleSequence: AnimationName[] = [
   'idle',
   'curious',
@@ -113,6 +116,8 @@ export default function CompanionPanel() {
   const [speech, setSpeech] = useState(false);
   const [pantry, setPantry] = useState(!!initialFood),
     [cheats, setCheats] = useState(false),
+    [roomTools, setRoomTools] = useState(false),
+    [activities, setActivities] = useState(false),
     [code, setCode] = useState(''),
     [error, setError] = useState(''),
     [closeUp, setCloseUp] = useState(false),
@@ -244,54 +249,7 @@ export default function CompanionPanel() {
             {clip === 'rest' ? 'Sleeping' : state.label}
           </span>
         </div>
-        <div className="room-controls" role="group" aria-label="Room controls">
-          <button
-            className="icon-button scene-zoom"
-            aria-label={clip === 'rest' ? 'Wake Blobby' : 'Put Blobby to bed'}
-            title={clip === 'rest' ? 'Wake Blobby' : 'Put Blobby to bed'}
-            aria-pressed={clip === 'rest'}
-            disabled={!activityAvailable('rest', data.hiddenGroups)}
-            onClick={() => {
-              const store = useAppStore.getState();
-              store.previewState(null);
-              store.react(clip === 'rest' ? 'idle' : 'rest');
-            }}
-          >
-            {clip === 'rest' ? (
-              <Sun aria-hidden="true" focusable="false" size={19} />
-            ) : (
-              <BedDouble aria-hidden="true" focusable="false" size={19} />
-            )}
-            <span>{clip === 'rest' ? 'Wake' : 'Bed'}</span>
-          </button>
-          <button
-            className="icon-button scene-zoom lamp-switch"
-            aria-label={data.preferences.lampOn ? 'Turn lamp off' : 'Turn lamp on'}
-            title={data.preferences.lampOn ? 'Turn lamp off' : 'Turn lamp on'}
-            aria-pressed={data.preferences.lampOn}
-            disabled={data.hiddenGroups.includes('Lamp')}
-            onClick={() => {
-              const store = useAppStore.getState();
-              const result = store.setPreference('lampOn', !store.data.preferences.lampOn);
-              if (!result.ok) store.showToast(result.error!);
-            }}
-          >
-            <LampDesk aria-hidden="true" focusable="false" size={19} />
-            <span>Lamp</span>
-          </button>
-          <button
-            className="icon-button scene-zoom"
-            aria-label={closeUp ? 'Show whole room' : 'Get closer to Blobby'}
-            aria-pressed={closeUp}
-            onClick={() => setCloseUp(!closeUp)}
-          >
-            {closeUp ? (
-              <Minimize2 aria-hidden="true" focusable="false" size={19} />
-            ) : (
-              <Maximize2 aria-hidden="true" focusable="false" size={19} />
-            )}
-            <span>{closeUp ? 'Room' : 'Closer'}</span>
-          </button>
+        <div className="companion-toolbar">
           <button
             className="icon-button scene-zoom"
             aria-label={paused ? 'Resume room animation' : 'Pause room animation'}
@@ -310,8 +268,125 @@ export default function CompanionPanel() {
             )}
             <span>{paused ? 'Resume' : 'Pause'}</span>
           </button>
+          <button
+            className="icon-button scene-zoom"
+            aria-label="Room options"
+            aria-expanded={roomTools}
+            aria-controls="room-tools"
+            onClick={() => setRoomTools(!roomTools)}
+          >
+            <SlidersHorizontal aria-hidden="true" size={19} />
+          </button>
         </div>
       </div>
+      {due && !preview && (
+        <div className="companion-checkin" data-snoozed={snoozed}>
+          <div
+            className="companion-checkin-copy"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <p id="companion-checkin-reason">
+              {snoozed
+                ? 'Check-in snoozed until ' +
+                  new Date(snooze!).toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                  })
+                : ['worried', 'sick', 'critical'].includes(mood)
+                  ? data.profile.petName +
+                    (mood === 'worried'
+                      ? ' is sad — a check-in is missing.'
+                      : ' is feeling low — a check-in is missing.')
+                  : 'Your medication check-in is waiting.'}
+            </p>
+            <strong>{due.name}</strong>
+            <span>
+              {pastCheckIn ? formatDay(due.date, true) + ' · ' : ''}
+              {formatTime(due.time)} · {due.dosage}
+            </span>
+          </div>
+          <button
+            className="button primary companion-checkin-button"
+            aria-describedby="companion-checkin-reason"
+            onClick={() => openCheckIn(due.id)}
+          >
+            {pastCheckIn ? 'Review missed check-in' : 'Review dose'}
+            <ArrowRight aria-hidden="true" focusable="false" size={16} />
+          </button>
+        </div>
+      )}
+      {roomTools && (
+        <div
+          id="room-tools"
+          className="room-tools"
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              setRoomTools(false);
+              document.querySelector<HTMLButtonElement>('[aria-controls="room-tools"]')?.focus();
+            }
+          }}
+        >
+          <div className="room-controls" role="group" aria-label="Room controls">
+            <button
+              className="icon-button scene-zoom"
+              aria-label={clip === 'rest' ? 'Wake Blobby' : 'Put Blobby to bed'}
+              title={clip === 'rest' ? 'Wake Blobby' : 'Put Blobby to bed'}
+              aria-pressed={clip === 'rest'}
+              disabled={!activityAvailable('rest', data.hiddenGroups)}
+              onClick={() => {
+                const store = useAppStore.getState();
+                store.previewState(null);
+                store.react(clip === 'rest' ? 'idle' : 'rest');
+              }}
+            >
+              {clip === 'rest' ? (
+                <Sun aria-hidden="true" focusable="false" size={19} />
+              ) : (
+                <BedDouble aria-hidden="true" focusable="false" size={19} />
+              )}
+              <span>{clip === 'rest' ? 'Wake' : 'Bed'}</span>
+            </button>
+            <button
+              className="icon-button scene-zoom lamp-switch"
+              aria-label={data.preferences.lampOn ? 'Turn lamp off' : 'Turn lamp on'}
+              title={data.preferences.lampOn ? 'Turn lamp off' : 'Turn lamp on'}
+              aria-pressed={data.preferences.lampOn}
+              disabled={data.hiddenGroups.includes('Lamp')}
+              onClick={() => {
+                const store = useAppStore.getState();
+                const result = store.setPreference('lampOn', !store.data.preferences.lampOn);
+                if (!result.ok) store.showToast(result.error!);
+              }}
+            >
+              <LampDesk aria-hidden="true" focusable="false" size={19} />
+              <span>Lamp</span>
+            </button>
+            <button
+              className="icon-button scene-zoom"
+              aria-label={closeUp ? 'Show whole room' : 'Get closer to Blobby'}
+              aria-pressed={closeUp}
+              onClick={() => setCloseUp(!closeUp)}
+            >
+              {closeUp ? (
+                <Minimize2 aria-hidden="true" focusable="false" size={19} />
+              ) : (
+                <Maximize2 aria-hidden="true" focusable="false" size={19} />
+              )}
+              <span>{closeUp ? 'Room' : 'Closer'}</span>
+            </button>
+          </div>
+          <div className="room-tools-links">
+            <Link to="/shop?tab=outfits" className="text-link">
+              <Shirt aria-hidden="true" size={17} /> Change look
+            </Link>
+            <Link to="/shop?tab=room" className="text-link">
+              <Armchair aria-hidden="true" size={17} /> Decorate room
+            </Link>
+          </div>
+        </div>
+      )}
       {!data.preferences.hideRewards && (
         <div className="friendship-row">
           <Heart aria-hidden="true" focusable="false" size={15} />
@@ -361,6 +436,24 @@ export default function CompanionPanel() {
             />
           </Suspense>
         )}
+        {data.preferences.staticScene && clip === 'tend' && !customGame && (
+          <Suspense fallback={null}>
+            <GardenCutscene
+              key={clip + reactionId}
+              outfit={data.outfit}
+              name={data.profile.petName}
+              reduced={reduced}
+              paused={previewPaused}
+              onPauseChange={() => useAppStore.getState().setPreviewPaused(!previewPaused)}
+              onFinish={() => {
+                const s = useAppStore.getState();
+                s.setPreviewPaused(false);
+                s.previewState(null);
+                s.react('recovering');
+              }}
+            />
+          </Suspense>
+        )}
         {preview && (
           <div className="preview-badge">
             <Code2 aria-hidden="true" focusable="false" size={13} /> Preview: {state.label}
@@ -372,13 +465,12 @@ export default function CompanionPanel() {
             </button>
           </div>
         )}
-        {speech && (
-          <div className="blobby-speech" key={clip} role="status">
-            {state.message}
-          </div>
-        )}
       </div>
-      <BlobbyWisdom suspended={speech || pantry} />
+      <BlobbyWisdom
+        message={speech ? state.message : undefined}
+        fallback={state.message}
+        suspended={pantry || !!customGame || ['tend', 'tea', 'feeding'].includes(clip)}
+      />
       {pantry && (
         <FeedingTray
           scene={scene}
@@ -390,45 +482,6 @@ export default function CompanionPanel() {
             document.querySelector<HTMLButtonElement>('.feed-button')?.focus();
           }}
         />
-      )}
-      {due && !preview && (
-        <div className="companion-checkin" data-snoozed={snoozed}>
-          <div
-            className="companion-checkin-copy"
-            role="status"
-            aria-live="polite"
-            aria-atomic="true"
-          >
-            <p id="companion-checkin-reason">
-              {snoozed
-                ? 'Check-in snoozed until ' +
-                  new Date(snooze!).toLocaleTimeString([], {
-                    hour: 'numeric',
-                    minute: '2-digit',
-                  })
-                : ['worried', 'sick', 'critical'].includes(mood)
-                  ? data.profile.petName +
-                    (mood === 'worried'
-                      ? ' is sad — a check-in is missing.'
-                      : ' is feeling low — a check-in is missing.')
-                  : 'Your medication check-in is waiting.'}
-            </p>
-            <strong>{due.name}</strong>
-            <span>
-              {pastCheckIn ? formatDay(due.date, true) + ' · ' : ''}
-              {formatTime(due.time)} · {due.dosage}
-            </span>
-          </div>
-          <button
-            className="button primary companion-checkin-button"
-            aria-describedby="companion-checkin-reason"
-            onClick={() => openCheckIn(due.id)}
-          >
-            <Pill aria-hidden="true" focusable="false" size={17} />
-            {pastCheckIn ? 'Review missed check-in' : snoozed ? 'Review dose' : 'Check in now'}
-            <ArrowRight aria-hidden="true" focusable="false" size={16} />
-          </button>
-        </div>
       )}
       <div className="companion-actions" role="group" aria-label="Care and activities">
         <button
@@ -456,14 +509,23 @@ export default function CompanionPanel() {
           <Sparkles aria-hidden="true" focusable="false" size={19} />
           <span>Play</span>
         </button>
-        <Link
-          to="/shop?tab=outfits"
-          className="button scene-button wardrobe-button"
-          aria-label="Change look"
+        <button
+          className="button scene-button"
+          aria-expanded={activities}
+          aria-controls="room-activities"
+          onClick={() => setActivities(!activities)}
         >
-          <Shirt aria-hidden="true" focusable="false" size={19} />
-          <span>Look</span>
-        </Link>
+          <Grid2X2 aria-hidden="true" size={19} />
+          <span>Activities</span>
+        </button>
+      </div>
+      <div
+        id="room-activities"
+        className="room-activities-drawer"
+        hidden={!activities}
+        role="group"
+        aria-label="Room activities"
+      >
         {ROOM_ACTIVITIES.map((activity) => {
           const Icon = {
             tea: data.room.table === 'record_player' ? Music2 : Coffee,
@@ -502,7 +564,10 @@ export default function CompanionPanel() {
                       ? 'Rake the Zen garden'
                       : activity.label
               }
-              onClick={() => {
+              onClick={(event) => {
+                // Safari doesn't focus pointer-activated buttons automatically.
+                // Keep a real return target while Blobby approaches the activity.
+                event.currentTarget.focus({ preventScroll: true });
                 useAppStore.getState().previewState(null);
                 useAppStore.getState().react(activity.id);
               }}
@@ -518,10 +583,6 @@ export default function CompanionPanel() {
         <div className="companion-shop-links">
           <Link to="/shop" className="shop-link">
             <ShoppingBag aria-hidden="true" size={15} /> Shop
-          </Link>
-          <Link to="/shop?tab=room" className="shop-link">
-            <Armchair aria-hidden="true" size={15} />
-            Decorate
           </Link>
         </div>
         <button
@@ -642,13 +703,11 @@ export function CompanionGoals() {
   const complete = goals.filter((g) => g.done).length;
   if (data.preferences.hideRewards) return null;
   return (
-    <section className="care-goals" aria-label="Today's little rituals">
-      <div className="section-heading">
-        <div>
-          <h2>Daily care</h2>
-        </div>
-        <span className="count-badge">{complete}/3</span>
-      </div>
+    <details className="care-goals care-details">
+      <summary>
+        <span>Blobby’s daily care</span>
+        <span>{complete}/3</span>
+      </summary>
       <ul>
         {goals.map(({ name, done, icon: Icon }) => (
           <li key={name} className={done ? 'complete' : ''}>
@@ -664,6 +723,6 @@ export function CompanionGoals() {
           </li>
         ))}
       </ul>
-    </section>
+    </details>
   );
 }

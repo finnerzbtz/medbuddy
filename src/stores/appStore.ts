@@ -90,7 +90,7 @@ interface State {
   celebration: CheckInMoment | null;
   previewCelebration: () => void;
   dismissCelebration: (id: string) => void;
-  toast: { message: string; undoId?: string; checkIn?: boolean } | null;
+  toast: { message: string; undoId?: string; checkIn?: boolean; destination?: string } | null;
   completeWelcome: (name: string, petName: string) => Result;
   saveMedication: (input: MedicationInput, id?: string) => Result;
   setMedicationStatus: (id: string, status: 'active' | 'paused' | 'archived') => Result;
@@ -110,7 +110,7 @@ interface State {
   reset: () => Result;
   react: (animation: AnimationName) => void;
   settle: () => void;
-  showToast: (message: string, undoId?: string) => void;
+  showToast: (message: string, options?: { undoId?: string; destination?: string }) => void;
   dismissToast: () => void;
   sync: () => void;
   applyCloud: (data: AppData, binding: CloudBinding | null) => Result;
@@ -709,11 +709,12 @@ export const useAppStore = create<State>((set, get) => {
         currentAnimation: animation,
         reactionId: state.reactionId + 1,
         // -1 means the scene owns completion. A paused/hidden room sequence must
-        // not be interrupted by a wall-clock timer. Still-image mode retains one.
+        // not be interrupted by a wall-clock timer. Still-room tea/feeding retains one.
         reactionUntil:
           roomGameFor(animation, state.data.room) ||
           animation === 'rest' ||
-          (['tend', 'tea', 'feeding'].includes(animation) && !state.data.preferences.staticScene)
+          animation === 'tend' ||
+          (['tea', 'feeding'].includes(animation) && !state.data.preferences.staticScene)
             ? -1
             : Date.now() + activityDuration(animation),
       })),
@@ -721,7 +722,7 @@ export const useAppStore = create<State>((set, get) => {
       if (get().reactionUntil > 0 && get().reactionUntil <= Date.now())
         set({ currentAnimation: 'idle', reactionUntil: 0 });
     },
-    showToast: (message, undoId) => set({ toast: { message, undoId } }),
+    showToast: (message, options) => set({ toast: { message, ...options } }),
     dismissToast: () => set({ toast: null }),
     sync: () => {
       const fresh = readInitial();

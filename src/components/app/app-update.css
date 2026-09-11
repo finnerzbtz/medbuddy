@@ -13,7 +13,7 @@
 }
 .app-update p {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .app-update > div {
   display: flex;
@@ -23,5 +23,5 @@
 .app-update .button {
   min-height: 44px;
   padding: 9px 14px;
-  font-size: 14px;
+  font-size: 0.875rem;
 }

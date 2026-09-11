@@ -16,7 +16,7 @@
   background: #dcebd1;
 }
 .leaf-wallet-button.compact {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .leaves-dialog {
   width: min(520px, calc(100% - 24px));
@@ -31,20 +31,20 @@
   color: #3d603d;
 }
 .leaves-total strong {
-  font-size: 48px;
+  font-size: 3rem;
   letter-spacing: -2px;
   line-height: 1.2;
 }
 .leaves-total span {
   flex-basis: 100%;
   text-align: center;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .leaves-earned {
   text-align: center;
   margin: 9px 0 24px;
   color: #466746;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 .leaves-gift {
   display: flex;
@@ -57,16 +57,16 @@
 }
 .leaves-gift > span {
   flex: 1;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .leaves-gift strong {
   display: block;
-  font-size: 16px;
+  font-size: 1rem;
   margin-top: 3px;
 }
 .leaf-packs h3 {
   margin: 24px 0 13px;
-  font-size: 17px;
+  font-size: 1.0625rem;
 }
 .leaf-pack-grid {
   display: grid;
@@ -97,22 +97,22 @@
   fill: #d8e7c6;
 }
 .leaf-pack > strong {
-  font-size: 25px;
+  font-size: 1.5625rem;
 }
 .leaf-pack > span {
-  font-size: 12px;
+  font-size: 0.75rem;
   text-align: center;
   min-height: 30px;
 }
 .leaf-pack .button {
   width: 100%;
   padding: 9px 5px;
-  font-size: 12px;
+  font-size: 0.75rem;
   min-height: 44px;
 }
 .leaf-pack-note,
 .leaves-help p {
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: #52634f;
 }
@@ -120,7 +120,7 @@
   display: none;
 }
 .leaves-message {
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.5;
 }
 .leaves-help summary {
@@ -128,7 +128,7 @@
   cursor: pointer;
   padding: 13px 0;
   color: #456343;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 @media (max-width: 360px) {
   .leaf-pack-grid {
@@ -147,14 +147,14 @@
   flex-shrink: 0;
 }
 .leaf-wallet-button strong {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 .leaf-wallet-button.compact {
   padding: 8px 11px;
   margin-right: auto;
 }
 .leaf-wallet-button.compact strong {
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .companion-footer {
   flex-wrap: wrap;

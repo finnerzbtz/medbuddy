@@ -26,7 +26,7 @@ const state = () =>
     reactionId: window.__appStore.getState().reactionId,
   }));
 async function setup(preference, route = '/') {
-  await page.goto(origin + '/welcome');
+  await page.goto(origin + '/profile');
   await page.waitForFunction(() => window.__appStore);
   await page.evaluate((preference) => {
     const s = window.__appStore.getState();
@@ -131,6 +131,7 @@ try {
   await expect(page.locator('.dose-celebration')).toHaveCount(0);
   assert.equal((await state()).reactionId, reaction);
   await page.reload();
+  await expect(page.locator('.dose-card')).toHaveCount(2);
   await expect(page.locator('.dose-celebration')).toHaveCount(0);
   assert.equal(Object.keys((await state()).data.records).length, 1);
   check('Editing a check-in or reloading the app never replays the celebration');

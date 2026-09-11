@@ -1,18 +1,18 @@
 # Reminduh · iPhone beta
 
-Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 2). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
+Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 4). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
 
 The app bundles its web UI, Blender models, games and audio. It does not need a development server, accounts or a backend. Medication data stays on the device. Each scheduled check-in earns leaves. StoreKit consumable leaf packs and MusicKit library playback are implemented but explicitly disabled pending Apple account/service configuration and end-to-end testing. The free record player supports Blobby radio and local audio files now. See [Leaves and Music](Leaves-and-Music.md).
 
 ## Current internal beta
 
-Build 2 includes Release A optional routines, medication-name autocomplete,
-notification onboarding and the audio, sand layout and switch fixes. Build it with
+Build 4 adds simpler room controls, focused History/routines, mobile shop details
+and explicit music/voice loading, failure and retry states to the Release A beta. Build it with
 `APPLE_TEAM_ID=37N43RUU8P npm run ios:beta`. This leaves cloud endpoints empty in the
 bundle because production has not received the new schema protocol. All local data,
 reminders and backup features remain available. The ordinary `ios:archive` command
 uses the configured production environment; do not use it for this offline beta.
-See [build 2 notes](releases/0.1.0-2.md) for validation and distribution status.
+See [build 4 notes](releases/0.1.0-4.md) for validation and distribution status.
 
 ## Build locally
 
@@ -50,7 +50,7 @@ The owner handled the macOS Keychain prompt, and the signed archive completed at
 
 - Use the existing app record and bundle ID; do not create duplicates.
 - Handle any macOS signing-key authorization prompt if shown. Enter passwords only into the native macOS prompt.
-- Run `APPLE_TEAM_ID=37N43RUU8P npm run ios:archive`, or open Xcode and choose Product → Archive. The Release profile requires the matching distribution identity in the login Keychain.
+- For the current offline beta, run `APPLE_TEAM_ID=37N43RUU8P npm run ios:beta`. The Release profile requires the matching distribution identity in the login Keychain. Recheck the working tree after asset preparation and ensure the archive matches its source commit.
 - Validate and upload the signed archive in Xcode Organizer. Alternatively use `xcodebuild -exportArchive -archivePath ios/App/build/Reminduh.xcarchive -exportOptionsPlist ios/App/ExportOptions.plist -exportPath ios/App/build/TestFlight-export -allowProvisioningUpdates`. The export options upload to App Store Connect; they do not submit an App Store release.
 - Increment `CURRENT_PROJECT_VERSION` for every new upload. Verify Apple processing, then add the build to **Reminduh Beta**, where the owner is already a tester. External testing may require beta review.
 - Confirm published privacy/support URLs before external testing; `Privacy-policy-draft.md` remains an unpublished draft.
@@ -73,7 +73,21 @@ The optional purchase test uses the separate **Reminduh StoreKit** scheme. Its c
 
 ## Native acceptance checks
 
-Use a separate simulator with no personal medication data. `AppUITests/ReminduhUITests.swift` exercises onboarding, iOS notification permission/test, process termination/relaunch and the native backup sheet. Run via Product → Test with scheme Reminduh. Use a fresh install to exercise onboarding; the smoke test also supports rerunning with its existing test data.
+Use a separate simulator with no personal medication data. `AppUITests/ReminduhUITests.swift` contains eight core flows: medication/supply/relaunch; local reminders/persistence; Files export/restore; radio; recorded voice; bonsai; optional-routine activity/isolation; and clothing/feeding/Zen. Run these through scheme Reminduh and inspect individual results and skips. The separate StoreKit scheme is not part of the offline beta gate. Fresh onboarding is only for a dedicated QA installation; never erase a personal installation.
+
+The focused `testNativeSoundDismissalAndToastNavigation` checks reachable Sound dismissal and contextual confirmation cleanup. `testNativeLocalMusicFilesLifecycle` uses real Files selection, automatic queue progression, end/restart, pause/foreground, radio/file exclusion and invalid-file recovery. Prepare its synthetic files only on the existing dedicated QA simulator, already booted:
+
+```sh
+python3 scripts/ios/native-music-fixtures.py --simulator 4482F80F-E6EF-499B-BE0D-07C1F6ACACB2
+```
+
+The helper is intentionally restricted to **Reminduh Notification Onboarding QA** and preserves existing differing files. It does not bootstrap or erase a device. Inspect native playhead progression and individual assertions; a visible Play/Pause label alone does not prove audio playback or physical speaker output.
+
+Use `testScheduledMedicationNotificationTap` for an actual future medication alert → background delivery → tap → Today round trip; the test notification alone does not cover routing or supply isolation. `testNativeBonsaiRainBreezeAndStillRoom` exercises real native rain/breeze, background cancellation and still-room access. `testNativeMelodyRoundsAndBackground` covers all three melody rounds, replay and interrupted pattern playback. The latter uses only the dedicated QA save's virtual leaves if Vinyl corner is not yet owned, then restores its original table. Inspect paired native screenshots alongside browser canvas metrics; a changed canvas image alone does not prove every physics detail.
+
+Use `testNativeRoutineDateTimeFormLayout` to verify native date/time field bounds, picker opening and cancellation. Desktop WebKit does not reproduce all iOS control sizing.
+
+Run `testNativeTextScaleAndCoreLayout` at normal and accessibility-large iOS text categories when typography changes. Compare actual native text frames and screenshots, check fields, count badges and controls above fixed navigation, and restore the QA category afterward. A browser root-font setting alone does not prove Dynamic Type support. Current local refinement evidence and remaining investigations are in [the quality pass](../refinement/quality-pass.md); local branch changes after build 4 are not automatically included in that distributed build.
 
 Before distributing broadly, test on a physical iPhone:
 

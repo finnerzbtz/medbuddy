@@ -116,6 +116,7 @@ try {
   await page.getByRole('dialog').getByRole('button', { name: 'Done', exact: true }).click();
   expect(Object.keys((await snapshot()).records)).toHaveLength(1);
   expect((await snapshot()).market.coins).toBe(before.market.coins + 5);
+  await expect(page.locator('#for-you-title')).toBeFocused();
   results.push('Failed save awards nothing; successful explicit retry saves exactly once');
   await writeFile(
     'rebuild/generated/release-a/activity-results.json',

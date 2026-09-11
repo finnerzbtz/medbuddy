@@ -1,280 +1,189 @@
-import { chromium, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { mkdir, writeFile } from 'node:fs/promises';
-const origin = process.env.MVP_TEST_URL ?? 'http://127.0.0.1:5177';
-const browser = await chromium.launch();
-const context = await browser.newContext({ viewport: { width: 1280, height: 1100 } });
-await context.addInitScript(() => {
-  window.__voiceAudio = [];
-  const Native = window.AudioContext;
-  window.AudioContext = class extends Native {
-    constructor(...args) {
-      super(...args);
-      const analyser = this.createAnalyser();
-      analyser.fftSize = 2048;
-      analyser.connect(this.destination);
-      Object.defineProperty(this, 'destination', { value: analyser });
-      window.__voiceAudio.push({ ctx: this, analyser });
-    }
-  };
-  if (localStorage.getItem('reminduh-mvp-v1')) return;
-  localStorage.setItem('reminduh-sound-v1', JSON.stringify({ effects: false, music: false }));
-  localStorage.setItem(
-    'reminduh-mvp-v1',
-    JSON.stringify({
-      schemaVersion: 1,
-      onboarded: true,
-      profile: { name: 'Alex', petName: 'Blobby' },
-      medications: [],
-      records: {},
-      outfit: 'base',
-      hiddenGroups: [],
-      preferences: { reducedMotion: true, staticScene: true, reminders: false },
-      reminders: {},
-      updatedAt: new Date().toISOString(),
-    }),
-  );
-});
-const page = await context.newPage();
-await page.clock.install();
-const checks = [],
-  errors = [],
-  external = [];
-page.on('pageerror', (e) => errors.push(String(e)));
-page.on('request', (r) => {
-  if (r.url().startsWith('http') && !r.url().startsWith(origin)) external.push(r.url());
-});
-const check = (name) => {
-  checks.push(name);
-  console.log('PASS', name);
-};
-const level = (ms = 500) =>
-  page.evaluate(async (ms) => {
-    let peak = 0;
-    const timer = setInterval(() => {
-      for (const { ctx, analyser } of window.__voiceAudio) {
-        if (ctx.state !== 'running') continue;
-        const x = new Float32Array(analyser.fftSize);
-        analyser.getFloatTimeDomainData(x);
-        peak = Math.max(peak, Math.sqrt(x.reduce((s, v) => s + v * v, 0) / x.length));
-      }
-    }, 10);
-    await new Promise((r) => setTimeout(r, ms));
-    clearInterval(timer);
-    return peak;
-  }, ms);
-const silence = async () => {
-  await page.waitForTimeout(350);
-  assert.ok((await level(200)) < 0.0001);
-};
-const installMonitor = async () => {
-  await page.waitForFunction(() => window.__appAudio);
-  await page.evaluate(() => {
-    const mixer = window.__appAudio;
-    const play = mixer.playSpeech.bind(mixer);
-    let current = { clip: null, automatic: false };
-    window.__readStarts = [];
-    window.__speech = {
-      getState: () => ({
-        ...current,
-        status: mixer.speech?.source ? 'playing' : mixer.speech ? 'loading' : 'idle',
-      }),
-    };
-    mixer.playSpeech = async (url, onEnd, automatic = false) => {
-      current = {
-        clip: new URL(url, location.href).pathname
-          .split('/')
-          .slice(-2)
-          .join('/')
-          .replace(/\.mp3$/, ''),
-        automatic,
-      };
-      const entry = { ...current };
-      const started = await play(url, onEnd, automatic);
-      if (started) window.__readStarts.push(entry);
-      return started;
-    };
-  });
-};
-try {
-  await page.goto(origin);
-  await page.waitForFunction(() => window.__appStore && window.__appAudio);
-  await installMonitor();
-  const initial = await page.evaluate(() => window.__appStore.getState().data);
-  const card = page.getByRole('region', { name: 'Little thoughts', exact: true });
-  const message = card.locator('.wisdom-message');
-  const unmute = card.getByRole('button', { name: 'Unmute Blobby', exact: true });
-  const mute = card.getByRole('button', { name: 'Mute Blobby', exact: true });
+import {
+  runSuite,
+  saved,
+  unchangedHealth,
+  openSound,
+  closeSound,
+  rotate,
+  installMonitor,
+  reading,
+  level,
+  silence,
+  setHidden,
+} from './wisdom-test-helpers.mjs';
+
+await runSuite('voice-auto', async ({ page, base, check }) => {
+  await installMonitor(page);
+  const before = await saved(page);
+  const message = page.locator('.wisdom-message');
   const current = () => message.getAttribute('data-thought-id');
-  const reading = async (voice = 'cloud') => {
-    const key = voice + '/' + (await current());
-    await page.waitForFunction(
-      (key) =>
-        window.__speech.getState().clip === key && window.__speech.getState().status === 'playing',
-      key,
-    );
-    assert.ok((await level()) > 0.001);
-    return key;
+  const dialog = page.getByRole('dialog', { name: 'Sound', exact: true });
+  const read = dialog.getByRole('checkbox', { name: 'Read thoughts aloud', exact: true });
+  const master = dialog.getByRole('checkbox', { name: 'Enable audio', exact: true });
+  const configure = async (changes) => {
+    await openSound(page);
+    if (changes.voice) await dialog.getByRole('radio', { name: new RegExp(changes.voice) }).check();
+    if ('read' in changes) await read.setChecked(changes.read);
+    if ('enabled' in changes) await master.setChecked(changes.enabled);
+    await closeSound(page);
   };
-  const rotate = async () => {
-    await message.scrollIntoViewIfNeeded();
-    await page.waitForTimeout(100);
-    const previous = await current();
-    await page.clock.fastForward(60_000);
-    await expect(message).not.toHaveAttribute('data-thought-id', previous);
-  };
-  const openVoices = async (voice = 'Cloud') => {
-    await card.getByRole('button', { name: 'Choose voice: ' + voice, exact: true }).click();
-  };
-  const dialog = page.getByRole('dialog', { name: 'Choose a voice', exact: true });
+  const starts = () => page.evaluate(() => window.__readStarts.length);
   await message.scrollIntoViewIfNeeded();
-  await page.waitForTimeout(500);
+  await rotate(page);
   assert.equal(await page.evaluate(() => window.__voiceAudio.length), 0);
-  await rotate();
-  assert.equal(await page.evaluate(() => window.__voiceAudio.length), 0);
-  check('Cold start and automatic rotation while muted never create or unmute audio');
-
-  await unmute.click();
-  await reading();
-  const speakingId = await current();
-  await page.clock.fastForward(120_000);
-  await expect(message).toHaveAttribute('data-thought-id', speakingId);
-  await page.waitForFunction(() => !window.__appAudio.speech, null, { timeout: 25_000 });
-  await rotate();
-  await reading();
-  assert.equal(await page.evaluate(() => window.__speech.getState().automatic), true);
-  await expect(message).toHaveAttribute('aria-live', 'off');
-  await mute.click();
-  await silence();
-  const stoppedCount = await page.evaluate(() => window.__readStarts.length);
-  await rotate();
-  await silence();
-  assert.equal(await page.evaluate(() => window.__readStarts.length), stoppedCount);
-  await expect(message).toHaveAttribute('aria-live', 'polite');
+  await expect(page.locator('.blobby-speech').getByRole('button')).toHaveCount(0);
+  await expect(page.locator('.blobby-speech').getByRole('link')).toHaveCount(0);
   check(
-    'Unmute reads the current thought; the timer waits for narration, then reads the next bubble automatically; Mute keeps future bubbles silent',
+    'Cold start and automatic rotation stay silent until Sound is enabled; bubble has no manual paging or source control',
   );
 
+  // Start on a real quotation, then prove its automatically changed successor is read.
+  while (!(await message.locator('blockquote').count())) await rotate(page);
+  await configure({ enabled: true });
+  const quotedId = await reading(page);
+  await expect(message.locator('blockquote')).toBeVisible();
+  await page.clock.fastForward(120_000);
+  await expect(message).toHaveAttribute('data-thought-id', quotedId);
+  await page.waitForFunction(() => window.__speech.getState().status === 'idle', null, {
+    timeout: 25000,
+  });
+  await rotate(page);
+  const nextId = await reading(page);
+  assert.notEqual(nextId, quotedId);
+  await expect(message).toHaveAttribute('aria-live', 'off');
+  check(
+    'A visible quote is narrated with its exact recording; rotation waits for it to finish, then automatically reads the next bubble',
+  );
+
+  await configure({ read: false });
+  await silence(page);
+  const mutedStarts = await starts();
+  await rotate(page);
+  await silence(page);
+  assert.equal(await starts(), mutedStarts);
+  await expect(message).toHaveAttribute('aria-live', 'polite');
+  check('Read thoughts aloud off cancels narration and keeps later bubbles silent');
+
+  // Hold a genuine recording response, cancel through the actual Sound UI, then release it.
+  let release,
+    intercepted = false;
+  const responseGate = new Promise((resolve) => {
+    release = resolve;
+  });
   await page.route('**/audio/voices/**', async (route) => {
-    await new Promise((r) => setTimeout(r, 800));
+    intercepted = true;
+    await responseGate;
     await route.continue().catch(() => {});
   });
-  await unmute.click();
-  await page.waitForFunction(() => window.__speech.getState().status === 'loading');
-  await mute.click();
-  await page.waitForTimeout(1100);
-  await silence();
-  assert.equal(await page.evaluate(() => window.__readStarts.length), stoppedCount);
-  await page.unroute('**/audio/voices/**');
-  check('Muting during a delayed download prevents late speech');
+  try {
+    await configure({ read: true });
+    await expect.poll(() => intercepted).toBe(true);
+    await page.waitForFunction(() => window.__speech.getState().status === 'loading');
+    await configure({ read: false });
+    release();
+    await page.waitForTimeout(500);
+    await silence(page);
+    assert.equal(await starts(), mutedStarts);
+  } finally {
+    release();
+    await page.unroute('**/audio/voices/**');
+  }
+  check(
+    'Opening Sound and muting a pending recording prevents speech after its delayed response arrives',
+  );
 
-  await openVoices();
+  await openSound(page);
   await dialog.getByRole('radio', { name: /Pip/ }).check();
-  await dialog.getByRole('button', { name: 'Preview Moss voice' }).click();
-  assert.ok((await level(800)) > 0.001);
-  await page.keyboard.press('Escape');
-  await silence();
-  await unmute.click();
-  await reading('pip');
-  await mute.click();
+  await dialog.getByRole('button', { name: 'Preview Moss voice', exact: true }).click();
+  await page.waitForFunction(() => window.__appAudio.speech?.source);
+  assert.ok((await level(page, 800)) > 0.001);
+  await expect(dialog.getByRole('radio', { name: /Pip/ })).toBeChecked();
+  await closeSound(page);
+  await silence(page);
   await page.reload();
-  await installMonitor();
-  await expect(card.getByRole('button', { name: 'Choose voice: Pip' })).toBeVisible();
-  await expect(unmute).toBeVisible();
-  assert.equal(
-    await page.evaluate(() => JSON.parse(localStorage.getItem('reminduh-sound-v1')).readThoughts),
-    false,
-  );
-  await rotate();
-  await silence();
-  await unmute.click();
-  await reading('pip');
+  await installMonitor(page);
+  await openSound(page);
+  await expect(dialog.getByRole('radio', { name: /Pip/ })).toBeChecked();
+  await expect(read).not.toBeChecked();
+  await read.check();
+  await closeSound(page);
+  // A saved opt-in still needs a fresh gesture; opening Sound supplies recovery.
+  await configure({ enabled: true });
+  await reading(page, 'pip');
   check(
-    'Voice selection and voice mute persist independently; previews remain available, with no speech leaking out of the dialog',
+    'Voice and read-aloud preference survive reload; previews do not change the selection, and the selected Pip voice reads the bubble',
   );
 
-  await openVoices('Pip');
-  await silence();
-  await dialog.getByRole('radio', { name: /Quiet/ }).check();
-  await page.keyboard.press('Escape');
-  await rotate();
-  await silence();
-  await unmute.click();
-  await reading();
-  await page.getByRole('button', { name: 'Sound settings', exact: true }).click();
-  const sounds = page.getByRole('dialog', { name: 'Sound', exact: true });
-  await sounds.getByRole('checkbox', { name: 'Enable audio', exact: true }).uncheck();
-  await page.keyboard.press('Escape');
-  await silence();
-  await unmute.click();
-  await reading();
-  await page.evaluate(() => window.dispatchEvent(new Event('blur')));
-  await silence();
+  await configure({ voice: 'Quiet' });
+  await rotate(page);
+  await silence(page);
+  await configure({ voice: 'Cloud' });
+  await reading(page);
+  await configure({ enabled: false });
+  await silence(page);
+  const masterMutedStarts = await starts();
   await page.evaluate(() => window.dispatchEvent(new Event('focus')));
-  await silence();
+  await rotate(page);
+  await silence(page);
+  assert.equal(await starts(), masterMutedStarts);
+  await configure({ enabled: true });
+  await reading(page);
   check(
-    'Quiet and master mute stop speech; explicit Unmute works afterwards, while focus return alone never replays a thought',
+    'Quiet and master mute remain silent; focus cannot unmute, while an explicit audio gesture can read the new bubble',
   );
 
-  await mute.click();
-  await unmute.click();
-  await reading();
-  await card.getByRole('button', { name: 'Hide little thoughts' }).click();
-  await silence();
-  await card.getByRole('button', { name: 'Show little thoughts' }).click();
-  await reading();
-  await page.setViewportSize({ width: 390, height: 480 });
-  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-  await silence();
-  const hiddenId = await current();
+  await setHidden(page, true);
+  await silence(page);
+  const hiddenId = await current(),
+    hiddenStarts = await starts();
   await page.clock.fastForward(180_000);
   await expect(message).toHaveAttribute('data-thought-id', hiddenId);
+  await setHidden(page, false);
+  await silence(page);
+  assert.equal(await starts(), hiddenStarts, 'Foreground alone does not replay a handled thought');
+  await rotate(page);
+  await reading(page);
+  check('Backgrounding cancels voice and pauses rotation; returning does not replay or catch up');
+
+  await page.setViewportSize({ width: 390, height: 480 });
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await silence(page);
+  const offscreenId = await current();
+  await page.clock.fastForward(180_000);
+  await expect(message).toHaveAttribute('data-thought-id', offscreenId);
   await message.scrollIntoViewIfNeeded();
-  await silence();
-  await rotate();
-  await reading();
-  await page.getByRole('link', { name: 'Help', exact: true }).click();
-  await silence();
-  await page.getByRole('link', { name: 'Today', exact: true }).click();
+  await silence(page);
+  await rotate(page);
+  await reading(page);
+  await page.locator('.feed-button').click();
+  await expect(message).toBeHidden();
+  await silence(page);
+  const suspendedStarts = await starts();
+  await page.clock.fastForward(120_000);
+  assert.equal(await starts(), suspendedStarts);
+  await page.getByRole('button', { name: 'Close food tray', exact: true }).click();
+  await page.clock.fastForward(5000);
   await message.scrollIntoViewIfNeeded();
-  await reading();
-  await page.getByRole('button', { name: /^Feed/ }).click();
-  await silence();
-  await page.getByRole('button', { name: /^Feed/ }).click();
-  await silence();
+  await silence(page);
+  await rotate(page);
+  await reading(page);
   check(
-    'Hiding, scrolling away, navigation and the feeding tray stop narration; the offscreen timer pauses too',
+    'Offscreen bubbles and the food tray suspend narration/rotation; closing the tray cannot leak queued speech',
   );
 
-  const after = await page.evaluate(() => window.__appStore.getState().data);
-  for (const key of ['medications', 'records', 'care', 'market', 'reminders'])
-    assert.deepEqual(after[key], initial[key]);
-  assert.deepEqual(errors, []);
-  assert.deepEqual(external, []);
-  await mkdir('rebuild/generated/qa-voice', { recursive: true });
-  await writeFile(
-    'rebuild/generated/qa-voice/automatic-results.json',
-    JSON.stringify(
-      { status: 'passed', checks, errors, externalRequests: external.length },
-      null,
-      2,
-    ) + '\n',
-  );
-} catch (error) {
-  console.log(
-    JSON.stringify(
-      await page.evaluate(() => ({
-        reads: window.__readStarts,
-        speech: window.__speech?.getState(),
-        audio: window.__appAudio?.config,
-        errors: document.querySelector('.wisdom-voice-status')?.textContent,
-        visible: document.querySelector('.wisdom-message')?.getBoundingClientRect().toJSON(),
-        focus: document.hasFocus(),
-      })),
-    ),
-  );
-  throw error;
-} finally {
-  await context.close();
-  await browser.close();
-}
+  await page.getByRole('link', { name: 'My Blobby', exact: true }).click();
+  await silence(page);
+  await page.getByRole('link', { name: 'Today', exact: true }).click();
+  await message.scrollIntoViewIfNeeded();
+  await reading(page);
+  await page.goto(base + '/profile#accessibility');
+  await page.getByRole('checkbox', { name: 'Little thoughts from Blobby', exact: true }).uncheck();
+  await page.getByRole('link', { name: 'Today', exact: true }).click();
+  await silence(page);
+  await expect(message).not.toHaveAttribute('data-thought-id');
+  await expect(message).toBeVisible();
+  check('Navigation cancels narration, and disabling thoughts retains a silent fallback bubble');
+  await unchangedHealth(page, before);
+});

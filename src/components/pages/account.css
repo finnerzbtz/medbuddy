@@ -8,12 +8,12 @@
   padding: clamp(24px, 5vw, 40px);
 }
 .account-panel h1 {
-  font-size: clamp(27px, 4vw, 34px);
+  font-size: clamp(1.6875rem, 4vw, 2.125rem);
   line-height: 1.2;
   margin: 20px 0 12px;
 }
 .account-panel h2 {
-  font-size: 21px;
+  font-size: 1.3125rem;
   margin: 8px 0;
 }
 .account-panel p {
@@ -127,7 +127,7 @@
   text-underline-offset: 3px;
 }
 .account-panel input {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .account-panel button {
   min-height: 44px;

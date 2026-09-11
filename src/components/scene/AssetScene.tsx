@@ -4,7 +4,15 @@ import RoomCollection from './RoomCollection';
 import { DEFAULT_ROOM, roomHiddenGroups } from '@/domain/room';
 import Snack from './Snack';
 import { FEED, type FeedTarget } from '@/domain/feeding';
-import { Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, useGLTF } from '@react-three/drei';
 import { clone } from 'three/examples/jsm/utils/SkeletonUtils.js';
@@ -120,6 +128,11 @@ function Character({
   const sleeper = useRef<THREE.Group>(null);
   const arrived = useRef(false);
   const completed = useRef(false);
+  const firstActiveFrame = useRef(true);
+  useLayoutEffect(() => {
+    // A demand-loop or hidden interval belongs to the pause, not the journey.
+    firstActiveFrame.current = true;
+  }, [clip, reactionId, playing]);
   useEffect(() => {
     objects.pet = placement.current ?? undefined;
     return () => {
@@ -256,9 +269,11 @@ function Character({
       });
     }
     if (!playing) return;
+    const activeDelta = firstActiveFrame.current ? 0 : delta;
+    firstActiveFrame.current = false;
     const dt = Math.min(delta, 0.05);
     if (cosy && room && placement.current) {
-      journey.update(dt);
+      journey.update(activeDelta);
       if (!presentation && window.location.pathname === '/')
         sound.current.update(
           journey.animation,

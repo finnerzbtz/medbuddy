@@ -2,7 +2,15 @@ import { isNative } from '@/native/platform';
 import { syncNativeReminders } from '@/native/reminders';
 import { appAudio } from '@/audio/AppAudio';
 import DoseCelebration from './DoseCelebration';
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { X, Undo2, AlertCircle, Check } from 'lucide-react';
 import { useAppStore } from '@/stores/appStore';
@@ -194,11 +202,41 @@ function StorageNotice() {
 }
 function Toast() {
   const toast = useAppStore((s) => s.toast);
+  const { pathname } = useLocation();
+  const displayed = useRef({ toast, pathname });
+  useLayoutEffect(() => {
+    const previous = displayed.current;
+    displayed.current = { toast, pathname };
+    // Leave a contextual confirmation on its page for as long as it is needed.
+    // A later navigation clears it, but a save that creates a new message and
+    // navigates must still show its arrival confirmation, even if the router
+    // transition commits after the external store update.
+    // Medication Undo stays available across pages until explicitly dismissed.
+    if (
+      toast &&
+      toast === previous.toast &&
+      pathname !== previous.pathname &&
+      pathname !== toast.destination &&
+      !toast.undoId &&
+      !toast.checkIn
+    ) {
+      useAppStore.getState().dismissToast();
+    }
+  }, [toast, pathname]);
   const returnFocus = useRef<HTMLElement | null>(null);
   const notice = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    if (toast && !notice.current?.contains(document.activeElement))
-      returnFocus.current = document.activeElement as HTMLElement;
+    const active = document.activeElement;
+    // Removing Undo can briefly return focus to body before this effect runs.
+    // Keep the earlier meaningful target so dismissal can fall back to the page.
+    if (
+      toast &&
+      active instanceof HTMLElement &&
+      active !== document.body &&
+      active !== document.documentElement &&
+      !notice.current?.contains(active)
+    )
+      returnFocus.current = active;
     const element = notice.current;
     const update = () =>
       document.documentElement.style.setProperty(
@@ -215,8 +253,11 @@ function Toast() {
   }, [toast]);
   const restoreFocus = () =>
     requestAnimationFrame(() => {
-      if (returnFocus.current?.isConnected) returnFocus.current.focus();
-      else document.getElementById('main-content')?.focus();
+      const target = returnFocus.current;
+      if (target?.isConnected) target.focus();
+      // A disclosure may have hidden the original trigger while the notice stayed.
+      if (!target || document.activeElement !== target || !target.getClientRects().length)
+        document.getElementById('main-content')?.focus({ preventScroll: true });
     });
   return (
     <div

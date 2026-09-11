@@ -11,7 +11,7 @@ const GardenCutscene = lazy(() => import('@/components/scene/GardenCutscene'));
 const SceneCanvas = lazy(() => import('@/components/scene/SceneCanvas'));
 export default function RoutineActivity({
   occurrence,
-  close: onClose,
+  close,
 }: {
   occurrence: RoutineOccurrence;
   close: () => void;
@@ -19,16 +19,21 @@ export default function RoutineActivity({
   const returnTo = useRef(document.activeElement as HTMLElement | null);
   useEffect(() => {
     const previous = useAppStore.getState().previewPaused;
+    const path = location.pathname;
     useAppStore.getState().setPreviewPaused(true);
-    return () => useAppStore.getState().setPreviewPaused(previous);
+    return () => {
+      useAppStore.getState().setPreviewPaused(previous);
+      // Restore after child dialogs finish their own unmount cleanup. Scheduling
+      // in the close event can race their focus restoration on a busy renderer.
+      requestAnimationFrame(() => {
+        if (location.pathname !== path || document.querySelector('dialog[open]')) return;
+        const target = returnTo.current?.isConnected
+          ? returnTo.current
+          : document.getElementById('for-you-title');
+        target?.focus({ preventScroll: true });
+      });
+    };
   }, []);
-
-  const close = () => {
-    onClose();
-    requestAnimationFrame(() => {
-      if (returnTo.current?.isConnected) returnTo.current.focus({ preventScroll: true });
-    });
-  };
   const data = useAppStore((s) => s.data);
   const [review, setReview] = useState(false),
     [error, setError] = useState(''),

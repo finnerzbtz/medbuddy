@@ -22,7 +22,7 @@
 }
 .sand-topline p {
   margin: 0;
-  font-size: 14px;
+  font-size: 0.875rem;
   line-height: 1.5;
   color: #57654f;
 }
@@ -31,7 +31,7 @@
   background: #fffdf6;
   border: 1px solid #c7d0bd;
   padding: 10px 14px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   border-radius: 16px;
 }
 .sand-volume {
@@ -40,7 +40,7 @@
   align-items: center;
   gap: 12px;
   min-height: 44px;
-  font-size: 12px;
+  font-size: 0.75rem;
   margin: -4px 0 12px;
 }
 .sensory-sand input[type='range'] {
@@ -129,7 +129,7 @@
   min-height: 44px;
   padding: 10px 16px;
   border-radius: 14px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   color: #40583f;
   border: 1px solid transparent;
 }
@@ -150,7 +150,7 @@
 }
 .sand-options {
   color: #52624b;
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 .sand-options summary {
   width: fit-content;
@@ -174,11 +174,11 @@
   flex-basis: 100%;
   margin: 0;
   max-width: 700px;
-  font-size: 13px;
+  font-size: 0.8125rem;
   line-height: 1.65;
 }
 .sand-options .button {
-  font-size: 13px;
+  font-size: 0.8125rem;
 }
 @media (max-width: 560px) {
   .room-game[data-game='sand'] {
@@ -188,11 +188,11 @@
     gap: 12px;
   }
   .sand-topline p {
-    font-size: 13px;
+    font-size: 0.8125rem;
   }
   .sand-topline .sand-sound {
     padding-inline: 10px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .sand-tray {
     padding: 10px;
@@ -214,7 +214,7 @@
   }
   .sand-toolbar .button {
     padding: 10px 12px;
-    font-size: 12px;
+    font-size: 0.75rem;
   }
   .sand-tools,
   .sand-edits {

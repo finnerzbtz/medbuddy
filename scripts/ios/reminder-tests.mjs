@@ -119,6 +119,40 @@ function data(day = '2026-09-07') {
   ];
   return value;
 }
+async function withReminderClock(run) {
+  const OriginalDate = globalThis.Date;
+  const previousPermission = allowed;
+  let instant = +new OriginalDate('2026-09-11T07:59:50+01:00');
+  globalThis.Date = class extends OriginalDate {
+    constructor(...args) {
+      super(...(args.length ? args : [instant]));
+    }
+    static now() {
+      return instant;
+    }
+  };
+  allowed = 'granted';
+  pending.clear();
+  delivered.clear();
+  const d = data('2026-09-11');
+  d.medications[0].schedules[0].times = ['08:00'];
+  const id = 'test-med@2026-09-11@08:00';
+  try {
+    await run({
+      d,
+      id,
+      advance: (value) => {
+        instant = +new OriginalDate(value);
+      },
+      request: () => [...pending.values()].find((item) => item.extra?.doseIds?.includes(id)),
+    });
+  } finally {
+    globalThis.Date = OriginalDate;
+    allowed = previousPermission;
+    pending.clear();
+    delivered.clear();
+  }
+}
 const cases = [];
 async function test(name, fn) {
   await fn();
@@ -244,6 +278,154 @@ await test('Turning reminders off wins over an in-flight schedule call', async (
   await Promise.all([syncNativeReminders(d), syncNativeReminders(off)]);
   assert.equal(pending.size, 0);
 });
+await test('An unchanged 8am alert stays pending across the due-time refresh without being rescheduled', () =>
+  withReminderClock(async ({ d, advance, request }) => {
+    await syncNativeReminders(d);
+    const original = request();
+    const before = calls;
+    assert.ok(original);
+    for (const time of ['2026-09-11T08:00:00+01:00', '2026-09-11T08:00:15+01:00']) {
+      advance(time);
+      await syncNativeReminders(d);
+      assert.equal(request(), original, 'Leave the same due request with iOS until delivery');
+    }
+    assert.equal(calls, before, 'A due request must not be submitted a second time');
+    pending.delete(original.id);
+    delivered.set(original.id, original);
+    await syncNativeReminders(d);
+    assert.equal(request(), undefined, 'Delivered alerts must not be requeued');
+    assert.ok(delivered.has(original.id));
+  }));
+await test('Opening after 8am with no pending request does not create a catch-up notification', () =>
+  withReminderClock(async ({ d, advance, request }) => {
+    advance('2026-09-11T08:00:15+01:00');
+    await syncNativeReminders(d);
+    assert.equal(request(), undefined);
+    assert.ok([...pending.values()].every((item) => +item.schedule.at > Date.now()));
+  }));
+await test('Recording, pausing, archiving, removing a time, snoozing or disabling still cancels a due request', async () => {
+  const changes = {
+    taken: (d, id) => {
+      d.records[id] = {
+        id,
+        medicationId: 'test-med',
+        date: '2026-09-11',
+        time: '08:00',
+        status: 'taken',
+      };
+    },
+    skipped: (d, id) => {
+      d.records[id] = {
+        id,
+        medicationId: 'test-med',
+        date: '2026-09-11',
+        time: '08:00',
+        status: 'skipped',
+      };
+    },
+    paused: (d) => {
+      d.medications[0].schedules[0].active = false;
+    },
+    archived: (d) => {
+      d.medications[0].archived = true;
+    },
+    edited: (d) => {
+      d.medications[0].schedules[0].times = ['09:00'];
+    },
+    snoozed: (d, id) => {
+      d.reminders[id] = { snoozedUntil: '2026-09-11T08:10:00+01:00' };
+    },
+    disabled: (d) => {
+      d.preferences.reminders = false;
+    },
+    denied: () => {
+      allowed = 'denied';
+    },
+  };
+  for (const [name, change] of Object.entries(changes)) {
+    await withReminderClock(async ({ d, id, advance, request }) => {
+      await syncNativeReminders(d);
+      const original = request();
+      advance('2026-09-11T08:00:15+01:00');
+      change(d, id);
+      await syncNativeReminders(d);
+      assert.ok(!pending.has(original.id), name + ' must cancel the old request');
+      if (name === 'snoozed') {
+        assert.equal(+request().schedule.at, +new Date('2026-09-11T08:10:00+01:00'));
+      }
+    });
+  }
+});
+await test('A grouped due alert remains while another medication still needs its check-in', () =>
+  withReminderClock(async ({ d, id, advance, request }) => {
+    d.medications.push({ ...d.medications[0], id: 'another' });
+    await syncNativeReminders(d);
+    const original = request();
+    advance('2026-09-11T08:00:15+01:00');
+    d.records[id] = {
+      id,
+      medicationId: 'test-med',
+      date: '2026-09-11',
+      time: '08:00',
+      status: 'taken',
+    };
+    await syncNativeReminders(d);
+    assert.equal(pending.get(original.id), original);
+    d.medications[1].archived = true;
+    await syncNativeReminders(d);
+    assert.ok(!pending.has(original.id));
+  }));
+await test('A delivered snoozed alert remains visible while its older pre-snooze alert is removed', () =>
+  withReminderClock(async ({ d, id, advance, request }) => {
+    await syncNativeReminders(d);
+    const original = request();
+    pending.delete(original.id);
+    delivered.set(original.id, original);
+    advance('2026-09-11T08:01:00+01:00');
+    d.reminders[id] = { snoozedUntil: '2026-09-11T08:10:00+01:00' };
+    await syncNativeReminders(d);
+    assert.ok(!delivered.has(original.id), 'Snoozing must remove the old delivered alert');
+    const snoozed = request();
+    pending.delete(snoozed.id);
+    delivered.set(snoozed.id, snoozed);
+    advance('2026-09-11T08:10:01+01:00');
+    await syncNativeReminders(d);
+    assert.ok(delivered.has(snoozed.id), 'The alert at the current snooze time is still relevant');
+    assert.equal(request(), undefined, 'Do not reschedule the delivered snooze');
+  }));
+await test('A future pause does not erase a current-day delivered reminder', () =>
+  withReminderClock(async ({ d, advance, request }) => {
+    await syncNativeReminders(d);
+    const original = request();
+    pending.delete(original.id);
+    delivered.set(original.id, original);
+    advance('2026-09-11T08:00:15+01:00');
+    d.medications[0].schedules.push({
+      ...d.medications[0].schedules[0],
+      from: '2026-09-12',
+      active: false,
+    });
+    await syncNativeReminders(d);
+    assert.ok(delivered.has(original.id));
+    advance('2026-09-12T08:00:15+01:00');
+    await syncNativeReminders(d);
+    assert.ok(!delivered.has(original.id), 'Remove it once the pause actually takes effect');
+  }));
+await test('Existing due alerts consume the same 60-alert budget as future reminders', () =>
+  withReminderClock(async ({ d, advance, request }) => {
+    d.medications[0].schedules[0].times = ['08:00', '12:00', '18:00'];
+    await syncNativeReminders(d);
+    const original = request();
+    await testNativeReminder();
+    advance('2026-09-11T08:00:15+01:00');
+    await syncNativeReminders(d);
+    assert.equal(pending.get(original.id), original);
+    const doses = [...pending.values()].filter((item) => item.extra?.kind === 'dose');
+    assert.equal(doses.length, 60);
+    assert.ok(pending.has(REMINDER_REFRESH_ID));
+    assert.ok(pending.has(REMINDER_TEST_ID));
+    assert.ok(pending.size <= 62);
+  }));
 await test('Denied permission never schedules or prompts automatically', async () => {
   allowed = 'denied';
   const before = calls;

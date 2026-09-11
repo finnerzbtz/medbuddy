@@ -1,3 +1,4 @@
+import { isNative } from '@/native/platform';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, Clock3, SkipForward, X, Undo2 } from 'lucide-react';
@@ -171,8 +172,12 @@ function CheckInDialog({ id, close }: { id: string; close: () => void }) {
                           .getState()
                           .showToast(
                             alertsOn
-                              ? 'Snoozed for 10 minutes. Keep Reminduh open for the alert.'
-                              : 'Snoozed for 10 minutes. Browser alerts are off; the time will update in Today.',
+                              ? isNative
+                                ? 'Snoozed for 10 minutes.'
+                                : 'Snoozed for 10 minutes. Keep Reminduh open for the alert.'
+                              : 'Snoozed for 10 minutes. ' +
+                                  (isNative ? 'Device' : 'Browser') +
+                                  ' alerts are off; the time will update in Today.',
                           );
                         close();
                       } else setError(result.error!);
@@ -183,7 +188,7 @@ function CheckInDialog({ id, close }: { id: string; close: () => void }) {
                   </button>
                   {!alertsOn && (
                     <p className="snooze-help">
-                      Browser alerts are off.{' '}
+                      {isNative ? 'Device alerts are off. ' : 'Browser alerts are off. '}
                       <Link to="/profile#reminders" onClick={close}>
                         Set up reminders
                       </Link>

@@ -78,7 +78,16 @@
 }
 .routine-form .field {
   display: grid;
+  /* Native date/time controls must shrink within the dialog grid track. */
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
   gap: 0.45rem;
+}
+/* iOS adds native date/time padding on top of percentage widths (WebKit 301648).
+   Stretch the grid item instead, keeping the native picker and its full label. */
+.routine-form input:is([type='date'], [type='time']) {
+  width: auto;
+  justify-self: stretch;
 }
 .routine-form select {
   padding: 0.8rem;

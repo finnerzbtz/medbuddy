@@ -1,3 +1,4 @@
+import { speakBlobby, stopBlobbySpeech, useBlobbySpeech } from '@/audio/BlobbySpeech';
 import { Link } from 'react-router-dom';
 import { VoicePreferences } from './VoicePicker';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -37,6 +38,9 @@ export function MusicButton() {
 export function SoundPreferences() {
   const settings = useSoundSettings(),
     [error, setError] = useState('');
+  const playback = useBlobbySpeech();
+  const isTest = playback.clip === 'cloud/familiar' && !playback.automatic;
+  const testing = isTest && ['loading', 'playing'].includes(playback.status);
   return (
     <div className="sound-preferences">
       <label className="toggle-row">
@@ -106,25 +110,47 @@ export function SoundPreferences() {
         Open record player
       </Link>
       <VoicePreferences />
-      <p className="sound-note">
-        Start audio when you’re ready. Your volume choices are remembered.
-      </p>
-      <span role="status">{error}</span>
+      <button
+        className="button secondary"
+        onClick={async () => {
+          setError('');
+          if (testing) {
+            stopBlobbySpeech();
+            return;
+          }
+          try {
+            await enableSound();
+            await speakBlobby('cloud', 'familiar');
+          } catch {
+            setError('Sound could not start. Check your connected headphones and try again.');
+          }
+        }}
+      >
+        {testing ? 'Stop sound test' : 'Test sound'}
+      </button>
+      <span role="status">
+        {error ||
+          (isTest ? playback.error || (playback.status === 'loading' ? 'Loading sound…' : '') : '')}
+      </span>
     </div>
   );
 }
-function SoundDialog({ close }: { close: () => void }) {
+function SoundDialog({ close, trigger }: { close: () => void; trigger: HTMLButtonElement | null }) {
   const ref = useRef<HTMLDialogElement>(null),
     id = useId();
   useEffect(() => {
-    const previous = document.activeElement as HTMLElement,
-      dialog = ref.current!;
+    const dialog = ref.current!,
+      returnPath = window.location.pathname;
     dialog.showModal();
     return () => {
       dialog.close();
-      if (previous?.isConnected) previous.focus({ preventScroll: true });
+      // Restore the opener after unmount, but let navigation own focus on a new page.
+      requestAnimationFrame(() => {
+        if (!dialog.open && window.location.pathname === returnPath && trigger?.isConnected)
+          trigger.focus({ preventScroll: true });
+      });
     };
-  }, []);
+  }, [trigger]);
   useEffect(() => {
     window.addEventListener('open-record-player', close);
     return () => window.removeEventListener('open-record-player', close);
@@ -137,21 +163,28 @@ function SoundDialog({ close }: { close: () => void }) {
           <X size={20} aria-hidden="true" />
         </button>
       </div>
-      <SoundPreferences />
+      <div className="sound-dialog-body">
+        <SoundPreferences />
+      </div>
     </dialog>,
     document.body,
   );
 }
 export default function SoundControls() {
   const [open, setOpen] = useState(false),
+    trigger = useRef<HTMLButtonElement>(null),
     enabled = useSoundSettings((s) => s.enabled);
   return (
     <>
       <button
         className="icon-button"
+        ref={trigger}
         aria-label="Sound settings"
         title="Sound settings"
-        onClick={() => setOpen(true)}
+        onClick={(event) => {
+          event.currentTarget.focus({ preventScroll: true });
+          setOpen(true);
+        }}
       >
         {enabled ? (
           <Volume2 size={19} aria-hidden="true" />
@@ -159,7 +192,7 @@ export default function SoundControls() {
           <VolumeX size={19} aria-hidden="true" />
         )}
       </button>
-      {open && <SoundDialog close={() => setOpen(false)} />}
+      {open && <SoundDialog close={() => setOpen(false)} trigger={trigger.current} />}
     </>
   );
 }
