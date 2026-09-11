@@ -1,18 +1,19 @@
 # Reminduh · iPhone beta
 
-Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 4). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
+Native app: Capacitor 8, iPhone, iOS 17+, version 0.1.0 (build 5). Xcode project: `ios/App/App.xcodeproj`, shared scheme `Reminduh`.
 
 The app bundles its web UI, Blender models, games and audio. It does not need a development server, accounts or a backend. Medication data stays on the device. Each scheduled check-in earns leaves. StoreKit consumable leaf packs and MusicKit library playback are implemented but explicitly disabled pending Apple account/service configuration and end-to-end testing. The free record player supports Blobby radio and local audio files now. See [Leaves and Music](Leaves-and-Music.md).
 
 ## Current internal beta
 
-Build 4 adds simpler room controls, focused History/routines, mobile shop details
-and explicit music/voice loading, failure and retry states to the Release A beta. Build it with
+Build 5 is verified Testing in the existing Reminduh Beta internal group. It adds
+reminder due-time/snooze retention fixes and the UI, larger-text, sensory and
+navigation refinements after build 4. Build it with
 `APPLE_TEAM_ID=37N43RUU8P npm run ios:beta`. This leaves cloud endpoints empty in the
 bundle because production has not received the new schema protocol. All local data,
 reminders and backup features remain available. The ordinary `ios:archive` command
 uses the configured production environment; do not use it for this offline beta.
-See [build 4 notes](releases/0.1.0-4.md) for validation and distribution status.
+See [build 5 notes](releases/0.1.0-5.md) for exact source, validation and distribution.
 
 ## Build locally
 
@@ -61,7 +62,7 @@ Device notifications use iOS local notifications, not the web service worker. Th
 
 The app schedules up to 60 distinct alert times within the next 30 days, combining simultaneous doses. The queue refreshes on foreground, schedule changes, snooze, recording/undo, pause/archive, restore and reset. Settings shows how far the current queue reaches. One separate renewal alert prompts the user to reopen when the queue ends. If they do not reopen, medication alerts eventually stop; this is stated in the app. The remaining OS slots are reserved for the renewal and test alert.
 
-Past unsnoozed times are not sent as fresh take-dose notifications; Today's check-in CTA remains available. A cross-midnight snooze is retained while its medication is active. Review/open the app after a time-zone change so the OS queue is rebuilt for local time. Focus, notification permissions and system settings can silence alerts. Do not claim guaranteed delivery or use this beta as a sole medication reminder.
+Already queued due alerts remain with iOS while the medication/time is valid, sharing the 60-alert budget with future alerts. Delivered snoozed alerts remain visible until superseded or recorded. Past unsnoozed times are not sent as fresh take-dose notifications; Today's check-in CTA remains available. A cross-midnight snooze is retained while its medication is active. Review/open the app after a time-zone change so the OS queue is rebuilt for local time. Focus, notification permissions and system settings can silence alerts. Do not claim guaranteed delivery or use this beta as a sole medication reminder.
 
 ## Storage and moving from the browser
 
@@ -87,7 +88,7 @@ Use `testScheduledMedicationNotificationTap` for an actual future medication ale
 
 Use `testNativeRoutineDateTimeFormLayout` to verify native date/time field bounds, picker opening and cancellation. Desktop WebKit does not reproduce all iOS control sizing.
 
-Run `testNativeTextScaleAndCoreLayout` at normal and accessibility-large iOS text categories when typography changes. Compare actual native text frames and screenshots, check fields, count badges and controls above fixed navigation, and restore the QA category afterward. A browser root-font setting alone does not prove Dynamic Type support. Current local refinement evidence and remaining investigations are in [the quality pass](../refinement/quality-pass.md); local branch changes after build 4 are not automatically included in that distributed build.
+Run `testNativeTextScaleAndCoreLayout` at normal and accessibility-large iOS text categories when typography changes. Compare actual native text frames and screenshots, check fields, count badges and controls above fixed navigation, and restore the QA category afterward. A browser root-font setting alone does not prove Dynamic Type support. Current local refinement evidence and remaining investigations are in [the quality pass](../refinement/quality-pass.md); the documented refinements after build 4 are included in build 5; later local changes still require another release.
 
 Before distributing broadly, test on a physical iPhone:
 

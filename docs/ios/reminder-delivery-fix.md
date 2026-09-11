@@ -25,8 +25,8 @@ current schedule rather than a future revision when checking whether it is pause
 
 The change uses existing notification metadata and saved medication data. No schema,
 backup, native-persistence or cloud-protocol migration is needed. Medication records,
-supply, optional self-care and default sadness are unchanged. This local patch is
-not part of distributed TestFlight 0.1.0 (4).
+supply, optional self-care and default sadness are unchanged. This patch is included in
+[TestFlight 0.1.0 (5)](releases/0.1.0-5.md); it was absent from build 4.
 
 ## Validation
 

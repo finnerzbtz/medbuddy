@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-10",
+  "updated": "2026-09-11",
   "appName": "Reminduh",
   "platform": "iOS",
   "bundleId": "com.reminduh.app",
@@ -18,7 +18,7 @@
   "listingCopySaved": true,
   "releaseMode": "manual",
   "storeVersionDraft": "1.0",
-  "currentBetaVersion": "0.1.0 (4)",
+  "currentBetaVersion": "0.1.0 (5)",
   "testFlightReviewNotesSaved": true,
   "testFlightReviewNotesStatus": "Saved with owner-approved private review contact details; no sign-in required.",
   "developerAgreement": "Updated Apple Developer Program License Agreement accepted on 2026-09-08 with explicit owner approval.",
@@ -26,7 +26,7 @@
   "liveAppleMusicEnabled": false,
   "liveLeafPurchasesEnabled": false,
   "remaining": [
-    "Physical iPhone update to build 4, speaker/headphone audio, interruptions, notification/Focus and accessibility validation",
+    "Physical iPhone update to build 5, scheduled reminders and snoozes under Focus/restarts, speaker/headphone audio and interruptions, local-library playback and accessibility validation",
     "Before cloud rollout: production protocol migration, real email delivery and native authentication/sync validation",
     "Before public App Store submission: screenshots, support/privacy URLs, age rating and regulatory declarations, privacy/accessibility disclosures and pricing/availability",
     "Before paid leaves: Paid Applications Agreement, banking/tax details, product pricing and StoreKit device testing"
@@ -52,22 +52,23 @@
       "0.1.0 (1)",
       "0.1.0 (2)",
       "0.1.0 (3)",
-      "0.1.0 (4)"
+      "0.1.0 (4)",
+      "0.1.0 (5)"
     ]
   },
   "signingStatus": "Signed archive passed strict recursive codesign verification. All 165 bundled web resources match the offline release build.",
-  "signedArchive": "/Users/finnerz/reminduh/ios/App/build/Reminduh.xcarchive",
+  "signedArchive": "/Users/finnerz/reminduh/ios/App/build/archives/Reminduh-0.1.0-5.xcarchive",
   "signedArchiveVerified": true,
-  "uploadStatus": "Xcode Organizer confirmed upload of 0.1.0 (4) on 2026-09-10 at 17:44 Europe/London using TestFlight Internal Only. Apple processing completed; testing notes saved and build assigned to Reminduh Beta, verified Testing.",
-  "testFlightBuildId": "500efba7-7806-4df5-82ad-1e36beee16e3",
+  "uploadStatus": "Xcode Organizer confirmed upload of 0.1.0 (5) on 2026-09-11 using TestFlight Internal Only. Apple records upload at 11:17 Europe/London and processed build at 11:18. Processing completed; testing notes saved and exact build assigned to Reminduh Beta, verified Testing.",
+  "testFlightBuildId": "0b42927a-1d78-4d5b-a989-30b2acef497a",
   "testFlightProcessingComplete": true,
   "testFlightWhatToTestSaved": true,
   "privateBetaReady": true,
-  "testFlightTesterStatus": "Existing internal tester retained. Build 4 is available. Apple reports build 3 installed; physical build 4 update and validation remain pending.",
+  "testFlightTesterStatus": "Existing internal tester retained. Build 5 is available in Reminduh Beta; physical installation and validation of build 5 remain pending.",
   "testFlightGroupBuildStatus": "Testing",
   "physicalIPhoneInstallVerified": false,
-  "sourceCommit": "a025bf970544602de7aec9ab2b7cf937a0e7ae45",
-  "sourceTag": "ios/0.1.0-4",
+  "sourceCommit": "fc38b87352f2fdd51b0526e8927364e7b604e9bc",
+  "sourceTag": "ios/0.1.0-5",
   "betaCloudSyncEnabled": false,
-  "verification": "Local release/browser/offline checks and five native simulator tests passed. This refinement branch has no remote CI run; no remote green status is claimed."
+  "verification": "Merged application source passed main CI run 34586805267. Build-number commit changes version metadata only. Local release gates, 17 fresh MVP production/offline scenarios, four Release A offline checks and the real scheduled-notification native test passed. Relevant unchanged native/UI evidence is documented in the quality pass. Strict archive signing and all 165 packaged web files verified."
 }

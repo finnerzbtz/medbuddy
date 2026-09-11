@@ -1,5 +1,7 @@
 # Calm, focused app refinement
 
+Current release: PR #2 is merged into main and [TestFlight build 5](../ios/releases/0.1.0-5.md) is verified Testing. It includes the follow-ups below and the reminder-retention fix. Historical build-4/local labels below describe when evidence was collected. Physical-device limits still apply.
+
 Branch: `refine/calm-premium-experience`, based on TestFlight build 3 plus its release notes. The user has now requested a TestFlight release of this refinement and a reusable TestFlight skill. Build 4 passed signing/archive verification, uploaded successfully, completed Apple processing and is verified Testing in the existing Reminduh Beta group. See [release notes](../ios/releases/0.1.0-4.md) for exact source and distribution evidence. No backend deployment is included.
 
 The goal remains a high-quality, engaging but calming app whose core functions work in the iOS simulator. A focused visual pass alone does not prove completion. Existing medication behaviour, default sadness thresholds, native data protection, optional self-care separation, owned assets and disabled purchase/cloud gates stay intact.
