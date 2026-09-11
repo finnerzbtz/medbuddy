@@ -1,6 +1,8 @@
 import { LocalNotifications } from '@capacitor/local-notifications';
 import type { AppData } from '@/types';
-import { planNativeReminders } from '@/domain/native-reminders';
+import { NATIVE_REMINDER_LIMIT, planNativeReminders } from '@/domain/native-reminders';
+import { dateKey, findDose, scheduleAt } from '@/domain/schedule';
+import { reminderTime } from '@/domain/reminders';
 
 let permission: NotificationPermission = 'default';
 export const nativeNotificationPermission = () => permission;
@@ -27,13 +29,56 @@ async function confirmScheduled(notifications: { id: number; schedule: { at: Dat
 }
 let queue: Promise<unknown> = Promise.resolve();
 
+interface ReminderMetadata {
+  extra?: { kind?: string; token?: string; doseIds?: string[] };
+}
+
+function originalReminderTime(item: ReminderMetadata): number {
+  return Number(item.extra?.token?.split(':')[0] ?? NaN);
+}
+
+/** A due request can still belong to iOS (for example while delivery is delayed).
+ * Only withdraw it when its dose or timing actually changes, not when the clock
+ * passes its due time. The same rule keeps a delivered snoozed alert visible. */
+function isCurrentDoseReminder(data: AppData, item: ReminderMetadata, now: Date): boolean {
+  if (item.extra?.kind !== 'dose') return false;
+  const at = originalReminderTime(item);
+  if (!Number.isFinite(at)) return false;
+  return (item.extra?.doseIds ?? []).some((id) => {
+    const dose = findDose(data, id);
+    if (!dose || dose.record || data.reminders[id]?.notifiedAt) return false;
+    const med = data.medications.find((medication) => medication.id === dose.medicationId);
+    return (
+      med !== undefined &&
+      !med.archived &&
+      (at > +now || scheduleAt(med, dateKey(now))?.active === true) &&
+      reminderTime(data, dose) === at
+    );
+  });
+}
+
 export function syncNativeReminders(data: AppData) {
   // Serialize OS changes: a late schedule call must never resurrect cancelled doses.
   const operation = queue
     .catch(() => {})
     .then(async () => {
       const granted = (await refreshNativePermission()) === 'granted';
-      const plan = granted ? planNativeReminders(data) : [];
+      const { notifications: pending } = await LocalNotifications.getPending();
+      const now = new Date();
+      const retained =
+        granted && data.preferences.reminders
+          ? pending.filter(
+              (item) =>
+                originalReminderTime(item) <= +now && isCurrentDoseReminder(data, item, now),
+            )
+          : [];
+      // Retained alerts share the same iOS budget as newly planned alerts.
+      const plan = granted
+        ? planNativeReminders(data, now).slice(
+            0,
+            Math.max(0, NATIVE_REMINDER_LIMIT - retained.length),
+          )
+        : [];
       const notifications = plan.map((item) => ({
         id: item.id,
         title: 'Time for a check-in',
@@ -58,11 +103,11 @@ export function syncNativeReminders(data: AppData) {
           ]
         : [];
       const wanted = [...notifications, ...renewal];
-      const { notifications: pending } = await LocalNotifications.getPending();
       const obsolete = pending.filter(
         (item) =>
           (!data.preferences.reminders || !granted || item.id !== REMINDER_TEST_ID) &&
-          !wanted.some((next) => next.id === item.id),
+          !wanted.some((next) => next.id === item.id) &&
+          !retained.some((saved) => saved.id === item.id),
       );
       if (obsolete.length)
         await LocalNotifications.cancel({ notifications: obsolete.map(({ id }) => ({ id })) });
@@ -75,19 +120,7 @@ export function syncNativeReminders(data: AppData) {
       const delivered = await LocalNotifications.getDeliveredNotifications();
       const stale = delivered.notifications.filter((item) => {
         if (!data.preferences.reminders || !granted) return true;
-        const ids: string[] = item.extra?.doseIds ?? [];
-        return (
-          ids.length > 0 &&
-          ids.every(
-            (id) =>
-              data.records[id] ||
-              data.reminders[id]?.snoozedUntil ||
-              !data.medications.some(
-                (med) =>
-                  id.startsWith(med.id + '@') && !med.archived && med.schedules.at(-1)?.active,
-              ),
-          )
-        );
+        return item.extra?.kind === 'dose' && !isCurrentDoseReminder(data, item, now);
       });
       if (stale.length)
         await LocalNotifications.removeDeliveredNotifications({ notifications: stale });
